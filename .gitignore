@@ -1,0 +1,81 @@
+#
+# Source https://github.com/github/gitignore/blob/master/C.gitignore
+#
+
+#
+# Object files
+#
+*.o
+
+#
+# Libraries
+#
+*.lib
+*.a
+
+#
+# Shared objects (inc. Windows DLLs)
+#
+*.dll
+*.so
+*.so.*
+*.dylib
+
+#
+# Executables
+#
+*.exe
+*.out
+*.app
+
+#
+# Custom
+#
+
+#
+# bak
+#
+*.bak
+*.swp
+*.~
+*.swap
+
+#
+# build directory (just in case, because we already exclude object files)
+#
+/build/
+
+#
+# binaries
+#
+# must be server
+/boostcached
+# must be client
+/boostcache
+
+#
+# core dumps
+#
+/core
+/vgcore*
+
+#
+# cmake
+#
+/CMakeFiles
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+# Very useful to use for cmake build system temporary stuff
+/.cmake
+
+#
+# profilers
+#
+/oprofile_data
+gmon.out
+
+#
+# git archive
+#
+/*.zip

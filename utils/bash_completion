@@ -1,0 +1,47 @@
+#
+# bash autocomplete, that parse --help of program.
+#
+# execute as:
+# . utils/bash_completion
+#
+# and use autocomplete in bash!
+#
+
+# Known to work with bash 3.* with programmable completion and extended
+# pattern matching enabled (use 'shopt -s extglob progcomp' to enable
+# these if they are not already enabled).
+shopt -s extglob
+
+_get_options()
+{
+    $1 --help 2>&1 | fgrep -- - | awk '{print $1; if (index($0, "[")) print $3 }'
+}
+
+_complete_for_bin()
+{
+    local cur
+    eval local cmd=$( quote "$1" )
+
+    COMPREPLY=()
+    cur="$(_get_cword)"
+    prev="$(_get_pword)"
+
+    case "$prev" in
+        -c|--config)
+            return
+            ;;
+        # Argh...  This looks like a bash bug...
+        # Redirections are passed to the completion function
+        # although it is managed by the shell directly...
+        '<'|'>'|'>>'|[12]'>'|[12]'>>')
+            return
+            ;;
+    esac
+
+    COMPREPLY=( $(compgen -W "$(_get_options $cmd)" -- $cur) )
+
+    return 0
+}
+
+# boostcached
+complete -F _complete_for_bin -o default boostcached
