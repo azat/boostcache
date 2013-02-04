@@ -99,7 +99,7 @@ if [[ $numberofcharsperline -gt 0 ]]; then
 fi
 
 # hooks.regexpforcommittitle
-if [ -n $regexpforcommittitle ]; then
+if [ ! -z $regexpforcommittitle ]; then
     not_matched=$(git log --pretty=%s $oldrev..$newrev | grep -v -E $regexpforcommittitle | head -n1)
     if [ -n "$not_matched" ]; then
 	echo "*** Commit subject not matched '${regexpforcommittitle}' pattern:"
