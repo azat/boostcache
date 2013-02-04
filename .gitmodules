@@ -1,3 +1,6 @@
 [submodule "src/third_party/astyle"]
 	path = src/third_party/astyle
 	url = git://github.com/azat/astyle.git
+[submodule "cmake"]
+	path = cmake
+	url = git://github.com/azat/cmake-external.git
