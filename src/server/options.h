@@ -3,9 +3,12 @@
 
 namespace Server
 {
-	class Options : public Util::Options
-	{
-	public:
-		Options(int argc, char **argv) : Util::Options(argc, argv) {}
-	};
+    class Options : public Util::Options
+    {
+    public:
+        Options() : Util::Options() {}
+
+    protected:
+        virtual void additionalOptions();
+    };
 }

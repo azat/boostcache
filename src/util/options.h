@@ -23,8 +23,8 @@ namespace Util
         typedef boost::program_options::options_description OptionsDescription;
         typedef std::map<std::string, boost::any> ExpandedOptions;
 
-        Options(int argc, char **argv)
-        {
+        Options() {}
+        void parse(int argc, char **argv) {
             tryParseOptions(argc, argv);
         }
 
@@ -57,6 +57,10 @@ namespace Util
 
         void dumpOptions();
 
+    protected:
+        OptionsDescription visibleOptions;
+        virtual void additionalOptions() = 0;
+
     private:
         static const bool IGNORE_NOT_EXISTED_ITEMS = true;
         static const bool PRINT_HELP_ON_ERROR = false;
@@ -65,7 +69,6 @@ namespace Util
         VariablesMap variablesMap;
 
         OptionsDescription hiddenOptions;
-        OptionsDescription visibleOptions;
 
         ExpandedOptions expandedOptions;
 

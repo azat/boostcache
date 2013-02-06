@@ -5,5 +5,8 @@ using namespace Server;
 
 int main(int argc, char **argv)
 {
-    Options options(argc, argv);
+    Options options;
+    options.parse(argc, argv);
+
+    return EXIT_SUCCESS;
 }

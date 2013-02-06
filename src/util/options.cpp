@@ -49,11 +49,13 @@ namespace Util
         }
 
         visibleOptions.add_options()
-                ("help,h", "Produce help message")
-                ("verbose,v", "Enable verbosity (optionally specify level, more v - more debug messages)")
-                ("version,V", "Print version")
-                ("config,c", boost::program_options::value<std::string>(), "Setup custom config file")
+            ("help,h", "Produce help message")
+            ("verbose,v", "Enable verbosity (optionally specify level, more v - more debug messages)")
+            ("version,V", "Print version")
+            ("config,c", boost::program_options::value<std::string>(), "Setup custom config file")
         ;
+
+        additionalOptions();
 
         /* don't allow guessing - creates ambiguities when some options are
          * prefixes of others. allow long disguises and don't allow guessing
