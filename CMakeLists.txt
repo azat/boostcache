@@ -36,7 +36,8 @@ set(BOOSTCACHE_LIBRARY_OUTPUT_PATH ${BOOSTCACHE_BUILD_DIR} CACHE PATH "Build dir
 include_directories(${BOOSTCACHE_SOURCE_DIR})
 include_directories(${BOOSTCACHE_BINARY_DIR})
 
-AddCompilerFlags("-Wall -Wextra -Werror -g -D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG -rdynamic")
+AddCompilerFlags(FLAGS -Wall -Wextra -Werror -g -rdynamic LANGUAGES C CXX)
+add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
 # boostcache sources
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/client/*.cpp")
