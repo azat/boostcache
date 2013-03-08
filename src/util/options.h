@@ -6,7 +6,9 @@
 #pragma once
 
 #include <boost/program_options.hpp>
+#include <boost/utility.hpp>
 #include <boost/any.hpp>
+
 #include <map>
 #include <ostream>
 #include <istream>
@@ -16,7 +18,7 @@
 
 namespace Util
 {
-    class Options
+    class Options : boost::noncopyable
     {
     public:
         typedef boost::program_options::variables_map VariablesMap;
