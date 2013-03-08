@@ -4,3 +4,6 @@
 [submodule "cmake"]
 	path = cmake
 	url = git://github.com/azat/cmake-external.git
+[submodule "utils/git_hooks"]
+	path = utils/git_hooks
+	url = git://github.com/azat/git_hooks.git
