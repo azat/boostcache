@@ -35,7 +35,8 @@ namespace Util
 
             if (variablesMap.count("version")) {
                 std::cout
-                    << BOOSTCACHE_NAME << " " << BOOSTCACHE_VERSION_FLOAT << std::endl
+                    << "Git version: " << BOOSTCACHE_VERSION_GIT << std::endl
+                    << "Version:     " << BOOSTCACHE_NAME << " " << BOOSTCACHE_VERSION_FLOAT << std::endl
                     << std::endl
                     << "See --help for more information" << std::endl;
                 exit(EXIT_SUCCESS);

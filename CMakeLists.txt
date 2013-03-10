@@ -12,6 +12,7 @@ include(AddCompilerFlags)
 include(CheckCXXCompilerFlag)
 include(FindLibrariesOrFatalError)
 include(AddFilesGlobRecursiveToList)
+include(GitVersion)
 
 message(STATUS "Making ${PROJECT_NAME} on ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 
@@ -22,6 +23,7 @@ FindLibrariesOrFatalError("event boost_program_options")
 # The version number.
 set(BoostCache_VERSION_MAJOR 0)
 set(BoostCache_VERSION_MINOR 10)
+GitVersion(BoostCache)
 
 # Directories
 set(BOOSTCACHE_ROOT_DIR "${CMAKE_SOURCE_DIR}")
