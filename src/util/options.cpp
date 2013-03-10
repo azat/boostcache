@@ -40,7 +40,7 @@ namespace Util
                     << "See --help for more information" << std::endl;
                 exit(EXIT_SUCCESS);
             }
-        } catch(std::exception& exception) {
+        } catch(const std::exception& exception) {
             if (PRINT_HELP_ON_ERROR) {
                 std::cerr << (*this);
             }
