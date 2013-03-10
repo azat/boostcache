@@ -14,9 +14,8 @@
 #include <iostream>
 #include <string>
 
-#include <boost/utility.hpp>
 
-class Exception : public std::exception, boost::noncopyable {
+class Exception : public std::exception {
 public:
     Exception(std::string message = "", long code = 0) : message(message), code(code) {
     }
