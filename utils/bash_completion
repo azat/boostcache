@@ -1,5 +1,5 @@
 #
-# bash autocomplete, that parse --help of program.
+# bash autocomplete, that parse --help of program (tested with boost::program_options).
 #
 # execute as:
 # . utils/bash_completion
