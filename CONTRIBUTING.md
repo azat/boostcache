@@ -5,6 +5,7 @@ Contributing to the boostcache project
 Codding Style
 ===============
     - https://github.com/azat/azat.github.com/wiki/Cpp-Coding-Style
+    - https://github.com/azat/azat.github.com/wiki/C-Coding-Style
 
 Git Settings
 ============
