@@ -4,16 +4,9 @@
 # TODO: add more options
 #
 
-DIRNAME=$(which dirname)
-
 set -e
 
-if [ ! "$DIRNAME" ]; then
-    echo "dirname is not available" >&2
-    exit 1
-fi
-
-SELF=$($DIRNAME "$0")
+SELF=${0%/*}
 BIN=$(which astyle)
 CONFIG=$(cat "$SELF/boostcache_astyle")
 SRCDIR=$(readlink -f "$SELF/../src")
