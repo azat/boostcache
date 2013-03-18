@@ -33,7 +33,8 @@ namespace Util
         typedef std::map<std::string, boost::any> ExpandedOptions;
 
         Options() {}
-        void parse(int argc, char **argv) {
+        void parse(int argc, char **argv)
+        {
             tryParseOptions(argc, argv);
         }
 

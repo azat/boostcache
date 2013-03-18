@@ -15,12 +15,15 @@
 #include <string>
 
 
-class Exception : public std::exception {
+class Exception : public std::exception
+{
 public:
-    Exception(std::string message = "", long code = 0) : message(message), code(code) {
+    Exception(std::string message = "", long code = 0) : message(message), code(code)
+    {
     }
 
-    virtual const char* what() const throw() {
+    virtual const char* what() const throw()
+    {
         std::cerr << "[" << code << "] " << message << std::endl;
 
         return "Exception";
@@ -28,11 +31,13 @@ public:
 
     virtual ~Exception() throw() {}
 
-    std::string getMessage() const {
+    std::string getMessage() const
+    {
         return message;
     }
 
-    int getCode() const {
+    int getCode() const
+    {
         return code;
     }
 

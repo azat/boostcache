@@ -20,10 +20,12 @@
 
 #include <execinfo.h>
 
-namespace Util {
+namespace Util
+{
     static const int MAX_BACK_TRACE_FRAMES = 20;
 
-    void printStackTrace(std::ostream& os) {
+    void printStackTrace(std::ostream& os)
+    {
         void *b[MAX_BACK_TRACE_FRAMES];
 
         int size = ::backtrace(b, MAX_BACK_TRACE_FRAMES);
@@ -42,8 +44,10 @@ namespace Util {
 }
 #else
 
-namespace Util {
-    void printStackTrace(std::ostream& os) {
+namespace Util
+{
+    void printStackTrace(std::ostream& os)
+    {
     }
 }
 

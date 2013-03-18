@@ -17,7 +17,8 @@
 
 #include <iostream>
 
-namespace Util {
+namespace Util
+{
     // Print stack trace to "os", default to std::cerr
     void printStackTrace(std::ostream &os = std::cerr);
 }

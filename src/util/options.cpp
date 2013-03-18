@@ -106,7 +106,8 @@ namespace Util
         }
     }
 
-    void Options::parseConfigFile(std::istream &fileStream, std::stringstream &stringStream) {
+    void Options::parseConfigFile(std::istream &fileStream, std::stringstream &stringStream)
+    {
         std::string tmpConfigString;
 
         char line[PATH_MAX];
