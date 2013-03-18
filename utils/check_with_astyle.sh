@@ -28,5 +28,5 @@ set -e
 
 # TODO: enhanced file "iterator"
 for FILE in $(find $SRCDIR -type f | fgrep -v src/third_party/); do
-    $BIN --check-only $CONFIG "$FILE"
+    $BIN --dry-run $CONFIG "$FILE"
 done
