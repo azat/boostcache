@@ -20,9 +20,11 @@
 /**
  * Async command server
  */
-class CommandServer {
+class CommandServer
+{
 public:
-    struct Options {
+    struct Options
+    {
         short port;
         std::string ip;
 

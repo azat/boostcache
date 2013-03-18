@@ -26,7 +26,8 @@ public:
 
     void start();
 
-    boost::asio::ip::tcp::socket& socket() {
+    boost::asio::ip::tcp::socket& socket()
+    {
         return m_socket;
     }
 
@@ -35,7 +36,8 @@ private:
     void handleWrite(const boost::system::error_code& error);
 
     boost::asio::ip::tcp::socket m_socket;
-    enum Constants {
+    enum Constants
+    {
         MAX_LENGTH = 1024
     };
     char m_data[MAX_LENGTH];

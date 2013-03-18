@@ -23,8 +23,7 @@ void Session::start()
 
 void Session::handleRead(const boost::system::error_code& error, size_t bytesTransferred)
 {
-    if (error)
-    {
+    if (error) {
         delete this;
         return;
     }
@@ -36,8 +35,7 @@ void Session::handleRead(const boost::system::error_code& error, size_t bytesTra
 
 void Session::handleWrite(const boost::system::error_code& error)
 {
-    if (error)
-    {
+    if (error) {
         delete this;
         return;
     }
