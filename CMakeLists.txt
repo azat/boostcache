@@ -18,7 +18,7 @@ message(STATUS "Making ${PROJECT_NAME} on ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PR
 
 find_package(Boost REQUIRED COMPONENTS program_options)
 
-FindLibrariesOrFatalError("event boost_program_options")
+FindLibrariesOrFatalError("event boost_program_options boost_system")
 
 # The version number.
 set(BoostCache_VERSION_MAJOR 0)
@@ -44,6 +44,7 @@ add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 # boostcache sources
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/client/*.cpp")
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/kernel/*.cpp")
+AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/kernel/net/*.cpp")
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/util/*.cpp")
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/wrapper/*.cpp")
 

@@ -9,6 +9,7 @@
  */
 
 #include "server/options.h"
+#include "kernel/net/commandserver.h"
 
 using namespace Server;
 
@@ -16,6 +17,9 @@ int main(int argc, char **argv)
 {
     Options options;
     options.parse(argc, argv);
+
+    CommandServer server(CommandServer::Options(options.getValue<int>("port")));
+    server.start();
 
     return EXIT_SUCCESS;
 }
