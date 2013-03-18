@@ -7,6 +7,10 @@ Codding Style
     - https://github.com/azat/azat.github.com/wiki/Cpp-Coding-Style
     - https://github.com/azat/azat.github.com/wiki/C-Coding-Style
 
+Files, folders and namespaces
+=============================
+    - You must wrap into namespace every top-level folder, except "kernel" for now
+
 Git Settings
 ============
 
