@@ -118,6 +118,8 @@ void Session::handleReadParseCommand()
 void Session::handleCommand()
 {
     writeCommand();
+
+    reset();
 }
 
 void Session::writeCommand()
@@ -145,4 +147,6 @@ void Session::reset()
     m_numberOfArguments = -1;
     m_numberOfArgumentsLeft = -1;
     m_lastArgumentLength = -1;
+
+    commandArguments.clear();
 }
