@@ -117,6 +117,11 @@ void Session::handleReadParseCommand()
 
 void Session::handleCommand()
 {
+    writeCommand();
+}
+
+void Session::writeCommand()
+{
     std::string arguments;
     int i;
     for_each(commandArguments.begin(), commandArguments.end(), [&arguments, &i] (std::string argument)

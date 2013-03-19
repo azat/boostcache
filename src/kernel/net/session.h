@@ -38,6 +38,10 @@ private:
     void handleWrite(const boost::system::error_code& error);
     void handleReadParseCommand();
     void handleCommand();
+    /**
+     * Write command to client
+     */
+    void writeCommand();
     void reset();
 
     boost::asio::ip::tcp::socket m_socket;
