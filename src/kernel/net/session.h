@@ -34,22 +34,6 @@ public:
     }
 
 private:
-    void asyncRead();
-    void asyncWrite(const std::string& message);
-    void handleRead(const boost::system::error_code& error, size_t bytesTransferred);
-    void handleWrite(const boost::system::error_code& error);
-    void handleReadParseCommand();
-    void handleCommand();
-    /**
-     * Write command to client
-     */
-    void writeCommand();
-    /**
-     * Reset internal structures
-     * i.e. "Connection failover"
-     */
-    void reset();
-
     boost::asio::ip::tcp::socket m_socket;
     /**
      * TODO: We can avid this, by using buffers with std::string
@@ -92,4 +76,20 @@ private:
     int m_numberOfArgumentsLeft;
     int m_lastArgumentLength;
     std::vector<std::string> commandArguments;
+
+    void asyncRead();
+    void asyncWrite(const std::string& message);
+    void handleRead(const boost::system::error_code& error, size_t bytesTransferred);
+    void handleWrite(const boost::system::error_code& error);
+    void handleReadParseCommand();
+    void handleCommand();
+    /**
+     * Write command to client
+     */
+    void writeCommand();
+    /**
+     * Reset internal structures
+     * i.e. "Connection failover"
+     */
+    void reset();
 };
