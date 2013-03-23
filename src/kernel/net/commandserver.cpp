@@ -10,6 +10,7 @@
 
 
 #include "commandserver.h"
+#include "util/log.h"
 
 #include <boost/bind.hpp>
 
@@ -28,6 +29,7 @@ CommandServer::~CommandServer()
 
 void CommandServer::start()
 {
+    LOG(info) << "Starting server";
     m_socket.run();
 }
 
@@ -43,10 +45,11 @@ void CommandServer::startAccept()
 
 void CommandServer::handleAccept(Session* newSession, const boost::system::error_code& error)
 {
-    // TODO: write normal logger and just log such cases.
     if (!error) {
+        LOG(info) << "Client connected " << newSession;
         newSession->start();
     } else {
+        LOG(info) << "Client disconnected";
         delete newSession;
     }
 

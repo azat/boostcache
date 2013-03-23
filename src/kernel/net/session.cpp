@@ -9,6 +9,7 @@
  */
 
 #include "session.h"
+#include "util/log.h"
 
 #include <boost/bind.hpp>
 #include <boost/spirit/include/qi.hpp>
@@ -80,6 +81,9 @@ void Session::handleReadParseCommand()
 
         commandArguments.reserve(m_numberOfArguments);
         m_numberOfArgumentsLeft = m_numberOfArguments;
+
+        LOG(info) << "Have " << m_numberOfArgumentsLeft
+                  << " number of arguments for " << this;
     }
 
     char *argument = NULL;
@@ -92,6 +96,7 @@ void Session::handleReadParseCommand()
                       m_lastArgumentLength)) {
             return;
         }
+        LOG(info) << "Reading argument for " << this;
 
         if (argumentLength < m_lastArgumentLength) {
             argument = (char *)realloc(argument, argumentLength + m_lastArgumentLength);
@@ -117,6 +122,8 @@ void Session::handleReadParseCommand()
 
 void Session::handleCommand()
 {
+    LOG(info) << "Handling new command on " << this;
+
     writeCommand();
 
     reset();
