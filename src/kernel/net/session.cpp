@@ -108,6 +108,7 @@ void Session::handleReadParseCommand()
                    m_lastArgumentLength)
         ) {
             LOG(debug) << "Can't find valid argument length, for " << this;
+            reset();
             break;
         }
         LOG(debug) << "Reading " << m_lastArgumentLength << " bytes, for " << this;
