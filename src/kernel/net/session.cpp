@@ -195,7 +195,7 @@ void Session::writeCommand()
 
 void Session::reset()
 {
-    m_commandString = "";
+    m_commandString.clear();
     m_commandOffset = 0;
     m_numberOfArguments = -1;
     m_numberOfArgumentsLeft = -1;
