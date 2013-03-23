@@ -140,9 +140,10 @@ void Session::handleReadParseCommand()
 
     if (!m_numberOfArgumentsLeft) {
         handleCommand();
+        // Will be called asyncRead() in write callback
+    } else {
+        asyncRead();
     }
-
-    asyncRead();
 }
 
 void Session::handleCommand()
