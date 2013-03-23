@@ -11,8 +11,9 @@ For now it is boost because used boost tree, but maybe in future it will be boos
 Used libraries
 ==============
 
-- boost program options
-- boost algorithms (rbtree|avltree)
-- OR stxxl library
-- libevent | boost tcp sockets
-- cmake for builds
+- boost program options ( http://www.boost.org/libs/program_options )
+- boost algorithms (rbtree|avltree) ( http://www.boost.org/libs/intrusive )
+- OR stxxl library ( http://stxxl.sourceforge.net/ )
+- boost tcp asio ( http://www.boost.org/libs/intrusive )
+- cmake for builds ( http://cmake.org/ )
+- log ( http://boost-log.sourceforge.net/ )
