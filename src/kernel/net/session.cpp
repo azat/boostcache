@@ -85,6 +85,7 @@ void Session::handleReadParseCommand()
 
         commandArguments.reserve(m_numberOfArguments);
         m_numberOfArgumentsLeft = m_numberOfArguments;
+        m_commandOffset = stream.tellg();
 
         LOG(info) << "Have " << m_numberOfArguments << " number of arguments, "
                   << "for " << this;
