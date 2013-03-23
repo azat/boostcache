@@ -32,6 +32,14 @@ void Session::asyncRead()
                                          boost::asio::placeholders::bytes_transferred));
 }
 
+void Session::asyncWrite(const std::string& message)
+{
+    boost::asio::async_write(m_socket,
+                             boost::asio::buffer(message),
+                             boost::bind(&Session::handleWrite, this,
+                                         boost::asio::placeholders::error));
+}
+
 void Session::handleRead(const boost::system::error_code& error, size_t /* bytesTransferred */)
 {
     if (error) {
@@ -181,10 +189,7 @@ void Session::writeCommand()
              }
     );
 
-    boost::asio::async_write(m_socket,
-                             boost::asio::buffer(arguments),
-                             boost::bind(&Session::handleWrite, this,
-                                         boost::asio::placeholders::error));
+    asyncWrite(arguments);
 }
 
 void Session::reset()
