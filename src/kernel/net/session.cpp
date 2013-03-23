@@ -73,11 +73,11 @@ void Session::handleReadParseCommand()
     if (m_numberOfArguments < 0) {
         std::getline(stream, line);
         parse(line.begin(), line.end(),
-              '*' >> int_ >> "\r\n",
+              '*' >> int_ >> "\r",
               m_numberOfArguments);
 
         if (m_numberOfArguments < 0) {
-            LOG(debug) << "Don't have number of arguments for " << this;
+            LOG(debug) << "Don't have number of arguments, for " << this;
 
             reset();
             asyncRead();
@@ -87,49 +87,67 @@ void Session::handleReadParseCommand()
         commandArguments.reserve(m_numberOfArguments);
         m_numberOfArgumentsLeft = m_numberOfArguments;
 
-        LOG(info) << "Have " << m_numberOfArgumentsLeft
-                  << " number of arguments for " << this;
+        LOG(info) << "Have " << m_numberOfArguments << " number of arguments, "
+                  << "for " << this;
     }
 
+    char crLf[2];
     char *argument = NULL;
     int argumentLength = 0;
     while (m_numberOfArgumentsLeft && std::getline(stream, line)) {
-        if (m_lastArgumentLength < 0
-            && !parse(line.begin(),
-                      line.end(),
-                      '$' >> int_ >> "\r\n",
-                      m_lastArgumentLength)) {
+        if (!parse(line.begin(), line.end(),
+                   '$' >> int_ >> "\r",
+                   m_lastArgumentLength)
+        ) {
+            LOG(debug) << "Can't find valid argument length, for " << this;
             break;
         }
-        LOG(info) << "Reading argument for " << this;
+        LOG(debug) << "Reading " << m_lastArgumentLength << " bytes, for " << this;
 
         if (argumentLength < m_lastArgumentLength) {
-            argument = (char *)realloc(argument, argumentLength + m_lastArgumentLength);
+            argument = (char *)realloc(argument, argumentLength + 1 /* NULL byte */
+                                       + m_lastArgumentLength);
             argumentLength += m_lastArgumentLength;
         }
-        stream.get(argument, m_lastArgumentLength);
+        stream.read(argument, m_lastArgumentLength);
+        argument[m_lastArgumentLength] = 0;
         if (!stream.good()) {
+            LOG(debug) << "Bad stream, for " << this;
             reset();
             break;
         }
+        // Read CRLF separator
+        stream.read(crLf, 2);
+        if (!stream.good()) {
+            LOG(debug) << "Bad stream, for " << this;
+            reset();
+            break;
+        }
+        if (memcmp(crLf, "\r\n", 2) != 0) {
+            LOG(debug) << "Malfomed end of argument, for " << this;
+            reset();
+            break;
+        }
+        // Save command argument
+        LOG(debug) << "Saving " << argument << " argument, for " << this;
         commandArguments.push_back(argument);
         m_lastArgumentLength = -1;
 
+        // Update some counters/offsets
         --m_numberOfArgumentsLeft;
+        m_commandOffset = stream.tellg();
     }
 
     if (!m_numberOfArgumentsLeft) {
         handleCommand();
     }
 
-    m_commandOffset = stream.tellg();
-
     asyncRead();
 }
 
 void Session::handleCommand()
 {
-    LOG(info) << "Handling new command on " << this;
+    LOG(info) << "Handling new command, for " << this;
 
     writeCommand();
 
@@ -140,13 +158,15 @@ void Session::writeCommand()
 {
     std::string arguments;
     int i;
-    for_each(commandArguments.begin(), commandArguments.end(), [&arguments, &i] (std::string argument)
-    {
-        arguments += i++;
-        arguments += " ";
-        arguments += argument;
-        arguments += "\r\n";
-    });
+    for_each(commandArguments.begin(), commandArguments.end(),
+             [&arguments, &i] (std::string argument)
+             {
+                  arguments += i++;
+                  arguments += " ";
+                  arguments += argument;
+                  arguments += "\n";
+             }
+    );
 
     boost::asio::async_write(m_socket,
                              boost::asio::buffer(arguments),
@@ -157,7 +177,7 @@ void Session::writeCommand()
 void Session::reset()
 {
     m_commandString = "";
-    m_commandOffset = -1;
+    m_commandOffset = 0;
     m_numberOfArguments = -1;
     m_numberOfArgumentsLeft = -1;
     m_lastArgumentLength = -1;
