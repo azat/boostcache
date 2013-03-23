@@ -182,7 +182,7 @@ void Session::writeCommand()
     for_each(commandArguments.begin(), commandArguments.end(),
              [&arguments, &i] (std::string argument)
              {
-                  arguments += i++;
+                  arguments += ++i;
                   arguments += " ";
                   arguments += argument;
                   arguments += "\n";
