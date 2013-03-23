@@ -112,15 +112,27 @@ void Session::handleReadParseCommand()
         stream.read(argument, m_lastArgumentLength);
         argument[m_lastArgumentLength] = 0;
         if (!stream.good()) {
-            LOG(debug) << "Bad stream, for " << this;
-            reset();
+            /**
+             * TODO: add some internal counters for failover,
+             * or smth like this
+             */
+            if (stream.bad()) {
+                LOG(debug) << "Bad stream, for " << this;
+                reset();
+            }
             break;
         }
         // Read CRLF separator
         stream.read(crLf, 2);
         if (!stream.good()) {
-            LOG(debug) << "Bad stream, for " << this;
-            reset();
+            /**
+             * TODO: add some internal counters for failover,
+             * or smth like this
+             */
+            if (stream.bad()) {
+                LOG(debug) << "Bad stream, for " << this;
+                reset();
+            }
             break;
         }
         if (memcmp(crLf, "\r\n", 2) != 0) {
