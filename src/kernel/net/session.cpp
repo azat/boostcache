@@ -21,6 +21,11 @@ using namespace boost::spirit::qi;
 
 void Session::start()
 {
+    asyncRead();
+}
+
+void Session::asyncRead()
+{
     m_socket.async_read_some(boost::asio::buffer(m_buffer, MAX_BUFFER_LENGTH),
                              boost::bind(&Session::handleRead, this,
                                          boost::asio::placeholders::error,
@@ -45,10 +50,7 @@ void Session::handleWrite(const boost::system::error_code& error)
         return;
     }
 
-    m_socket.async_read_some(boost::asio::buffer(m_buffer, MAX_BUFFER_LENGTH),
-                             boost::bind(&Session::handleRead, this,
-                                         boost::asio::placeholders::error,
-                                         boost::asio::placeholders::bytes_transferred));
+    asyncRead();
 }
 
 /**
@@ -58,6 +60,9 @@ void Session::handleWrite(const boost::system::error_code& error)
  */
 void Session::handleReadParseCommand()
 {
+    LOG(debug) << "Try to read/parser command " << m_buffer
+               << "with " << m_numberOfArguments << " arguments, "
+               "for " << this;
     m_commandString += m_buffer;
 
     std::string line;
@@ -67,15 +72,15 @@ void Session::handleReadParseCommand()
     // Number of arguments
     if (m_numberOfArguments < 0) {
         std::getline(stream, line);
-        if (!parse(line.begin(),
-                   line.end(),
-                   '*' >> int_ >> "\r\n",
-                   m_numberOfArguments)) {
-            reset();
-            return;
-        }
+        parse(line.begin(), line.end(),
+              '*' >> int_ >> "\r\n",
+              m_numberOfArguments);
+
         if (m_numberOfArguments < 0) {
+            LOG(debug) << "Don't have number of arguments for " << this;
+
             reset();
+            asyncRead();
             return;
         }
 
@@ -94,7 +99,7 @@ void Session::handleReadParseCommand()
                       line.end(),
                       '$' >> int_ >> "\r\n",
                       m_lastArgumentLength)) {
-            return;
+            break;
         }
         LOG(info) << "Reading argument for " << this;
 
@@ -105,7 +110,7 @@ void Session::handleReadParseCommand()
         stream.get(argument, m_lastArgumentLength);
         if (!stream.good()) {
             reset();
-            return;
+            break;
         }
         commandArguments.push_back(argument);
         m_lastArgumentLength = -1;
@@ -118,6 +123,8 @@ void Session::handleReadParseCommand()
     }
 
     m_commandOffset = stream.tellg();
+
+    asyncRead();
 }
 
 void Session::handleCommand()

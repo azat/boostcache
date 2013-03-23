@@ -49,7 +49,7 @@ void CommandServer::handleAccept(Session* newSession, const boost::system::error
         LOG(info) << "Client connected " << newSession;
         newSession->start();
     } else {
-        LOG(info) << "Client disconnected";
+        LOG(info) << "Client session error";
         delete newSession;
     }
 

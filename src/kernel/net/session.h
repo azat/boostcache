@@ -34,6 +34,7 @@ public:
     }
 
 private:
+    void asyncRead();
     void handleRead(const boost::system::error_code& error, size_t bytesTransferred);
     void handleWrite(const boost::system::error_code& error);
     void handleReadParseCommand();
