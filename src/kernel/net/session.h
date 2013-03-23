@@ -43,6 +43,10 @@ private:
      * Write command to client
      */
     void writeCommand();
+    /**
+     * Reset internal structures
+     * i.e. "Connection failover"
+     */
     void reset();
 
     boost::asio::ip::tcp::socket m_socket;
