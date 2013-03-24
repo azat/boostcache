@@ -10,9 +10,10 @@
 
 #pragma once
 
+#include "kernel/command.h"
+
 #include <boost/asio.hpp>
 #include <string>
-#include <vector>
 
 /**
  * Session handler for CommandServer
@@ -23,7 +24,9 @@ public:
     Session(boost::asio::io_service& socket)
         : m_socket(socket)
     {
-        reset();
+        m_command.setFinishCallback([this] (const std::string& message) {
+            asyncWrite(message);
+        });
     }
 
     void start();
@@ -43,53 +46,10 @@ private:
         MAX_BUFFER_LENGTH = 1 << 10 /* 1024 */
     };
     char m_buffer[MAX_BUFFER_LENGTH];
-
-    /**
-     * (TODO: move to separate module ?)
-     * Format:
-     *
-     * *<number of arguments> CR LF
-     * $<number of bytes of argument 1> CR LF
-     * <argument data> CR LF
-     * ...
-     * $<number of bytes of argument N> CR LF
-     * <argument data> CR LF
-     *
-     * Example:
-     *
-     * *3
-     * $3
-     * SET
-     * $5
-     * mykey
-     * $7
-     * myvalue
-     *
-     * More info at http://redis.io/topics/protocol
-     */
-    std::string m_commandString;
-    int m_commandOffset;
-    int m_numberOfArguments;
-    /**
-     * Number of command arguments left for parsing
-     */
-    int m_numberOfArgumentsLeft;
-    int m_lastArgumentLength;
-    std::vector<std::string> commandArguments;
+    Command m_command;
 
     void asyncRead();
     void asyncWrite(const std::string& message);
     void handleRead(const boost::system::error_code& error, size_t bytesTransferred);
     void handleWrite(const boost::system::error_code& error);
-    void handleReadParseCommand();
-    void handleCommand();
-    /**
-     * Write command to client
-     */
-    void writeCommand();
-    /**
-     * Reset internal structures
-     * i.e. "Connection failover"
-     */
-    void reset();
 };

@@ -1,0 +1,95 @@
+
+/**
+ * This file is part of the boostcache package.
+ *
+ * (c) Azat Khuzhin <a3at.mail@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+#pragma once
+
+#include <sstream>
+#include <string>
+#include <vector>
+#include <functional>
+
+/**
+ * Format:
+ *
+ * *<number of arguments> CR LF
+ * $<number of bytes of argument 1> CR LF
+ * <argument data> CR LF
+ * ...
+ * $<number of bytes of argument N> CR LF
+ * <argument data> CR LF
+ *
+ * Example:
+ *
+ * *3
+ * $3
+ * SET
+ * $5
+ * mykey
+ * $7
+ * myvalue
+ *
+ * More info at http://redis.io/topics/protocol
+ */
+class Command
+{
+public:
+    typedef std::function<void(const std::string& )> FinishCallback;
+
+    Command()
+    {
+        reset();
+    }
+
+    void setFinishCallback(FinishCallback callback)
+    {
+        m_finishCallback = callback;
+    }
+
+    /**
+     * Return true if need it is not the end of command,
+     * and need to feed more data.
+     */
+    bool feedAndParseCommand(const char *buffer);
+
+private:
+    std::string m_lineBuffer;
+    std::string m_commandString;
+    int m_commandOffset;
+    int m_numberOfArguments;
+    /**
+     * Number of command arguments left for parsing
+     */
+    int m_numberOfArgumentsLeft;
+    int m_lastArgumentLength;
+    std::vector<std::string> commandArguments;
+
+    /**
+     * This callback will be called with result of executed command
+     */
+    std::function<void(const std::string& )> m_finishCallback;
+
+    /**
+     * Return true if we can go next, i.e. number of arguments
+     * successfully parsed
+     */
+    bool parseNumberOfArguments(std::istringstream& stream);
+    /**
+     * Return true if we can go next, i.e. all arguments
+     * successfully parsed
+     */
+    bool parseArguments(std::istringstream& stream);
+    void executeCommand();
+    std::string toString();
+    /**
+     * Reset internal structures
+     * i.e. "Connection failover"
+     */
+    void reset();
+};
