@@ -15,7 +15,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-using namespace boost::spirit::qi;
+namespace qi = boost::spirit::qi;
 
 bool Command::feedAndParseCommand(const char *buffer)
 {
@@ -81,9 +81,9 @@ bool Command::parseNumberOfArguments(std::istringstream& stream)
     m_type = MULTI_BULK;
 
     std::getline(stream, m_lineBuffer);
-    parse(m_lineBuffer.begin(), m_lineBuffer.end(),
-          '*' >> int_ >> "\r",
-          m_numberOfArguments);
+    qi::parse(m_lineBuffer.begin(), m_lineBuffer.end(),
+              '*' >> qi::int_ >> "\r",
+              m_numberOfArguments);
 
     if (m_numberOfArguments < 0) {
         LOG(debug) << "Don't have number of arguments, for " << this;
@@ -109,9 +109,9 @@ bool Command::parseArguments(std::istringstream& stream)
     int argumentLength = 0;
 
     while (m_numberOfArgumentsLeft && std::getline(stream, m_lineBuffer)) {
-        if (!parse(m_lineBuffer.begin(), m_lineBuffer.end(),
-                   '$' >> int_ >> "\r",
-                   m_lastArgumentLength)
+        if (!qi::parse(m_lineBuffer.begin(), m_lineBuffer.end(),
+                       '$' >> qi::int_ >> "\r",
+                       m_lastArgumentLength)
         ) {
             LOG(debug) << "Can't find valid argument length, for " << this;
             reset();
