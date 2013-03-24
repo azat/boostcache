@@ -65,13 +65,13 @@ bool Command::parseInline(std::istringstream& stream)
     m_commandOffset = stream.tellg();
 
     boost::trim_right(m_lineBuffer);
-    boost::split(commandArguments, m_lineBuffer, boost::algorithm::is_space());
+    boost::split(m_commandArguments, m_lineBuffer, boost::algorithm::is_space());
 
-    if (!commandArguments.size() || !commandArguments[0].size() /* no command */) {
+    if (!m_commandArguments.size() || !m_commandArguments[0].size() /* no command */) {
         return false;
     }
 
-    LOG(info) << "Have " << commandArguments.size() << " arguments, "
+    LOG(info) << "Have " << m_commandArguments.size() << " arguments, "
               << "for " << this << " (inline)";
 
     return true;
@@ -93,7 +93,7 @@ bool Command::parseNumberOfArguments(std::istringstream& stream)
         return false;
     }
 
-    commandArguments.reserve(m_numberOfArguments);
+    m_commandArguments.reserve(m_numberOfArguments);
     m_numberOfArgumentsLeft = m_numberOfArguments;
     m_commandOffset = stream.tellg();
 
@@ -142,7 +142,7 @@ bool Command::parseArguments(std::istringstream& stream)
         }
         // Save command argument
         LOG(debug) << "Saving " << argument << " argument, for " << this;
-        commandArguments.push_back(argument);
+        m_commandArguments.push_back(argument);
         m_lastArgumentLength = -1;
 
         // Update some counters/offsets
@@ -166,7 +166,7 @@ std::string Command::toString() const
 {
     std::string arguments;
     int i;
-    for_each(commandArguments.begin(), commandArguments.end(),
+    for_each(m_commandArguments.begin(), m_commandArguments.end(),
              [&arguments, &i] (std::string argument)
              {
                   arguments += ++i;
@@ -188,7 +188,7 @@ void Command::reset()
     m_numberOfArgumentsLeft = -1;
     m_lastArgumentLength = -1;
 
-    commandArguments.clear();
+    m_commandArguments.clear();
 }
 
 bool Command::handleStreamIsValid(const std::istringstream& stream)

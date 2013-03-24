@@ -76,7 +76,7 @@ private:
      */
     int m_numberOfArgumentsLeft;
     int m_lastArgumentLength;
-    std::vector<std::string> commandArguments;
+    std::vector<std::string> m_commandArguments;
 
     /**
      * This callback will be called with result of executed command
