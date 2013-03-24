@@ -11,6 +11,8 @@
 #include "session.h"
 
 #include <boost/bind.hpp>
+#include <boost/asio/write.hpp>
+#include <boost/asio/placeholders.hpp>
 
 
 void Session::start()

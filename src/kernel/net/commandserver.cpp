@@ -13,6 +13,7 @@
 #include "util/log.h"
 
 #include <boost/bind.hpp>
+#include <boost/asio/placeholders.hpp>
 
 using namespace boost;
 

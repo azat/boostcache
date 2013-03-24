@@ -12,7 +12,8 @@
 
 #include "kernel/command.h"
 
-#include <boost/asio.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <boost/noncopyable.hpp>
 #include <string>
 
