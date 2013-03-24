@@ -9,7 +9,6 @@
  */
 
 #include "session.h"
-#include "util/log.h"
 
 #include <algorithm>
 #include <boost/bind.hpp>
