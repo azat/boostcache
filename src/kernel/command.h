@@ -48,6 +48,7 @@ public:
     Command()
     {
         reset();
+        resetBufferOffset();
     }
 
     void setFinishCallback(FinishCallback callback)
@@ -59,7 +60,7 @@ public:
      * Return true if need it is not the end of command,
      * and need to feed more data.
      */
-    bool feedAndParseCommand(const char *buffer);
+    bool feedAndParseCommands(const char *buffer);
 
 private:
     enum Type {
@@ -69,7 +70,7 @@ private:
     } m_type;
     std::string m_lineBuffer;
     std::string m_commandString;
-    int m_commandOffset;
+    size_t m_commandOffset;
     int m_numberOfArguments;
     /**
      * Number of command arguments left for parsing
@@ -83,6 +84,12 @@ private:
      */
     std::function<void(const std::string& )> m_finishCallback;
 
+
+    /**
+     * Return true if need it is not the end of command,
+     * and need to feed more data.
+     */
+    bool feedAndParseCommand();
     /**
      * Return true if command successfully parsed
      */
@@ -98,10 +105,21 @@ private:
      */
     bool parseArguments(std::istringstream& stream);
     void executeCommand();
-    std::string toString();
+    std::string toString() const;
     /**
      * Reset internal structures
      * i.e. "Connection failover"
      */
     void reset();
+    /**
+     * Reset buffer
+     * Must be done on seriously errors only
+     * Because all request buffer will be cleared, or it is the last command
+     */
+    void resetBufferOffset();
+    /**
+     * Check is stream good, and do some stuff otherwise
+     * @return true if stream is good
+     */
+    bool handleStreamIsValid(const std::istringstream& stream);
 };

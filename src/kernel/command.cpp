@@ -17,12 +17,18 @@
 
 using namespace boost::spirit::qi;
 
-bool Command::feedAndParseCommand(const char *buffer)
+bool Command::feedAndParseCommands(const char *buffer)
 {
-    LOG(debug) << "Try to read/parser command " << buffer
-               << "with " << m_numberOfArguments << " arguments, "
-               "for " << this;
     m_commandString += buffer;
+    while (!feedAndParseCommand()) {}
+    return false;
+}
+
+bool Command::feedAndParseCommand()
+{
+    LOG(debug) << "Try to read/parser command(" << m_commandString.length() << ") "
+               "with " << m_numberOfArguments << " arguments, "
+               "for " << this;
 
     // Need to feed more data
     if (!m_commandString.size()) {
@@ -31,6 +37,9 @@ bool Command::feedAndParseCommand(const char *buffer)
 
     std::istringstream stream(m_commandString);
     stream.seekg(m_commandOffset);
+    if (!handleStreamIsValid(stream)) {
+        return true;
+    }
 
     // Try to read new command
     if (m_numberOfArguments < 0) {
@@ -59,6 +68,9 @@ bool Command::parseInline(std::istringstream& stream)
     m_type = INLINE;
 
     std::getline(stream, m_lineBuffer);
+    if (!handleStreamIsValid(stream)) {
+        return false;
+    }
     m_commandOffset = stream.tellg();
 
     boost::trim_right(m_lineBuffer);
@@ -68,7 +80,7 @@ bool Command::parseInline(std::istringstream& stream)
         return false;
     }
 
-    LOG(info) << "Have " << m_numberOfArguments << " number of arguments, "
+    LOG(info) << "Have " << commandArguments.size() << " arguments, "
               << "for " << this << " (inline)";
 
     return true;
@@ -94,7 +106,7 @@ bool Command::parseNumberOfArguments(std::istringstream& stream)
     m_numberOfArgumentsLeft = m_numberOfArguments;
     m_commandOffset = stream.tellg();
 
-    LOG(info) << "Have " << m_numberOfArguments << " number of arguments, "
+    LOG(info) << "Have " << m_numberOfArguments << " arguments, "
               << "for " << this << " (bulk)";
 
     return true;
@@ -124,28 +136,12 @@ bool Command::parseArguments(std::istringstream& stream)
         }
         stream.read(argument, m_lastArgumentLength);
         argument[m_lastArgumentLength] = 0;
-        if (!stream.good()) {
-            /**
-             * TODO: add some internal counters for failover,
-             * or smth like this
-             */
-            if (stream.bad()) {
-                LOG(debug) << "Bad stream, for " << this;
-                reset();
-            }
+        if (!handleStreamIsValid(stream)) {
             break;
         }
         // Read CRLF separator
         stream.read(crLf, 2);
-        if (!stream.good()) {
-            /**
-             * TODO: add some internal counters for failover,
-             * or smth like this
-             */
-            if (stream.bad()) {
-                LOG(debug) << "Bad stream, for " << this;
-                reset();
-            }
+        if (!handleStreamIsValid(stream)) {
             break;
         }
         if (memcmp(crLf, "\r\n", 2) != 0) {
@@ -175,7 +171,7 @@ void Command::executeCommand()
     reset();
 }
 
-std::string Command::toString()
+std::string Command::toString() const
 {
     std::string arguments;
     int i;
@@ -194,12 +190,38 @@ std::string Command::toString()
 
 void Command::reset()
 {
+    // TODO: use circular buffer
+    if (m_commandOffset == m_commandString.size()) {
+        LOG(debug) << "Reset command buffer";
+    }
     m_type = NOT_SET;
-    m_commandString.clear();
-    m_commandOffset = 0;
     m_numberOfArguments = -1;
     m_numberOfArgumentsLeft = -1;
     m_lastArgumentLength = -1;
 
     commandArguments.clear();
+}
+
+void Command::resetBufferOffset()
+{
+    m_commandString.clear();
+    m_commandOffset = 0;
+}
+
+bool Command::handleStreamIsValid(const std::istringstream& stream)
+{
+    if (stream.good()) {
+        return true;
+    }
+
+    /**
+     * TODO: add some internal counters for failover,
+     * or smth like this
+     */
+    if (stream.bad()) {
+        LOG(debug) << "Bad stream, for " << this;
+        reset();
+    }
+
+    return false;
 }
