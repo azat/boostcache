@@ -43,7 +43,7 @@
 class Command
 {
 public:
-    typedef std::function<void(const std::string& )> FinishCallback;
+    typedef std::function<void(const std::string&)> FinishCallback;
 
     Command()
     {
@@ -81,7 +81,7 @@ private:
     /**
      * This callback will be called with result of executed command
      */
-    std::function<void(const std::string& )> m_finishCallback;
+    FinishCallback m_finishCallback;
 
 
     /**
