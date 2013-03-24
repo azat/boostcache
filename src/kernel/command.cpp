@@ -36,6 +36,7 @@ bool Command::feedAndParseCommand(const char *buffer)
         // We have inline request, because it is not start with '*'
         if (m_commandString[0] != '*') {
             if (!parseInline(stream)) {
+                reset();
                 return true;
             }
         } else if (!parseNumberOfArguments(stream)) {
@@ -66,7 +67,7 @@ bool Command::parseInline(std::istringstream& stream)
     boost::trim_right(m_lineBuffer);
     boost::split(commandArguments, m_lineBuffer, boost::algorithm::is_space());
 
-    if (!commandArguments.size()) {
+    if (!commandArguments.size() || !commandArguments[0].size() /* no command */) {
         return false;
     }
 
