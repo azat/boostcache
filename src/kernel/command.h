@@ -38,6 +38,9 @@
  * $7
  * myvalue
  *
+ * Also inline commands supports, example:
+ * GET mykey
+ *
  * More info at http://redis.io/topics/protocol
  */
 class Command
