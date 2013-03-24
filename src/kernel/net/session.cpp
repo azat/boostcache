@@ -43,7 +43,7 @@ void Session::handleRead(const boost::system::error_code& error, size_t /* bytes
         return;
     }
 
-    if (m_command.feedAndParseCommands(m_buffer)) {
+    if (m_command.feedAndParseCommand(m_buffer)) {
         asyncRead();
     }
 }

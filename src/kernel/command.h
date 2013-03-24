@@ -48,7 +48,6 @@ public:
     Command()
     {
         reset();
-        resetBufferOffset();
     }
 
     void setFinishCallback(FinishCallback callback)
@@ -60,7 +59,7 @@ public:
      * Return true if need it is not the end of command,
      * and need to feed more data.
      */
-    bool feedAndParseCommands(const char *buffer);
+    bool feedAndParseCommand(const char *buffer);
 
 private:
     enum Type {
@@ -86,11 +85,6 @@ private:
 
 
     /**
-     * Return true if need it is not the end of command,
-     * and need to feed more data.
-     */
-    bool feedAndParseCommand();
-    /**
      * Return true if command successfully parsed
      */
     bool parseInline(std::istringstream& stream);
@@ -111,12 +105,6 @@ private:
      * i.e. "Connection failover"
      */
     void reset();
-    /**
-     * Reset buffer
-     * Must be done on seriously errors only
-     * Because all request buffer will be cleared, or it is the last command
-     */
-    void resetBufferOffset();
     /**
      * Check is stream good, and do some stuff otherwise
      * @return true if stream is good

@@ -17,27 +17,17 @@
 
 using namespace boost::spirit::qi;
 
-bool Command::feedAndParseCommands(const char *buffer)
+bool Command::feedAndParseCommand(const char *buffer)
 {
     m_commandString += buffer;
-    while (!feedAndParseCommand()) {}
-    return false;
-}
-
-bool Command::feedAndParseCommand()
-{
     LOG(debug) << "Try to read/parser command(" << m_commandString.length() << ") "
                "with " << m_numberOfArguments << " arguments, "
                "for " << this;
 
-    // Need to feed more data
-    if (!m_commandString.size()) {
-        return true;
-    }
-
     std::istringstream stream(m_commandString);
     stream.seekg(m_commandOffset);
     if (!handleStreamIsValid(stream)) {
+        // Need to feed more data
         return true;
     }
 
@@ -190,22 +180,14 @@ std::string Command::toString() const
 
 void Command::reset()
 {
-    // TODO: use circular buffer
-    if (m_commandOffset == m_commandString.size()) {
-        LOG(debug) << "Reset command buffer";
-    }
     m_type = NOT_SET;
+    m_commandString.clear();
+    m_commandOffset = 0;
     m_numberOfArguments = -1;
     m_numberOfArgumentsLeft = -1;
     m_lastArgumentLength = -1;
 
     commandArguments.clear();
-}
-
-void Command::resetBufferOffset()
-{
-    m_commandString.clear();
-    m_commandOffset = 0;
 }
 
 bool Command::handleStreamIsValid(const std::istringstream& stream)
