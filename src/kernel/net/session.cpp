@@ -36,14 +36,14 @@ void Session::asyncWrite(const std::string& message)
                                          boost::asio::placeholders::error));
 }
 
-void Session::handleRead(const boost::system::error_code& error, size_t /* bytesTransferred */)
+void Session::handleRead(const boost::system::error_code& error, size_t bytesTransferred)
 {
     if (error) {
         delete this;
         return;
     }
 
-    if (m_command.feedAndParseCommand(m_buffer)) {
+    if (m_command.feedAndParseCommand(m_buffer, bytesTransferred)) {
         asyncRead();
     }
 }

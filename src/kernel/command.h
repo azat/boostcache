@@ -59,7 +59,7 @@ public:
      * Return true if need it is not the end of command,
      * and need to feed more data.
      */
-    bool feedAndParseCommand(const char *buffer);
+    bool feedAndParseCommand(const char *buffer, size_t size);
 
 private:
     enum Type {

@@ -17,9 +17,9 @@
 
 namespace qi = boost::spirit::qi;
 
-bool Command::feedAndParseCommand(const char *buffer)
+bool Command::feedAndParseCommand(const char *buffer, size_t size)
 {
-    m_commandString += buffer;
+    m_commandString.append(buffer, size);
     LOG(debug) << "Try to read/parser command(" << m_commandString.length() << ") "
                "with " << m_numberOfArguments << " arguments, "
                "for " << this;
