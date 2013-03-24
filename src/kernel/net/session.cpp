@@ -10,7 +10,6 @@
 
 #include "session.h"
 
-#include <algorithm>
 #include <boost/bind.hpp>
 
 

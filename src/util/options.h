@@ -13,7 +13,7 @@
 #pragma once
 
 #include <boost/program_options.hpp>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/any.hpp>
 
 #include <map>

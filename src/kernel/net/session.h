@@ -13,12 +13,13 @@
 #include "kernel/command.h"
 
 #include <boost/asio.hpp>
+#include <boost/noncopyable.hpp>
 #include <string>
 
 /**
  * Session handler for CommandServer
  */
-class Session
+class Session : boost::noncopyable
 {
 public:
     Session(boost::asio::io_service& socket)

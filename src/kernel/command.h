@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <boost/noncopyable.hpp>
 
 /**
  * TODO: speedup parsing
@@ -43,7 +44,7 @@
  *
  * More info at http://redis.io/topics/protocol
  */
-class Command
+class Command : boost::noncopyable
 {
 public:
     typedef std::function<void(const std::string&)> FinishCallback;

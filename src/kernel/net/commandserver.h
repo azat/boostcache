@@ -16,11 +16,14 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/noncopyable.hpp>
 
 /**
  * Async command server
+ *
+ * TODO: singleton
  */
-class CommandServer
+class CommandServer : boost::noncopyable
 {
 public:
     struct Options
