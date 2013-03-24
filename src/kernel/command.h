@@ -16,7 +16,10 @@
 #include <functional>
 
 /**
- * Format:
+ * TODO: speedup parsing
+ * TODO: more error-friendly parsing
+ *
+ * Protocol format:
  *
  * *<number of arguments> CR LF
  * $<number of bytes of argument 1> CR LF
@@ -59,6 +62,11 @@ public:
     bool feedAndParseCommand(const char *buffer);
 
 private:
+    enum Type {
+        NOT_SET,
+        INLINE,
+        MULTI_BULK
+    } m_type;
     std::string m_lineBuffer;
     std::string m_commandString;
     int m_commandOffset;
@@ -75,6 +83,10 @@ private:
      */
     std::function<void(const std::string& )> m_finishCallback;
 
+    /**
+     * Return true if command successfully parsed
+     */
+    bool parseInline(std::istringstream& stream);
     /**
      * Return true if we can go next, i.e. number of arguments
      * successfully parsed

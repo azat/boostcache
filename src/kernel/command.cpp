@@ -12,14 +12,11 @@
 #include "util/log.h"
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 using namespace boost::spirit::qi;
 
-/**
- * TODO: speedup parsing
- * TODO: more error-friendly parsing
- * TODO: add logging before every reset() call
- */
 bool Command::feedAndParseCommand(const char *buffer)
 {
     LOG(debug) << "Try to read/parser command " << buffer
@@ -27,16 +24,29 @@ bool Command::feedAndParseCommand(const char *buffer)
                "for " << this;
     m_commandString += buffer;
 
+    // Need to feed more data
+    if (!m_commandString.size()) {
+        return true;
+    }
+
     std::istringstream stream(m_commandString);
     stream.seekg(m_commandOffset);
 
+    // Try to read new command
     if (m_numberOfArguments < 0) {
-        if (!parseNumberOfArguments(stream)) {
+        // We have inline request, because it is not start with '*'
+        if (m_commandString[0] != '*') {
+            if (!parseInline(stream)) {
+                return true;
+            }
+        } else if (!parseNumberOfArguments(stream)) {
+            // Need to feed more data
             return true;
         }
     }
 
-    if (!parseArguments(stream)) {
+    if ((m_type == MULTI_BULK) && !parseArguments(stream)) {
+        // Need to feed more data
         return true;
     }
 
@@ -44,8 +54,30 @@ bool Command::feedAndParseCommand(const char *buffer)
     return false;
 }
 
+bool Command::parseInline(std::istringstream& stream)
+{
+    m_type = INLINE;
+
+    std::getline(stream, m_lineBuffer);
+    m_commandOffset = stream.tellg();
+
+    boost::trim_right(m_lineBuffer);
+    boost::split(commandArguments, m_lineBuffer, boost::algorithm::is_space());
+
+    if (!commandArguments.size()) {
+        return false;
+    }
+
+    LOG(info) << "Have " << m_numberOfArguments << " number of arguments, "
+              << "for " << this << " (inline)";
+
+    return true;
+}
+
 bool Command::parseNumberOfArguments(std::istringstream& stream)
 {
+    m_type = MULTI_BULK;
+
     std::getline(stream, m_lineBuffer);
     parse(m_lineBuffer.begin(), m_lineBuffer.end(),
           '*' >> int_ >> "\r",
@@ -63,7 +95,7 @@ bool Command::parseNumberOfArguments(std::istringstream& stream)
     m_commandOffset = stream.tellg();
 
     LOG(info) << "Have " << m_numberOfArguments << " number of arguments, "
-              << "for " << this;
+              << "for " << this << " (bulk)";
 
     return true;
 }
@@ -151,9 +183,9 @@ std::string Command::toString()
              [&arguments, &i] (std::string argument)
              {
                   arguments += ++i;
-                  arguments += " ";
+                  arguments += " " "'";
                   arguments += argument;
-                  arguments += "\n";
+                  arguments += "'" "\n";
              }
     );
 
@@ -162,6 +194,7 @@ std::string Command::toString()
 
 void Command::reset()
 {
+    m_type = NOT_SET;
     m_commandString.clear();
     m_commandOffset = 0;
     m_numberOfArguments = -1;
