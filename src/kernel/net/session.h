@@ -39,7 +39,7 @@ public:
 private:
     boost::asio::ip::tcp::socket m_socket;
     /**
-     * TODO: We can avid this, by using buffers with std::string
+     * TODO: We can avoid this, by using buffers with std::string
      */
     enum Constants
     {
