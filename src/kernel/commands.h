@@ -33,6 +33,7 @@ class Commands : boost::noncopyable
 
 public:
     typedef std::function<std::string(const Command::Arguments&)> Callback;
+    typedef std::unordered_map<std::string, Callback> HashTable;
 
     Callback find(const std::string& commandName);
 
@@ -40,7 +41,7 @@ private:
     /**
      * Hashtable of all supported commands
      */
-    std::unordered_map<std::string, Callback> m_commands;
+    HashTable m_commands;
 
     /**
      * Just print warning, that such command not supported yet.
