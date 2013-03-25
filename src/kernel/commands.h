@@ -25,6 +25,10 @@
  */
 class Commands : boost::noncopyable
 {
+    /**
+     * TODO: maybe move all properties to static,
+     * and make new method to initalize it, and just use static methods.
+     */
     friend class Wrapper::Singleton<Commands>;
 
 public:
