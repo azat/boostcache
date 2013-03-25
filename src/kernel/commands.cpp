@@ -15,7 +15,12 @@
 
 Commands::Callback Commands::find(const std::string& commandName)
 {
-    return m_commands[commandName];
+    HashTable::const_iterator command = m_commands.find(commandName);
+    if (command == m_commands.end()) {
+        return std::bind(&Commands::notImplementedYetCallback,
+                         this, std::placeholders::_1);
+    }
+    return command->second;
 }
 
 Commands::Commands()
