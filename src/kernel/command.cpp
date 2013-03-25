@@ -9,6 +9,7 @@
  */
 
 #include "command.h"
+#include "commands.h"
 #include "util/log.h"
 
 #include <boost/spirit/include/qi.hpp>
@@ -157,7 +158,9 @@ void Command::executeCommand()
 {
     LOG(info) << "Execute new command, for " << this;
 
-    m_finishCallback(toString());
+    Commands& commands = TheCommands::instance();
+    m_finishCallback((commands.find(m_commandArguments[0]))(
+                     m_commandArguments));
 
     reset();
 }

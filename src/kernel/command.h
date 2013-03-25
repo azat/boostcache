@@ -48,6 +48,7 @@ class Command : boost::noncopyable
 {
 public:
     typedef std::function<void(const std::string&)> FinishCallback;
+    typedef std::vector<std::string> Arguments;
 
     Command()
     {
@@ -80,7 +81,7 @@ private:
      */
     int m_numberOfArgumentsLeft;
     int m_lastArgumentLength;
-    std::vector<std::string> m_commandArguments;
+    Arguments m_commandArguments;
 
     /**
      * This callback will be called with result of executed command
