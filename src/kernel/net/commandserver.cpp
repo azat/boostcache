@@ -12,14 +12,14 @@
 #include "commandserver.h"
 #include "util/log.h"
 
-#include <boost/bind.hpp>
-#include <boost/asio/placeholders.hpp>
+#include <functional>
 
-using namespace boost;
+namespace PlaceHolders = std::placeholders;
+namespace Ip = boost::asio::ip;
 
 CommandServer::CommandServer(const Options &options)
     : m_options(options)
-    , m_acceptor(m_socket, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), options.port))
+    , m_acceptor(m_socket, Ip::tcp::endpoint(Ip::tcp::v4(), options.port))
 {
     startAccept();
 }
@@ -38,10 +38,10 @@ void CommandServer::startAccept()
 {
     Session* newSession = new Session(m_socket);
     m_acceptor.async_accept(newSession->socket(),
-                            boost::bind(&CommandServer::handleAccept,
-                                        this,
-                                        newSession,
-                                        boost::asio::placeholders::error));
+                            std::bind(&CommandServer::handleAccept,
+                                      this,
+                                      newSession,
+                                      PlaceHolders::_1));
 }
 
 void CommandServer::handleAccept(Session* newSession, const boost::system::error_code& error)

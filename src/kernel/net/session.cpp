@@ -10,10 +10,11 @@
 
 #include "session.h"
 
-#include <boost/bind.hpp>
 #include <boost/asio/write.hpp>
-#include <boost/asio/placeholders.hpp>
+#include <functional>
 
+namespace PlaceHolders = std::placeholders;
+namespace Asio = boost::asio;
 
 void Session::start()
 {
@@ -22,18 +23,18 @@ void Session::start()
 
 void Session::asyncRead()
 {
-    m_socket.async_read_some(boost::asio::buffer(m_buffer, MAX_BUFFER_LENGTH),
-                             boost::bind(&Session::handleRead, this,
-                                         boost::asio::placeholders::error,
-                                         boost::asio::placeholders::bytes_transferred));
+    m_socket.async_read_some(Asio::buffer(m_buffer, MAX_BUFFER_LENGTH),
+                             std::bind(&Session::handleRead, this,
+                                       PlaceHolders::_1,
+                                       PlaceHolders::_2));
 }
 
 void Session::asyncWrite(const std::string& message)
 {
-    boost::asio::async_write(m_socket,
-                             boost::asio::buffer(message),
-                             boost::bind(&Session::handleWrite, this,
-                                         boost::asio::placeholders::error));
+    Asio::async_write(m_socket,
+                      Asio::buffer(message),
+                      std::bind(&Session::handleWrite, this,
+                                PlaceHolders::_1));
 }
 
 void Session::handleRead(const boost::system::error_code& error, size_t bytesTransferred)

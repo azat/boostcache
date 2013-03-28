@@ -13,12 +13,14 @@
 
 #include <boost/format.hpp>
 
+namespace PlaceHolders = std::placeholders;
+
 Commands::Callback Commands::find(const std::string& commandName)
 {
     HashTable::const_iterator command = m_commands.find(commandName);
     if (command == m_commands.end()) {
         return std::bind(&Commands::notImplementedYetCallback,
-                         this, std::placeholders::_1);
+                         this, PlaceHolders::_1);
     }
     return command->second;
 }
@@ -26,7 +28,7 @@ Commands::Callback Commands::find(const std::string& commandName)
 Commands::Commands()
 {
     Callback defaultCallback = std::bind(&Commands::notImplementedYetCallback,
-                                         this, std::placeholders::_1);
+                                         this, PlaceHolders::_1);
 
     // Service commands
     m_commands["STATUS"] =         defaultCallback;
