@@ -23,13 +23,7 @@
 class Session : boost::noncopyable
 {
 public:
-    Session(boost::asio::io_service& socket)
-        : m_socket(socket)
-    {
-        m_command.setFinishCallback([this] (const std::string& message) {
-            asyncWrite(message);
-        });
-    }
+    Session(boost::asio::io_service& socket);
 
     void start();
 

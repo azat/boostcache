@@ -16,6 +16,12 @@
 namespace PlaceHolders = std::placeholders;
 namespace Asio = boost::asio;
 
+Session::Session(boost::asio::io_service& socket)
+    : m_socket(socket)
+{
+    m_command.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
+}
+
 void Session::start()
 {
     asyncRead();
