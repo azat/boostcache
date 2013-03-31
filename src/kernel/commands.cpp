@@ -9,7 +9,6 @@
  */
 
 #include "commands.h"
-#include "util/log.h"
 
 #include <boost/format.hpp>
 
