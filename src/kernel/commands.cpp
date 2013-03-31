@@ -34,9 +34,12 @@ Commands::Commands()
     m_commands["SHUTDOWN"] =       defaultCallback;
 
     // "db" operations
-    m_commands["GET"] =            defaultCallback;
-    m_commands["SET"] =            defaultCallback;
-    m_commands["DEL"] =            defaultCallback;
+    m_commands["HGET"] =           std::bind(&Db::HashTable::get,
+                                             &m_dbHashTable, PlaceHolders::_1);
+    m_commands["HSET"] =           std::bind(&Db::HashTable::set,
+                                             &m_dbHashTable, PlaceHolders::_1);
+    m_commands["HDEL"] =           std::bind(&Db::HashTable::del,
+                                             &m_dbHashTable, PlaceHolders::_1);
     m_commands["INC"] =            defaultCallback;
     m_commands["DEC"] =            defaultCallback;
     m_commands["CAS"] =            defaultCallback;

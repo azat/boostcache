@@ -13,6 +13,8 @@
 #include "command.h" // Command::Arguments
 #include "wrapper/singleton.h"
 
+#include "db/hashtable.h"
+
 #include <boost/noncopyable.hpp>
 #include <string>
 #include <functional>
@@ -22,6 +24,10 @@
  * All supported commands, includes interface to get it from hashtable
  *
  * TODO: add conception of database/key-space
+ * TODO: maybe it is not good to delegate all response for commands?
+ *
+ * TODO: check number of arguments inside the commands callback
+ * make method that write errors
  */
 class Commands : boost::noncopyable
 {
@@ -47,6 +53,9 @@ private:
      * Just print warning, that such command not supported yet.
      */
     std::string notImplementedYetCallback(const Command::Arguments& arguments);
+
+    /******* DB ******/
+    Db::HashTable m_dbHashTable;
 
 
     Commands();
