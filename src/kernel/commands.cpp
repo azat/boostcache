@@ -26,13 +26,6 @@ Commands::Callback Commands::find(const std::string& commandName)
 
 Commands::Commands()
 {
-    Callback defaultCallback = std::bind(&Commands::notImplementedYetCallback,
-                                         this, PlaceHolders::_1);
-
-    // Service commands
-    m_commands["STATUS"] =         defaultCallback;
-    m_commands["SHUTDOWN"] =       defaultCallback;
-
     // "db" operations
     m_commands["HGET"] =           std::bind(&Db::HashTable::get,
                                              &m_dbHashTable, PlaceHolders::_1);
@@ -40,9 +33,6 @@ Commands::Commands()
                                              &m_dbHashTable, PlaceHolders::_1);
     m_commands["HDEL"] =           std::bind(&Db::HashTable::del,
                                              &m_dbHashTable, PlaceHolders::_1);
-    m_commands["INC"] =            defaultCallback;
-    m_commands["DEC"] =            defaultCallback;
-    m_commands["CAS"] =            defaultCallback;
 }
 
 std::string Commands::notImplementedYetCallback(const Command::Arguments& arguments)
