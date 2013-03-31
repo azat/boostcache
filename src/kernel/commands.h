@@ -24,7 +24,7 @@
  * All supported commands, includes interface to get it from hashtable
  *
  * TODO: add conception of database/key-space
- * TODO: maybe it is not good to delegate all response for commands?
+ * TODO: maybe it is not good to delegate all response for command callback?
  *
  * TODO: check number of arguments inside the commands callback
  * make method that write errors
