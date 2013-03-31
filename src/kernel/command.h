@@ -50,6 +50,23 @@ public:
     typedef std::function<void(const std::string&)> FinishCallback;
     typedef std::vector<std::string> Arguments;
 
+    /**
+     * Some of default replices for commands
+     * TODO: wrap this to enum
+     */
+    static const char *REPLY_FALSE;
+    static const char *REPLY_TRUE;
+    /**
+     * Not found
+     */
+    static const char *REPLY_NIL;
+    static const char *REPLY_OK;
+    /**
+     * Use this when debug, and don't want to write full error message
+     */
+    static const char *REPLY_ERROR;
+
+
     Command()
     {
         reset();
