@@ -38,7 +38,8 @@
  * myvalue
  *
  * Also inline commands supports, example:
- * GET mykey
+ * GET mykey LF
+ * GET mykey CR LF
  *
  * TODO: speedup parsing
  * TODO: more error-friendly parsing
@@ -108,16 +109,22 @@ private:
 
     /**
      * Return true if command successfully parsed
+     *
+     * Possible line separator: LF OR CRLF
      */
     bool parseInline(std::istringstream& stream);
     /**
      * Return true if we can go next, i.e. number of arguments
      * successfully parsed
+     *
+     * Possible line separator: CRLF
      */
     bool parseNumberOfArguments(std::istringstream& stream);
     /**
      * Return true if we can go next, i.e. all arguments
      * successfully parsed
+     *
+     * Possible line separator: CRLF
      */
     bool parseArguments(std::istringstream& stream);
     void executeCommand();
