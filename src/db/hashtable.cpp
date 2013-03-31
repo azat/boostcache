@@ -53,6 +53,6 @@ namespace Db
 
     std::string HashTable::valueToReplyString(const Value& value)
     {
-        return value;
+        return str(boost::format("$%i\r\n%s\r\n") % value.size() % value);
     }
 }
