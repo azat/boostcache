@@ -17,10 +17,8 @@
 #include <boost/noncopyable.hpp>
 
 /**
- * TODO: speedup parsing
- * TODO: more error-friendly parsing
- *
- * Protocol format:
+ * @brief Protocol format (based on redis protocol):
+ * (@see http://redis.io/topics/protocol)
  *
  * *<number of arguments> CR LF
  * $<number of bytes of argument 1> CR LF
@@ -42,7 +40,9 @@
  * Also inline commands supports, example:
  * GET mykey
  *
- * More info at http://redis.io/topics/protocol
+ * TODO: speedup parsing
+ * TODO: more error-friendly parsing
+ * TODO: work on compatitiblity with redis protocol
  */
 class Command : boost::noncopyable
 {

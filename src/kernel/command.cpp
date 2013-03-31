@@ -20,8 +20,8 @@
 const char *Command::REPLY_FALSE = "0\n";
 const char *Command::REPLY_TRUE  = "1\n";
 const char *Command::REPLY_NIL   = "(nil)\n";
-const char *Command::REPLY_OK    = "OK\n";
-const char *Command::REPLY_ERROR = "ERR\n";
+const char *Command::REPLY_OK    = "+OK\n";
+const char *Command::REPLY_ERROR = "-ERR\n";
 
 
 namespace qi = boost::spirit::qi;
