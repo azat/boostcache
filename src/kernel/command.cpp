@@ -166,6 +166,13 @@ void Command::executeCommand()
 {
     LOG(info) << "Execute new command, for " << this;
 
+    /**
+     * TODO: We need here something like vector::pop() method,
+     * but it is slow for vectors.
+     * So need to think on it.
+     * As a temporary decision for one hashtable db I will just not use 0 index.
+     */
+
     Commands& commands = TheCommands::instance();
     m_finishCallback((commands.find(m_commandArguments[0]))(
                      m_commandArguments));

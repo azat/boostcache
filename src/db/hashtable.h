@@ -27,6 +27,8 @@
  * that will do all stuff, including different db names
  *
  * TODO: make multi-value (value something like std::vector)
+ *
+ * TODO: see Command::executeCommand() notes
  */
 
 namespace Db

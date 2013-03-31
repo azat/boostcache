@@ -22,7 +22,7 @@ namespace Db
 
     std::string HashTable::get(const Command::Arguments& arguments)
     {
-        Table::const_iterator value = m_table.find(arguments[0]);
+        Table::const_iterator value = m_table.find(arguments[1]);
         if (value == m_table.end()) {
             return Command::REPLY_NIL;
         }
@@ -31,13 +31,18 @@ namespace Db
 
     std::string HashTable::set(const Command::Arguments& arguments)
     {
-        m_table[arguments[0] /* key */] = arguments[1] /* value */;
+        // TODO: avoid this check in every command (see Commands notes)
+        if (arguments.size() != 3) {
+            return Command::REPLY_ERROR;
+        }
+
+        m_table[arguments[1] /* key */] = arguments[2] /* value */;
         return Command::REPLY_OK;
     }
 
     std::string HashTable::del(const Command::Arguments& arguments)
     {
-        Table::const_iterator value = m_table.find(arguments[0]);
+        Table::const_iterator value = m_table.find(arguments[1]);
         if (value == m_table.end()) {
             return Command::REPLY_FALSE;
         }
