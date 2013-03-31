@@ -17,11 +17,11 @@
 #include <boost/algorithm/string/split.hpp>
 
 
-const char *Command::REPLY_FALSE = ":0\n";
-const char *Command::REPLY_TRUE  = ":1\n";
-const char *Command::REPLY_NIL   = "$-1\n";
-const char *Command::REPLY_OK    = "+OK\n";
-const char *Command::REPLY_ERROR = "-ERR\n";
+const char *Command::REPLY_FALSE = ":0\r\n";
+const char *Command::REPLY_TRUE  = ":1\r\n";
+const char *Command::REPLY_NIL   = "$-1\r\n";
+const char *Command::REPLY_OK    = "+OK\r\n";
+const char *Command::REPLY_ERROR = "-ERR\r\n";
 
 
 namespace qi = boost::spirit::qi;

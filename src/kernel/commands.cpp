@@ -47,5 +47,5 @@ Commands::Commands()
 
 std::string Commands::notImplementedYetCallback(const Command::Arguments& arguments)
 {
-    return str(boost::format("-ERR %s is not implemented\n") % arguments[0]);
+    return str(boost::format("-ERR %s is not implemented\r\n") % arguments[0]);
 }
