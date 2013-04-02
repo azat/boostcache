@@ -39,20 +39,8 @@ namespace Util
         }
 
         template <class Type>
-        Type getValue(const char *optionKey) const
-        {
-            // From expandedOptions
-            ExpandedOptions::const_iterator it = expandedOptions.find(optionKey);
-            if (it != expandedOptions.end()) {
-                return boost::any_cast<Type>(it->second);
-            }
-
-            // From variablesMap
-            if (IGNORE_NOT_EXISTED_ITEMS && !variablesMap.count(optionKey)) {
-                return Type();
-            }
-            return variablesMap[optionKey].as<Type>();
-        }
+        Type getValue(const char *optionKey) const;
+        bool getValue(const char *optionKey) const;
 
         void help(std::ostream& out)
         {

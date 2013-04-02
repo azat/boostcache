@@ -22,6 +22,37 @@
 
 namespace Util
 {
+    template <class Type>
+    Type Options::getValue(const char *optionKey) const
+    {
+        // From expandedOptions
+        ExpandedOptions::const_iterator it = expandedOptions.find(optionKey);
+        if (it != expandedOptions.end()) {
+            return boost::any_cast<Type>(it->second);
+        }
+
+        // From variablesMap
+        if (IGNORE_NOT_EXISTED_ITEMS && !variablesMap.count(optionKey)) {
+            return Type();
+        }
+        return variablesMap[optionKey].as<Type>();
+    }
+
+    bool Options::getValue(const char *optionKey) const
+    {
+        // From expandedOptions
+        ExpandedOptions::const_iterator it = expandedOptions.find(optionKey);
+        if (it != expandedOptions.end()) {
+            return true;
+        }
+
+        // From variablesMap
+        if (IGNORE_NOT_EXISTED_ITEMS && !variablesMap.count(optionKey)) {
+            return false;
+        }
+        return true;
+    }
+
     void Options::tryParseOptions(int argc, char **argv)
     {
         try {
