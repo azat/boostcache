@@ -18,7 +18,7 @@ message(STATUS "Making ${PROJECT_NAME} on ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PR
 
 find_package(Boost REQUIRED COMPONENTS program_options system log)
 
-FindLibrariesOrFatalError("event boost_program_options boost_system boost_log")
+FindLibrariesOrFatalError("boost_program_options boost_system boost_log")
 
 # The version number.
 set(BoostCache_VERSION_MAJOR 0)
