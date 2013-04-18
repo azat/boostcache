@@ -5,6 +5,7 @@ compiler:
     - clang
 
 script:
+    - git submodule update --init
     - mkdir .cmake
     - cd .cmake
     - cmake ..
