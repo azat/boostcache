@@ -1,0 +1,17 @@
+language: cpp
+
+compiler:
+    - gcc
+    - clang
+
+script:
+    - mkdir .cmake
+    - cd .cmake
+    - cmake ..
+    # TODO: add gtest
+
+branches:
+    only:
+        - master
+
+# TODO: add notifications
