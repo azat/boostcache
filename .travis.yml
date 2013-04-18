@@ -8,6 +8,7 @@ script:
     - mkdir .cmake
     - cd .cmake
     - cmake ..
+    - make
     # TODO: add gtest
 
 branches:
