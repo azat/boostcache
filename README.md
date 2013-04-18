@@ -3,6 +3,8 @@ What is this
 
 Memory object caching system
 
+[![Build Status](https://travis-ci.org/azat/boostcache.png?branch=master)](https://travis-ci.org/azat/boostcache)
+
 Why boostcache?
 ===============
 
