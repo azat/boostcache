@@ -9,7 +9,10 @@ fi
 
 #PORT=9876
 #HOST=localhost
-LIMIT=10000000
+LIMIT=1000000
+TMP_FILE="/tmp/test-boostcached-commands-$RANDOM.txt"
+
+trap 'echo Removing temporary data; rm -f $TMP_FILE' EXIT
 
 function run_test_client()
 {
@@ -32,13 +35,13 @@ function run_test_client()
 
 echo "Preparing data for HSET ..."
 for ((i=1; i<=$LIMIT; i++)); do
-    echo "HSET ${i}_key ${i}_value" >> test-input.log
+    echo "HSET ${i}_key ${i}_value" >> $TMP_FILE
 done
-run_test_client "test-input.log"
+run_test_client $TMP_FILE
 
-rm "test-input.log"
+rm $TMP_FILE
 echo "Preparing data for HGET ..."
 for ((i=1; i<=$LIMIT; i++)); do
-    echo "HGET ${i}_key" >> test-input.log
+    echo "HGET ${i}_key" >> $TMP_FILE
 done
-run_test_client "test-input.log"
+run_test_client $TMP_FILE
