@@ -1,7 +1,10 @@
 language: cpp
 
 compiler:
-    - gcc
+    # Waiting for next issues:
+    #   travis-ci/travis-cookbooks#114
+    #   travis-ci/travis-core#195
+    # - gcc
     - clang
 
 before_script:
