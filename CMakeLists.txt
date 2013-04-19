@@ -38,7 +38,8 @@ set(BOOSTCACHE_LIBRARY_OUTPUT_PATH ${BOOSTCACHE_BUILD_DIR} CACHE PATH "Build dir
 include_directories(${BOOSTCACHE_SOURCE_DIR})
 include_directories(${BOOSTCACHE_BINARY_DIR})
 
-AddCompilerFlags(FAIL_ON_ERROR FLAGS -Wall -Wextra -Werror -g -rdynamic LANGUAGES C CXX)
+AddCompilerFlags(FAIL_ON_ERROR FLAGS -Wall -Wextra -Werror -g LANGUAGES C CXX)
+AddCompilerFlags(FLAGS -rdynamic LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR FLAGS -std=c++11 LANGUAGES CXX)
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
