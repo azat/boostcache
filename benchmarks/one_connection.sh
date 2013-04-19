@@ -17,6 +17,8 @@ trap 'echo Removing temporary data; rm -f $TMP_FILE' EXIT
 function run_test_client()
 {
     echo "Sending data"
+
+    START=$(date +%s)
     gawk 'BEGIN {
         serverConnection = "/inet4/tcp/0/localhost/9876"
     }
@@ -31,6 +33,8 @@ function run_test_client()
     END {
         close(service)
     }' $1
+    END=$(date +%s)
+    echo "Estimate $((END - START)) sec"
 }
 
 echo "Preparing data for HSET ..."
