@@ -7,18 +7,12 @@ if ! $( pidof boostcached &> /dev/null ); then
     exit 1
 fi
 
-INPUT_FIFO="/tmp/test-boostcached-input.$RANDOM"
-OUTPUT_FIFO="/tmp/test-boostcached-output.$RANDOM"
 #PORT=9876
-HOST=localhost
-#LIMIT=10000000
-LIMIT=10
+#HOST=localhost
+LIMIT=10000000
 
-mkfifo "$INPUT_FIFO"
-mkfifo "$OUTPUT_FIFO"
-
-# Server client
-cat "$INPUT_FIFO" | tee in.log | \
+function run_test_client()
+{
     gawk 'BEGIN {
         serverConnection = "/inet4/tcp/0/localhost/9876"
     }
@@ -27,28 +21,23 @@ cat "$INPUT_FIFO" | tee in.log | \
         print $0 |& serverConnection
         # read from server
         serverConnection |& getline
-        print $0
+        # We do not need to print output test data
+        # print $0
     }
     END {
         close(service)
-    }' \
-    | tee out.log > $OUTPUT_FIFO &
-
-PID="$!"
-trap 'echo Killing nc, and removing tmp pipe; kill $PID; rm -f $INPUT_FIFO $OUTPUT_FIFO' EXIT
-
-function write_read()
-{
-    echo $* >> $INPUT_FIFO
-    timeout 10s head -n1 $OUTPUT_FIFO || "Can't read anything from $OUTPUT_FIFO"
+    }' $1
 }
 
 echo "Testing HSET ..."
 for ((i=1; i<=$LIMIT; i++)); do
-    write_read "HSET ${i}_key ${i}_value"
+    echo "HSET ${i}_key ${i}_value" >> test-input.log
 done
+run_test_client "test-input.log"
 
+rm "test-input.log"
 echo "Testing HGET ..."
 for ((i=1; i<=$LIMIT; i++)); do
-    write_read "HGET ${i}_key" >> "$INPUT_FIFO"
+    echo "HGET ${i}_key" >> test-input.log
 done
+run_test_client "test-input.log"
