@@ -19,12 +19,14 @@ function run_test_client()
     echo "Sending data"
 
     START=$(date +%s)
-    gawk 'BEGIN {
+    COUNT=$(gawk 'BEGIN {
         serverConnection = "/inet4/tcp/0/localhost/9876"
+        count=0
     }
     {
         # write to server
         print $0 |& serverConnection
+        ++count
         # read from server
         serverConnection |& getline
         # We do not need to print output test data
@@ -32,9 +34,14 @@ function run_test_client()
     }
     END {
         close(service)
-    }' $1
+        print count
+    }' $1)
     END=$(date +%s)
-    echo "Estimate $((END - START)) sec"
+    ESTIMATE=$((END - START))
+    # Queries per second
+    QPS=$((COUNT / ESTIMATE))
+
+    echo "Estimate $ESTIMATE sec ($QPS qps)"
 }
 
 echo "Preparing data for HSET ..."
