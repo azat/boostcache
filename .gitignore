@@ -79,3 +79,6 @@ gmon.out
 # git archive
 #
 /*.zip
+
+# logs
+*.log
