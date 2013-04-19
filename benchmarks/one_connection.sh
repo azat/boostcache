@@ -13,6 +13,7 @@ LIMIT=10000000
 
 function run_test_client()
 {
+    echo "Sending data"
     gawk 'BEGIN {
         serverConnection = "/inet4/tcp/0/localhost/9876"
     }
@@ -29,14 +30,14 @@ function run_test_client()
     }' $1
 }
 
-echo "Testing HSET ..."
+echo "Preparing data for HSET ..."
 for ((i=1; i<=$LIMIT; i++)); do
     echo "HSET ${i}_key ${i}_value" >> test-input.log
 done
 run_test_client "test-input.log"
 
 rm "test-input.log"
-echo "Testing HGET ..."
+echo "Preparing data for HGET ..."
 for ((i=1; i<=$LIMIT; i++)); do
     echo "HGET ${i}_key" >> test-input.log
 done
