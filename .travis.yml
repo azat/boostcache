@@ -19,7 +19,7 @@ script:
     - cmake ..
     - make
     # Run one_connection
-    - ./boostcache -f
+    - ./boostcached -f
     - ../benchmarks/one_connection.sh
     # TODO: add gtest
 
