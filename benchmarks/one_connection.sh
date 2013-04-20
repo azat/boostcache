@@ -20,7 +20,7 @@ function run_test_client()
 
     START=$(date +%s)
     COUNT=$(gawk 'BEGIN {
-        serverConnection = "/inet4/tcp/0/localhost/9876"
+        serverConnection = "/inet/tcp/0/localhost/9876"
         count=0
     }
     {
