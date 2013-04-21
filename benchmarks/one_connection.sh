@@ -7,35 +7,36 @@ if ! $( pidof boostcached &> /dev/null ); then
     exit 1
 fi
 
-#PORT=9876
-#HOST=localhost
+PORT=9876
+HOST=localhost
 LIMIT=1000000
-TMP_FILE="/tmp/test-boostcached-commands-$RANDOM.txt"
-
-trap 'echo Removing temporary data; rm -f $TMP_FILE' EXIT
 
 function run_test_client()
 {
-    echo "Sending data"
+    local FMT_STRING=$1
+
+    echo "Testing '$FMT_STRING'"
 
     START=$(date +%s)
-    COUNT=$(gawk 'BEGIN {
-        serverConnection = "/inet/tcp/0/localhost/9876"
+    COUNT=$(gawk "
+    BEGIN {
+        serverConnection = \"/inet/tcp/0/$HOST/$PORT\"
         count=0
-    }
-    {
-        # write to server
-        print $0 |& serverConnection
-        ++count
-        # read from server
-        serverConnection |& getline
-        # We do not need to print output test data
-        # print $0
-    }
-    END {
+        limit=$LIMIT
+        fmt_string=\"$FMT_STRING\n\"
+
+        for (i = 0; i < limit; ++i) {
+            printf fmt_string, i, i |& serverConnection
+            ++count
+            serverConnection |& getline
+            # We do not need to print output test data
+            # print \$0
+        }
+
         close(service)
         print count
-    }' $1)
+    }
+    ")
     END=$(date +%s)
     ESTIMATE=$((END - START))
     # Queries per second
@@ -44,15 +45,5 @@ function run_test_client()
     echo "Estimate $ESTIMATE sec ($QPS qps)"
 }
 
-echo "Preparing data for HSET ..."
-for ((i=1; i<=$LIMIT; i++)); do
-    echo "HSET ${i}_key ${i}_value" >> $TMP_FILE
-done
-run_test_client $TMP_FILE
-
-rm $TMP_FILE
-echo "Preparing data for HGET ..."
-for ((i=1; i<=$LIMIT; i++)); do
-    echo "HGET ${i}_key" >> $TMP_FILE
-done
-run_test_client $TMP_FILE
+run_test_client "HSET %i_key %i_value"
+run_test_client "HGET %i_key"
