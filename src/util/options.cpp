@@ -80,6 +80,11 @@ namespace Util
              * maybe we need to move this to childs
              */
             Util::installLoggerLevel(getValue<int>("logLevel"));
+
+            std::string fileFormat = getValue<std::string>("logFile");
+            if (fileFormat.size()) {
+                Util::installLoggerFile(fileFormat);
+            }
         } catch(const std::exception& exception) {
             if (PRINT_HELP_ON_ERROR) {
                 std::cerr << (*this);
@@ -102,6 +107,8 @@ namespace Util
             ("verbose,v", "Enable verbosity (optionally specify level, more v - more debug messages)")
             ("version,V", "Print version")
             ("config,c", boost::program_options::value<std::string>(), "Setup custom config file")
+            ("logFile,l", boost::program_options::value<std::string>(),
+            "Output log (used instead of stdout, can contain modifiers)")
         ;
 
         additionalOptions();

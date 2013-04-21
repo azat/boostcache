@@ -54,4 +54,25 @@ namespace Util
         }
 #undef CASE_SEVERITY_LEVEL
     }
+
+    void installLoggerFile(const std::string &fileFormat)
+    {
+        boost::log::add_file_log
+        (
+            boost::log::keywords::file_name = fileFormat,
+            boost::log::keywords::rotation_size = LOGGER_ROTATION_SIZE,
+            boost::log::keywords::auto_flush = true,
+            boost::log::keywords::open_mode = (std::ios::out | std::ios::app),
+            boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0)
+            /**
+             * TODO: for now I have next error from linker:
+             * undefined reference to
+             * `boost::log::v2_mt_posix::basic_formatter<char>
+             * boost::log::v2_mt_posix::parse_formatter<char>(char const*, char const*)'
+             *
+             * But without this, logger didn't write anything to file.
+             */
+            // boost::log::keywords::format = "[%TimeStamp%]: %Message%"
+        );
+    }
 }
