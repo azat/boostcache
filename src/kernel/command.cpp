@@ -226,7 +226,7 @@ bool Command::handleStreamIsValid(const std::istringstream& stream)
     return false;
 }
 
-void Command::splitString(std::string &string, std::vector<std::string>& destination)
+void Command::splitString(const std::string &string, std::vector<std::string>& destination)
 {
     const char *cString = string.c_str();
     const char *lastCString = cString;
