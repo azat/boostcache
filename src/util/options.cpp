@@ -97,6 +97,8 @@ namespace Util
 
     void Options::parseOptions(int argc, char **argv)
     {
+        namespace po = boost::program_options;
+
         /* support for -vv -vvvv etc. */
         for (std::string s = "vv"; s.length() <= MAX_VERBOSE_LEVEL; s.append("v")) {
             hiddenOptions.add_options()(s.c_str(), "verbose");
@@ -107,9 +109,9 @@ namespace Util
             ("verbose,v",
              "Enable verbosity (optionally specify level, more v - more debug messages)")
             ("version,V", "Print version")
-            ("config,c", boost::program_options::value<std::string>(),
+            ("config,c", po::value<std::string>(),
              "Setup custom config file")
-            ("logFile,l", boost::program_options::value<std::string>(),
+            ("logFile,l", po::value<std::string>(),
              "Output log (used instead of stdout, can contain modifiers)")
         ;
 
@@ -120,15 +122,18 @@ namespace Util
          * to get away with our vvvvvvv trick. */
         int mongoStyle = (
             (
-                (boost::program_options::command_line_style::unix_style ^ boost::program_options::command_line_style::allow_guessing)
-                | boost::program_options::command_line_style::allow_long_disguise
+                (po::command_line_style::unix_style ^ po::command_line_style::allow_guessing)
+                | po::command_line_style::allow_long_disguise
             )
-            ^ boost::program_options::command_line_style::allow_sticky);
+            ^ po::command_line_style::allow_sticky);
 
         OptionsDescription allOptions;
         allOptions.add(hiddenOptions);
         allOptions.add(visibleOptions);
-        boost::program_options::store(boost::program_options::command_line_parser(argc, argv).style(mongoStyle).options(allOptions).run(), variablesMap);
+        po::store(po::command_line_parser(argc, argv)
+                  .style(mongoStyle)
+                  .options(allOptions)
+                  .run(), variablesMap);
 
         std::string config = getValue<std::string>("config");
         if (config.size()) {
@@ -139,11 +144,11 @@ namespace Util
 
             std::stringstream stringStream;
             parseConfigFile(fileStream, stringStream);
-            boost::program_options::store(boost::program_options::parse_config_file(stringStream, allOptions), variablesMap);
+            po::store(po::parse_config_file(stringStream, allOptions), variablesMap);
             fileStream.close();
         }
 
-        boost::program_options::notify(variablesMap);
+        po::notify(variablesMap);
 
         expandedOptions["logLevel"] = int(variablesMap.count("verbose") ? 1 : 0);
         for (std::string s = "vv"; s.length() <= MAX_VERBOSE_LEVEL; s.append("v")) {
