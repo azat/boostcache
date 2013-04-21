@@ -14,13 +14,23 @@ shopt -s extglob
 
 _get_options()
 {
-    $1 --help 2>&1 | fgrep -- - | awk '{print $1; if (index($0, "[")) print $3 }'
+    $* --help 2>&1 | fgrep -- - \
+        | awk '{for (i=1; i<=NF; i++) print $i}' \
+        | awk -F= '{for (i=1; i<=NF; i++) print $i}' \
+        | tr -d ',' | tr -d '[' | tr -d ']' \
+        | tr -d '(' | tr -d ')' \
+        | grep -- ^- | grep -v ^-$ | grep -v ^--$ \
+        | sort -u
 }
 
 _complete_for_bin()
 {
     local cur
     eval local cmd=$( quote "$1" )
+
+    if [ ! -f "$cmd" ] && ! $( whereis $cmd >& /dev/null ); then
+        return 0
+    fi
 
     COMPREPLY=()
     cur="$(_get_cword)"
