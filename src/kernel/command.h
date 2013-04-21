@@ -107,6 +107,7 @@ private:
     FinishCallback m_finishCallback;
 
 
+    static void splitString(std::string &string, std::vector<std::string>& destination);
     /**
      * Return true if command successfully parsed
      *

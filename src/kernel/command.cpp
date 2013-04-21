@@ -14,7 +14,6 @@
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string/split.hpp>
 
 
 const char *Command::REPLY_FALSE = ":0\r\n";
@@ -74,7 +73,7 @@ bool Command::parseInline(std::istringstream& stream)
     m_commandOffset = stream.tellg();
 
     boost::trim_right(m_lineBuffer);
-    boost::split(m_commandArguments, m_lineBuffer, boost::algorithm::is_space());
+    splitString(m_lineBuffer, m_commandArguments);
 
     if (!m_commandArguments.size() || !m_commandArguments[0].size() /* no command */) {
         return false;
@@ -225,4 +224,24 @@ bool Command::handleStreamIsValid(const std::istringstream& stream)
     }
 
     return false;
+}
+
+void Command::splitString(std::string &string, std::vector<std::string>& destination)
+{
+    const char *cString = string.c_str();
+    const char *lastCString = cString;
+    while (true) {
+        if (*cString == ' ' || *cString == '\0') {
+            destination.push_back(std::string(lastCString, cString - lastCString));
+
+            if (*cString == '\0') {
+                break;
+            }
+
+            // Avoid copying whitespace
+            lastCString = (cString + 1);
+        }
+
+        ++cString;
+    }
 }
