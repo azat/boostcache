@@ -23,7 +23,7 @@ function run_test_client()
         serverConnection = \"/inet/tcp/0/$HOST/$PORT\"
         count=0
         limit=$LIMIT
-        fmt_string=\"$FMT_STRING\n\"
+        fmt_string=\"$FMT_STRING\r\n\"
 
         for (i = 0; i < limit; ++i) {
             printf fmt_string, i, i |& serverConnection
