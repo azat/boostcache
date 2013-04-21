@@ -82,3 +82,6 @@ gmon.out
 
 # logs
 *.log
+
+# internal
+*-internal/
