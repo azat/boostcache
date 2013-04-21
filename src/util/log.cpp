@@ -57,13 +57,14 @@ namespace Util
 
     void installLoggerFile(const std::string &fileFormat)
     {
-        boost::log::add_file_log
+        using namespace boost::log;
+        add_file_log
         (
-            boost::log::keywords::file_name = fileFormat,
-            boost::log::keywords::rotation_size = LOGGER_ROTATION_SIZE,
-            boost::log::keywords::auto_flush = true,
-            boost::log::keywords::open_mode = (std::ios::out | std::ios::app),
-            boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(0, 0, 0)
+            keywords::file_name = fileFormat,
+            keywords::rotation_size = LOGGER_ROTATION_SIZE,
+            keywords::auto_flush = true,
+            keywords::open_mode = (std::ios::out | std::ios::app),
+            keywords::time_based_rotation = sinks::file::rotation_at_time_point(0, 0, 0)
             /**
              * TODO: for now I have next error from linker:
              * undefined reference to
@@ -72,7 +73,7 @@ namespace Util
              *
              * But without this, logger didn't write anything to file.
              */
-            // boost::log::keywords::format = "[%TimeStamp%]: %Message%"
+            // keywords::format = "[%TimeStamp%]: %Message%"
         );
     }
 }
