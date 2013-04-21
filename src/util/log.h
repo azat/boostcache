@@ -15,3 +15,8 @@
 #include <boost/log/trivial.hpp>
 
 #define LOG(...) BOOST_LOG_TRIVIAL(__VA_ARGS__)
+
+namespace Util
+{
+    void installLoggerLevel(int level);
+}

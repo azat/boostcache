@@ -17,6 +17,7 @@
 
 #include "kernel/with_trace_exception.h"
 #include "util/options.h"
+#include "util/log.h"
 #include "config.h"
 
 
@@ -73,6 +74,12 @@ namespace Util
                     << "See --help for more information" << std::endl;
                 exit(EXIT_SUCCESS);
             }
+
+            /**
+             * Install log level here for now,
+             * maybe we need to move this to childs
+             */
+            Util::installLoggerLevel(getValue<int>("logLevel"));
         } catch(const std::exception& exception) {
             if (PRINT_HELP_ON_ERROR) {
                 std::cerr << (*this);
