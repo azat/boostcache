@@ -11,6 +11,12 @@ if ! $( netstat -an | egrep -q "tcp.*:$PORT.*LISTEN" ); then
     exit 1
 fi
 
+function get_machine_info()
+{
+    echo "CPU info"
+    awk '{if ($0 == "") { exit; } print "\t" $0}' /proc/cpuinfo
+}
+
 function run_test_client()
 {
     local FMT_STRING=$1
@@ -45,5 +51,6 @@ function run_test_client()
     echo "Estimate $ESTIMATE sec ($QPS qps)"
 }
 
+get_machine_info
 run_test_client "HSET %i_key %i_value"
 run_test_client "HGET %i_key"
