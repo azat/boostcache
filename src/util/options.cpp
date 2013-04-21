@@ -104,11 +104,13 @@ namespace Util
 
         visibleOptions.add_options()
             ("help,h", "Produce help message")
-            ("verbose,v", "Enable verbosity (optionally specify level, more v - more debug messages)")
+            ("verbose,v",
+             "Enable verbosity (optionally specify level, more v - more debug messages)")
             ("version,V", "Print version")
-            ("config,c", boost::program_options::value<std::string>(), "Setup custom config file")
+            ("config,c", boost::program_options::value<std::string>(),
+             "Setup custom config file")
             ("logFile,l", boost::program_options::value<std::string>(),
-            "Output log (used instead of stdout, can contain modifiers)")
+             "Output log (used instead of stdout, can contain modifiers)")
         ;
 
         additionalOptions();
