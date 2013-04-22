@@ -11,12 +11,11 @@
 
 #include "hashtable.h"
 
-#include <boost/format.hpp>
-
 
 namespace Db
 {
     HashTable::HashTable()
+        : Interface()
     {
     }
 
@@ -49,10 +48,5 @@ namespace Db
 
         m_table.erase(value);
         return Command::REPLY_TRUE;
-    }
-
-    std::string HashTable::valueToReplyString(const Value& value)
-    {
-        return str(boost::format("$%i\r\n%s\r\n") % value.size() % value);
     }
 }

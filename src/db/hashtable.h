@@ -11,32 +11,20 @@
 
 #pragma once
 
-#include "kernel/command.h" // Command::Arguments
+#include "db/interface.h"
 
-#include <boost/noncopyable.hpp>
 #include <unordered_map>
-#include <vector>
 #include <string>
 
 /**
  * @brief Hash table using std::unordered_map
- *
- * TODO: make a abstract factory, and use virtual methods? (vtable lookup)
- *
- * TODO: make private constructor and a static method,
- * that will do all stuff, including different db names
- *
- * TODO: make multi-value (value something like std::vector)
- *
- * TODO: see Command::executeCommand() notes
  */
 
 namespace Db
 {
-    class HashTable : boost::noncopyable
+    class HashTable : public Interface
     {
     public:
-        typedef std::string Value;
         typedef std::unordered_map<std::string, Value> Table;
 
         HashTable();
@@ -47,7 +35,5 @@ namespace Db
 
     private:
         Table m_table;
-
-        static std::string valueToReplyString(const Value& value);
     };
 }
