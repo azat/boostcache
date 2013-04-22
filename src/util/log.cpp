@@ -70,8 +70,6 @@ namespace Util
              * undefined reference to
              * `boost::log::v2_mt_posix::basic_formatter<char>
              * boost::log::v2_mt_posix::parse_formatter<char>(char const*, char const*)'
-             *
-             * But without this, logger didn't write anything to file.
              */
             // keywords::format = "[%TimeStamp%]: %Message%"
         );
