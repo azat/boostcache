@@ -66,6 +66,10 @@ public:
      * Use this when debug, and don't want to write full error message
      */
     static const char *REPLY_ERROR;
+    /**
+     * Use this for non implemented _yet_ stuff
+     */
+    static const char *REPLY_ERROR_NOTSUPPORTED;
 
 
     Command()
