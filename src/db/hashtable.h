@@ -25,7 +25,7 @@ namespace Db
     class HashTable : public Interface
     {
     public:
-        typedef std::unordered_map<std::string, Value> Table;
+        typedef std::unordered_map<Key, Value> Table;
 
         HashTable();
 

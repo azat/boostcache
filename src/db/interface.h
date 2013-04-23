@@ -37,6 +37,7 @@ namespace Db
     {
     public:
         typedef std::string Value;
+        typedef std::string Key;
 
         Interface();
 
