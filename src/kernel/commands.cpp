@@ -26,13 +26,25 @@ Commands::Callback Commands::find(const std::string& commandName)
 
 Commands::Commands()
 {
-    // "db" operations
+    addDbCommands();
+}
+
+void Commands::addDbCommands()
+{
+    /* hashtable */
     m_commands["HGET"] =           std::bind(&Db::HashTable::get,
                                              &m_dbHashTable, PlaceHolders::_1);
     m_commands["HSET"] =           std::bind(&Db::HashTable::set,
                                              &m_dbHashTable, PlaceHolders::_1);
     m_commands["HDEL"] =           std::bind(&Db::HashTable::del,
                                              &m_dbHashTable, PlaceHolders::_1);
+    /* avltree */
+    m_commands["ATGET"] =          std::bind(&Db::AvlTree::get,
+                                             &m_dbAvlTree, PlaceHolders::_1);
+    m_commands["ATSET"] =          std::bind(&Db::AvlTree::set,
+                                             &m_dbAvlTree, PlaceHolders::_1);
+    m_commands["ATDEL"] =          std::bind(&Db::AvlTree::del,
+                                             &m_dbAvlTree, PlaceHolders::_1);
 }
 
 std::string Commands::notImplementedYetCallback(const Command::Arguments& arguments)

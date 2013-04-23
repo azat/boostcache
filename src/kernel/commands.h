@@ -14,6 +14,7 @@
 #include "wrapper/singleton.h"
 
 #include "db/hashtable.h"
+#include "db/avltree.h"
 
 #include <boost/noncopyable.hpp>
 #include <string>
@@ -22,6 +23,7 @@
 
 /**
  * All supported commands, includes interface to get it from hashtable
+ * (that store all commands)
  *
  * TODO: add conception of database/key-space
  * TODO: maybe it is not good to delegate all response for command callback?
@@ -56,9 +58,11 @@ private:
 
     /******* DB ******/
     Db::HashTable m_dbHashTable;
+    Db::AvlTree m_dbAvlTree;
 
 
     Commands();
+    void addDbCommands();
 };
 
 typedef Wrapper::Singleton<Commands> TheCommands;
