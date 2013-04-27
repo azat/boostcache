@@ -25,7 +25,7 @@ script:
     - make
     # Run one_connection
     - ./boostcached -f
-    - ../benchmarks/one_connection.sh
+    - ../utils/one_conn_awk_bench.sh
     # TODO: add gtest
 
 branches:
