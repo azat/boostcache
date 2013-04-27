@@ -7,3 +7,6 @@
 [submodule "utils/git_hooks"]
 	path = utils/git_hooks
 	url = git://github.com/azat/git_hooks.git
+[submodule "src/benchmark"]
+	path = src/benchmark
+	url = git://github.com/azat/mc-benchmark.git

@@ -8,6 +8,7 @@ project(BoostCache CXX C)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
+include(ExternalProject)
 include(AddCompilerFlags)
 include(CheckCXXCompilerFlag)
 include(FindLibrariesOrFatalError)
@@ -64,3 +65,29 @@ file(GLOB_RECURSE BOOSTCACHE_SERVER_SOURCES "${BOOSTCACHE_SOURCE_DIR}/server/*.c
 list(APPEND BOOSTCACHE_SERVER_SOURCES ${BOOSTCACHE_SOURCES})
 add_executable(boostcached ${BOOSTCACHE_SERVER_SOURCES})
 target_link_libraries(boostcached ${LIBS})
+
+set(BENCHMARK_TRASH_DIR "${BOOSTCACHE_BUILD_DIR}")
+set(BENCHMARK_SRC_DIR "${BOOSTCACHE_SOURCE_DIR}/benchmark")
+ExternalProject_Add(benchmark
+    # PREFIX "${BENCHMARK_SRC_DIR}"
+    TMP_DIR "${BENCHMARK_TRASH_DIR}"
+    STAMP_DIR "${BENCHMARK_TRASH_DIR}"
+    # Download step
+    # Instead download do
+    # git submodule init
+    # git submodule update
+    DOWNLOAD_COMMAND ""
+    # GIT_REPOSITORY ${BENCHMARK_REPO}
+    # Update
+    # Do not fetch
+    UPDATE_COMMAND ""
+    # Configure
+    SOURCE_DIR "${BENCHMARK_SRC_DIR}"
+    CONFIGURE_COMMAND ""
+    # Build step
+    BINARY_DIR "${BENCHMARK_SRC_DIR}"
+    BUILD_COMMAND make
+    # Install
+    INSTALL_DIR "${BENCHMARK_SRC_DIR}"
+    INSTALL_COMMAND ""
+)
