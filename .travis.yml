@@ -23,8 +23,9 @@ script:
     - cd .cmake
     - cmake ..
     - make
-    # Run one_connection
     - ./boostcached -f
+    - sleep 2
+    # Run one_connection
     - ../utils/one_conn_awk_bench.sh
     - ../src/benchmark/bc-benchmark
     # TODO: add gtest
