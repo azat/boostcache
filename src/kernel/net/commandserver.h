@@ -11,6 +11,7 @@
 #pragma once
 
 #include "session.h"
+#include "ioservicepool.h"
 
 #include <string>
 
@@ -47,7 +48,7 @@ public:
 private:
     Options m_options;
 
-    boost::asio::io_service m_ioService;
+    IoServicePool m_ioServicePool;
     boost::asio::ip::tcp::acceptor m_acceptor;
 
     void startAccept();
