@@ -16,6 +16,7 @@
 #include <boost/intrusive/avl_set_hook.hpp>
 #include <boost/intrusive/avltree.hpp>
 #include <boost/utility.hpp>
+#include <boost/thread/pthread/shared_mutex.hpp>
 #include <memory>
 #include <utility>
 #include <list>
@@ -24,6 +25,8 @@
 
 /**
  * @brief Avl tree using boost::intrusive
+ *
+ * Thread-safe (TODO: improve thread-safe support)
  */
 
 namespace Db
@@ -81,11 +84,16 @@ namespace Db
             Data m_data;
         };
 
-       typedef boost::intrusive::member_hook< Node, boost::intrusive::avl_set_member_hook<>, &Node::member_hook > MemberHook;
-       typedef boost::intrusive::avltree< Node, MemberHook > Tree;
-       std::unique_ptr<Tree> m_tree;
+        typedef boost::intrusive::member_hook< Node, boost::intrusive::avl_set_member_hook<>, &Node::member_hook > MemberHook;
+        typedef boost::intrusive::avltree< Node, MemberHook > Tree;
+        std::unique_ptr<Tree> m_tree;
 
-       typedef std::list<Node> Nodes;
-       Nodes m_nodes;
+        typedef std::list<Node> Nodes;
+        Nodes m_nodes;
+
+        /**
+         * TODO: maybe move to ThreadSafe wrapper
+         */
+        boost::shared_mutex m_access;
     };
 }

@@ -13,11 +13,14 @@
 
 #include "db/interface.h"
 
+#include <boost/thread/pthread/shared_mutex.hpp>
 #include <unordered_map>
 #include <string>
 
 /**
  * @brief Hash table using std::unordered_map
+ *
+ * Thread-safe (TODO: improve thread-safe support)
  */
 
 namespace Db
@@ -35,5 +38,10 @@ namespace Db
 
     private:
         Table m_table;
+
+        /**
+         * TODO: maybe move to ThreadSafe wrapper
+         */
+        boost::shared_mutex m_access;
     };
 }
