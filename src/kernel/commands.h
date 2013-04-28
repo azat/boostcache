@@ -43,7 +43,7 @@ public:
     typedef std::function<std::string(const Command::Arguments&)> Callback;
     typedef std::unordered_map<std::string, Callback> HashTable;
 
-    Callback find(const std::string& commandName);
+    Callback find(const std::string& commandName) const;
 
 private:
     /**
@@ -54,7 +54,7 @@ private:
     /**
      * Just print warning, that such command not supported yet.
      */
-    std::string notImplementedYetCallback(const Command::Arguments& arguments);
+    std::string notImplementedYetCallback(const Command::Arguments& arguments) const;
 
     /******* DB ******/
     Db::HashTable m_dbHashTable;
