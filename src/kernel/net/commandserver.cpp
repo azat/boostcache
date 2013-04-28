@@ -34,6 +34,11 @@ void CommandServer::start()
 {
     LOG(info) << "Starting server";
 
+    /**
+     * TODO: test/benchmarks
+     *
+     * Maybe this will be slower then single-threaded application
+     */
     std::vector< std::shared_ptr<boost::thread> > threads;
     for (int i = 0; i < m_options.numOfWorkers; ++i) {
         LOG(info) << "Creating " << i << " thread";
