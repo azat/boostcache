@@ -38,7 +38,8 @@ void CommandServer::start()
      * TODO: more test/benchmarks
      * Maybe this will be slower then single-threaded application in some cases
      *
-     * Maybe this will be slower then single-threaded application
+     * TODO: Also this is just simple/raw implementation, it is not final.
+     * A lot of work need to do.
      */
     std::vector< std::shared_ptr<boost::thread> > threads;
     for (int i = 0; i < m_options.numOfWorkers; ++i) {
