@@ -47,7 +47,7 @@ public:
 private:
     Options m_options;
 
-    boost::asio::io_service m_socket;
+    boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::acceptor m_acceptor;
 
     void startAccept();

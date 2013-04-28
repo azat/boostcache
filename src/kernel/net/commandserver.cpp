@@ -21,7 +21,7 @@ namespace Ip = boost::asio::ip;
 
 CommandServer::CommandServer(const Options &options)
     : m_options(options)
-    , m_acceptor(m_socket, Ip::tcp::endpoint(Ip::tcp::v4(), options.port))
+    , m_acceptor(m_ioService, Ip::tcp::endpoint(Ip::tcp::v4(), options.port))
 {
     startAccept();
 }
@@ -52,7 +52,7 @@ void CommandServer::start()
         std::shared_ptr<boost::thread> thread(new boost::thread(std::bind(
                                               static_cast<size_t (boost::asio::io_service::*)()>
                                               (&boost::asio::io_service::run),
-                                              &m_socket)));
+                                              &m_ioService)));
         threads.push_back(thread);
     }
 
@@ -63,7 +63,7 @@ void CommandServer::start()
 
 void CommandServer::startAccept()
 {
-    Session* newSession = new Session(m_socket);
+    Session* newSession = new Session(m_ioService);
     m_acceptor.async_accept(newSession->socket(),
                             std::bind(&CommandServer::handleAccept,
                                       this,
