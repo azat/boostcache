@@ -13,6 +13,8 @@
 #include "util/log.h"
 
 #include <functional>
+#include <vector>
+#include <boost/thread/thread.hpp>
 
 namespace PlaceHolders = std::placeholders;
 namespace Ip = boost::asio::ip;
@@ -31,7 +33,25 @@ CommandServer::~CommandServer()
 void CommandServer::start()
 {
     LOG(info) << "Starting server";
-    m_socket.run();
+
+    std::vector< std::shared_ptr<boost::thread> > threads;
+    for (int i = 0; i < m_options.numOfWorkers; ++i) {
+        LOG(info) << "Creating " << i << " thread";
+
+        /**
+         * static_cast<> is the work around for std::bind() vs boost::bind()
+         * for overloaded functions.
+         */
+        std::shared_ptr<boost::thread> thread(new boost::thread(std::bind(
+                                              static_cast<size_t (boost::asio::io_service::*)()>
+                                              (&boost::asio::io_service::run),
+                                              &m_socket)));
+        threads.push_back(thread);
+    }
+
+    for (int i = 0; i < m_options.numOfWorkers; ++i) {
+        threads[i]->join();
+    }
 }
 
 void CommandServer::startAccept()

@@ -30,10 +30,12 @@ public:
     {
         short port;
         std::string ip;
+        int numOfWorkers;
 
-        Options(short port = 0, std::string ip = "")
+        Options(short port = 0, std::string ip = "", int numOfWorkers = 0)
             : port(port)
             , ip(ip)
+            , numOfWorkers(numOfWorkers)
         {}
     };
 

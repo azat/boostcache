@@ -22,6 +22,8 @@ namespace Server
             ("socket,s", boost::program_options::value<std::string>()->default_value("boostcached.sock"),
              "Socket listen to")
             ("fork,f", "Fork server process")
+            ("workers,w", boost::program_options::value<int>()->default_value(3),
+             "Number of workers-threads")
         ;
     }
 }
