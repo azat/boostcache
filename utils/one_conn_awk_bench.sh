@@ -32,12 +32,20 @@ function run_test_client()
         fmt_string=\"$FMT_STRING\r\n\"
 
         for (i = 0; i < limit; ++i) {
+            # progress
+            if ((i % 1000) == 0) {
+                printf(\"Processed requests: %.0f%% (%i of %i)\r\",
+                       ((i / limit) * 100), i, limit) > \"/dev/stderr\"
+            }
             printf fmt_string, i, i |& serverConnection
             ++count
             serverConnection |& getline
             # We do not need to print output test data
             # print \$0
         }
+
+        # Flush progress bar
+        print \"\" > \"/dev/stderr\"
 
         close(service)
         print count
