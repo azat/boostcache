@@ -35,7 +35,8 @@ void CommandServer::start()
     LOG(info) << "Starting server";
 
     /**
-     * TODO: test/benchmarks
+     * TODO: more test/benchmarks
+     * Maybe this will be slower then single-threaded application in some cases
      *
      * Maybe this will be slower then single-threaded application
      */
