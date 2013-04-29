@@ -11,8 +11,7 @@
 
 #include "ioservicepool.h"
 
-// TODO: replace by std::thread()
-#include <boost/thread.hpp>
+#include <thread>
 
 
 IoServicePool::IoServicePool(size_t size)
@@ -29,11 +28,17 @@ IoServicePool::IoServicePool(size_t size)
 
 void IoServicePool::start()
 {
-    std::vector< std::shared_ptr<boost::thread> > threads;
+    std::vector< std::shared_ptr<std::thread> > threads;
+
     for (size_t i = 0; i < m_ioServices.size(); ++i) {
-        std::shared_ptr<boost::thread> thread(new boost::thread(
-                                              boost::bind(&boost::asio::io_service::run,
-                                                          m_ioServices[i])));
+        /**
+         * static_cast<> is the work around for std::bind() vs boost::bind()
+         * for overloaded functions.
+         */
+        std::shared_ptr<std::thread> thread(new std::thread(
+                                            static_cast<size_t (boost::asio::io_service::*)()>
+                                            (&boost::asio::io_service::run),
+                                            m_ioServices[i].get()));
         threads.push_back(thread);
     }
 
