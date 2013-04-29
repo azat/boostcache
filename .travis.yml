@@ -1,15 +1,19 @@
 language: cpp
 
 compiler:
-    # Waiting for next issues:
-    #   travis-ci/travis-cookbooks#114
-    #   travis-ci/travis-core#195
-    # - gcc
-    - clang
+    - gcc
 
 before_script:
     - sudo add-apt-repository -y ppa:azat/boost-unofficial
+    # HACK: Update gcc it to support c++11
+    #
+    # We can't use clang because libstdc++4.7 contains a broken definition of std::common_type
+    # http://llvm.org/bugs/show_bug.cgi?id=12893
+    #
+    # TODO: wait for travis-ci/travis-core#195
+    - sudo add-apt-repository -y "deb http://us.archive.ubuntu.com/ubuntu/ quantal main"
     - sudo apt-get update
+    - sudo apt-get install g++
     - sudo apt-get install libboost1.53-all-dev
     - sudo apt-get install gawk
     # Version of some utils
