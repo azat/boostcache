@@ -19,7 +19,7 @@ Commands::Callback Commands::find(const std::string& commandName) const
     HashTable::const_iterator command = m_commands.find(commandName);
     if (command == m_commands.end()) {
         return std::bind(&Commands::notImplementedYetCallback,
-                         this, PlaceHolders::_1);
+                         PlaceHolders::_1);
     }
     return command->second;
 }
@@ -47,7 +47,7 @@ void Commands::addDbCommands()
                                              &m_dbAvlTree, PlaceHolders::_1);
 }
 
-std::string Commands::notImplementedYetCallback(const Command::Arguments& arguments) const
+std::string Commands::notImplementedYetCallback(const Command::Arguments& arguments)
 {
     return str(boost::format("-ERR %s is not implemented\r\n") % arguments[0]);
 }

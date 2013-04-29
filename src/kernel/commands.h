@@ -54,7 +54,7 @@ private:
     /**
      * Just print warning, that such command not supported yet.
      */
-    std::string notImplementedYetCallback(const Command::Arguments& arguments) const;
+    static std::string notImplementedYetCallback(const Command::Arguments& arguments);
 
     /******* DB ******/
     Db::HashTable m_dbHashTable;
