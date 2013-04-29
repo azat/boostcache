@@ -23,10 +23,17 @@ script:
     - cd .cmake
     - cmake ..
     - make
-    - ./boostcached -f
+    # Run one_connection, with 1 worker
+    # We have one connection, so we don't need in more than 1 worker.
+    - ./boostcached -f -w1
     - sleep 2
-    # Run one_connection
     - ../utils/one_conn_awk_bench.sh
+    # TODO: try to use $!
+    - pkill -u $USER boostcached
+    # Run bc-benchmark, with 3 workers
+    # We have multiple connections, this must speedup server
+    - ./boostcached -f -w3
+    - sleep 2
     - ../src/benchmark/bc-benchmark
     # TODO: add gtest
 
