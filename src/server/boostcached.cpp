@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     options.parse(argc, argv);
 
     // TODO: VERIFY macros
-    if (options.getValue("fork") && (daemon(0, 0) == -1)) {
+    if (options.getValue("fork") && (daemon(1 /* nochdir */, 0 /* noclose */) == -1)) {
         return EXIT_FAILURE;
     }
 
