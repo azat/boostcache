@@ -30,12 +30,15 @@ public:
     struct Options
     {
         short port;
-        std::string ip;
+        std::string host;
+        std::string socket;
         int numOfWorkers;
 
-        Options(short port = 0, std::string ip = "", int numOfWorkers = 0)
+        Options(short port = 0, std::string host = "",
+                std::string socket = "", int numOfWorkers = 0)
             : port(port)
-            , ip(ip)
+            , host(host)
+            , socket(socket)
             , numOfWorkers(numOfWorkers)
         {}
     };

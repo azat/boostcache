@@ -25,9 +25,12 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    CommandServer server(CommandServer::Options(options.getValue<int>("port"),
-                                                options.getValue<std::string>("host"),
-                                                options.getValue<int>("workers")));
+    CommandServer server(CommandServer::Options(
+        options.getValue<int>("port"),
+        options.getValue<std::string>("host"),
+        options.getValue<std::string>("socket"),
+        options.getValue<int>("workers")
+    ));
     server.start();
 
     return EXIT_SUCCESS;
