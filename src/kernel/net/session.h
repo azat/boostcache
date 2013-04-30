@@ -14,26 +14,28 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/local/stream_protocol.hpp>
 #include <boost/noncopyable.hpp>
 #include <string>
 
 /**
  * Session handler for CommandServer
  */
+template <typename SocketType>
 class Session : boost::noncopyable
 {
 public:
-    Session(boost::asio::io_service& socket);
+    Session(boost::asio::io_service& ioService);
 
     void start();
 
-    boost::asio::ip::tcp::socket& socket()
+    SocketType& socket()
     {
         return m_socket;
     }
 
 private:
-    boost::asio::ip::tcp::socket m_socket;
+    SocketType m_socket;
     /**
      * TODO: We can avoid this, by using buffers with std::string
      */
@@ -49,3 +51,6 @@ private:
     void handleRead(const boost::system::error_code& error, size_t bytesTransferred);
     void handleWrite(const boost::system::error_code& error);
 };
+
+typedef Session<boost::asio::local::stream_protocol::socket> UnixDomainSession;
+typedef Session<boost::asio::ip::tcp::socket> TcpSession;

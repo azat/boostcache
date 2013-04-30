@@ -16,18 +16,21 @@
 namespace PlaceHolders = std::placeholders;
 namespace Asio = boost::asio;
 
-Session::Session(boost::asio::io_service& socket)
-    : m_socket(socket)
+template <typename SocketType>
+Session<SocketType>::Session(boost::asio::io_service& ioService)
+    : m_socket(ioService)
 {
     m_command.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
 }
 
-void Session::start()
+template <typename SocketType>
+void Session<SocketType>::start()
 {
     asyncRead();
 }
 
-void Session::asyncRead()
+template <typename SocketType>
+void Session<SocketType>::asyncRead()
 {
     m_socket.async_read_some(Asio::buffer(m_buffer, MAX_BUFFER_LENGTH),
                              std::bind(&Session::handleRead, this,
@@ -35,7 +38,8 @@ void Session::asyncRead()
                                        PlaceHolders::_2));
 }
 
-void Session::asyncWrite(const std::string& message)
+template <typename SocketType>
+void Session<SocketType>::asyncWrite(const std::string& message)
 {
     Asio::async_write(m_socket,
                       Asio::buffer(message),
@@ -43,7 +47,8 @@ void Session::asyncWrite(const std::string& message)
                                 PlaceHolders::_1));
 }
 
-void Session::handleRead(const boost::system::error_code& error, size_t bytesTransferred)
+template <typename SocketType>
+void Session<SocketType>::handleRead(const boost::system::error_code& error, size_t bytesTransferred)
 {
     if (error) {
         delete this;
@@ -55,7 +60,8 @@ void Session::handleRead(const boost::system::error_code& error, size_t bytesTra
     }
 }
 
-void Session::handleWrite(const boost::system::error_code& error)
+template <typename SocketType>
+void Session<SocketType>::handleWrite(const boost::system::error_code& error)
 {
     if (error) {
         delete this;
@@ -64,3 +70,8 @@ void Session::handleWrite(const boost::system::error_code& error)
 
     asyncRead();
 }
+
+
+// Explicit instantiations
+template class Session<boost::asio::local::stream_protocol::socket>;
+template class Session<boost::asio::ip::tcp::socket>;
