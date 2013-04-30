@@ -9,7 +9,10 @@
  */
 
 #include "server/options.h"
+#include "util/log.h"
 #include "kernel/net/commandserver.h"
+
+#include <boost/exception/diagnostic_information.hpp>
 
 #include <unistd.h>
 
@@ -25,13 +28,19 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    CommandServer server(CommandServer::Options(
-        options.getValue<int>("port"),
-        options.getValue<std::string>("host"),
-        options.getValue<std::string>("socket"),
-        options.getValue<int>("workers")
-    ));
-    server.start();
+    try {
+        CommandServer server(CommandServer::Options(
+            options.getValue<int>("port"),
+            options.getValue<std::string>("host"),
+            options.getValue<std::string>("socket"),
+            options.getValue<int>("workers")
+        ));
+        server.start();
+    } catch (const boost::exception &exception) {
+        LOG(fatal) << boost::diagnostic_information(exception);
+
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }
