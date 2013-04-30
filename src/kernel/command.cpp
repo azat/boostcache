@@ -29,7 +29,7 @@ namespace qi = boost::spirit::qi;
 bool Command::feedAndParseCommand(const char *buffer, size_t size)
 {
     m_commandString.append(buffer, size);
-    LOG(debug) << "Try to read/parser command(" << m_commandString.length() << ") "
+    LOG(trace) << "Try to read/parser command(" << m_commandString.length() << ") "
                "with " << m_numberOfArguments << " arguments, "
                "for " << this;
 
@@ -80,8 +80,8 @@ bool Command::parseInline(std::istringstream& stream)
         return false;
     }
 
-    LOG(info) << "Have " << m_commandArguments.size() << " arguments, "
-              << "for " << this << " (inline)";
+    LOG(trace) << "Have " << m_commandArguments.size() << " arguments, "
+               << "for " << this << " (inline)";
 
     return true;
 }
@@ -106,8 +106,8 @@ bool Command::parseNumberOfArguments(std::istringstream& stream)
     m_numberOfArgumentsLeft = m_numberOfArguments;
     m_commandOffset = stream.tellg();
 
-    LOG(info) << "Have " << m_numberOfArguments << " arguments, "
-              << "for " << this << " (bulk)";
+    LOG(trace) << "Have " << m_numberOfArguments << " arguments, "
+               << "for " << this << " (bulk)";
 
     return true;
 }
@@ -127,7 +127,7 @@ bool Command::parseArguments(std::istringstream& stream)
             reset();
             break;
         }
-        LOG(debug) << "Reading " << m_lastArgumentLength << " bytes, for " << this;
+        LOG(trace) << "Reading " << m_lastArgumentLength << " bytes, for " << this;
 
         if (argumentLength < m_lastArgumentLength) {
             argument = (char *)realloc(argument, argumentLength + 1 /* NULL byte */
@@ -150,7 +150,7 @@ bool Command::parseArguments(std::istringstream& stream)
             break;
         }
         // Save command argument
-        LOG(debug) << "Saving " << argument << " argument, for " << this;
+        LOG(trace) << "Saving " << argument << " argument, for " << this;
         m_commandArguments.push_back(argument);
         m_lastArgumentLength = -1;
 
@@ -164,7 +164,7 @@ bool Command::parseArguments(std::istringstream& stream)
 
 void Command::executeCommand()
 {
-    LOG(info) << "Execute new command, for " << this;
+    LOG(trace) << "Execute new command, for " << this;
 
     /**
      * TODO: We need here something like vector::pop() method,

@@ -108,12 +108,12 @@ void CommandServer::handleAcceptOnTcp(TcpSession* newSession,
                                       const boost::system::error_code& error)
 {
     if (!error) {
-        LOG(info) << "Client connected " << newSession
-                  << " on " << m_tcpAcceptor.local_endpoint();
+        LOG(debug) << "Client connected " << newSession
+                   << " on " << m_tcpAcceptor.local_endpoint();
         newSession->start();
     } else {
-        LOG(info) << "Client session error on "
-                  << m_tcpAcceptor.local_endpoint();
+        LOG(error) << "Client session error on "
+                   << m_tcpAcceptor.local_endpoint();
         delete newSession;
     }
 
@@ -124,12 +124,12 @@ void CommandServer::handleAcceptOnUnixDomain(UnixDomainSession* newSession,
                                              const boost::system::error_code& error)
 {
     if (!error) {
-        LOG(info) << "Client connected " << newSession
-                  << " on " << m_unixDomainAcceptor.local_endpoint();
+        LOG(debug) << "Client connected " << newSession
+                   << " on " << m_unixDomainAcceptor.local_endpoint();
         newSession->start();
     } else {
-        LOG(info) << "Client session error on "
-                  << m_unixDomainAcceptor.local_endpoint();
+        LOG(error) << "Client session error on "
+                   << m_unixDomainAcceptor.local_endpoint();
         delete newSession;
     }
 
