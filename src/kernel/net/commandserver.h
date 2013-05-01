@@ -21,7 +21,7 @@
 #include <boost/noncopyable.hpp>
 
 /**
- * Async command server
+ * @brief Async command server
  *
  * TODO: singleton
  *

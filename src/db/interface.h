@@ -16,23 +16,23 @@
 #include <boost/noncopyable.hpp>
 #include <string>
 
-/**
- * @brief Db interface
- *
- * TODO: make it abstract (I'm not sure about vtable for now)
- *
- * TODO: make a abstract factory, and use virtual methods? (vtable lookup)
- *
- * TODO: make private constructor and a static method,
- * that will do all stuff, including different db names
- *
- * TODO: make multi-value (value something like std::vector)
- *
- * TODO: see Command::executeCommand() notes
- */
 
 namespace Db
 {
+    /**
+     * @brief Db interface
+     *
+     * TODO: make it abstract (I'm not sure about vtable for now)
+     *
+     * TODO: make a abstract factory, and use virtual methods? (vtable lookup)
+     *
+     * TODO: make private constructor and a static method,
+     * that will do all stuff, including different db names
+     *
+     * TODO: make multi-value (value something like std::vector)
+     *
+     * TODO: see Command::executeCommand() notes
+     */
     class Interface : boost::noncopyable
     {
     public:

@@ -17,14 +17,14 @@
 #include <unordered_map>
 #include <string>
 
-/**
- * @brief Hash table using std::unordered_map
- *
- * Thread-safe (TODO: improve thread-safe support)
- */
 
 namespace Db
 {
+    /**
+     * @brief Hash table using std::unordered_map
+     *
+     * Thread-safe (TODO: improve thread-safe support)
+     */
     class HashTable : public Interface
     {
     public:

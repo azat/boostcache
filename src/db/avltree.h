@@ -23,14 +23,13 @@
 #include <string>
 
 
-/**
- * @brief Avl tree using boost::intrusive
- *
- * Thread-safe (TODO: improve thread-safe support)
- */
-
 namespace Db
 {
+    /**
+     * @brief Avl tree using boost::intrusive
+     *
+     * Thread-safe (TODO: improve thread-safe support)
+     */
     class AvlTree : public Interface
     {
     public:
