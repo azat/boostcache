@@ -85,3 +85,6 @@ gmon.out
 
 # internal
 *-internal/
+
+# doxygen
+/.doxygen
