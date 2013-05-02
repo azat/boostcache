@@ -16,7 +16,7 @@ Used libraries
 - [boost program options](http://www.boost.org/libs/program_options)
 - [boost algorithms (rbtree|avltree)](http://www.boost.org/libs/intrusive)
 - OR [stxxl library](http://stxxl.sourceforge.net/)
-- [boost tcp asio](http://www.boost.org/libs/intrusive)
+- [boost asio](http://www.boost.org/libs/asio)
 - [cmake for builds](http://cmake.org/)
 - [boost log (proposal)](http://boost-log.sourceforge.net/)
 
