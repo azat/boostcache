@@ -18,6 +18,7 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/local/stream_protocol.hpp>
+#include <boost/asio/signal_set.hpp>
 #include <boost/noncopyable.hpp>
 
 /**
@@ -58,6 +59,9 @@ private:
     boost::asio::ip::tcp::acceptor m_tcpAcceptor;
     boost::asio::local::stream_protocol::acceptor m_unixDomainAcceptor;
 
+    boost::asio::signal_set m_stopSignals;
+
+    void setupStopSignals();
 
     void createTcpEndpoint();
     void createUnixDomainEndpoint();
@@ -69,4 +73,6 @@ private:
                            const boost::system::error_code& error);
     void handleAcceptOnUnixDomain(UnixDomainSession* newSession,
                                   const boost::system::error_code& error);
+
+    void stop();
 };

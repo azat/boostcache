@@ -28,6 +28,7 @@ public:
     IoServicePool(size_t size);
 
     void start();
+    void stop();
 
     /**
      * Use a round-robin scheme to choose the next io_service to use.

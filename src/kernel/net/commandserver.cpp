@@ -16,6 +16,7 @@
 #include <vector>
 #include <sstream>
 
+
 namespace PlaceHolders = std::placeholders;
 namespace Ip = boost::asio::ip;
 namespace Local = boost::asio::local;
@@ -25,7 +26,9 @@ CommandServer::CommandServer(const Options &options)
     , m_ioServicePool(m_options.numOfWorkers)
     , m_tcpAcceptor(m_ioServicePool.ioService())
     , m_unixDomainAcceptor(m_tcpAcceptor.get_io_service())
+    , m_stopSignals(m_tcpAcceptor.get_io_service())
 {
+    setupStopSignals();
     createTcpEndpoint();
     createUnixDomainEndpoint();
 }
@@ -46,6 +49,17 @@ void CommandServer::start()
      * A lot of work need to do.
      */
     m_ioServicePool.start();
+}
+
+void CommandServer::setupStopSignals()
+{
+    m_stopSignals.add(SIGINT);
+    m_stopSignals.add(SIGTERM);
+#if defined(SIGQUIT)
+    m_stopSignals.add(SIGQUIT);
+#endif
+
+    m_stopSignals.async_wait(std::bind(&CommandServer::stop, this));
 }
 
 void CommandServer::createTcpEndpoint()
@@ -134,4 +148,10 @@ void CommandServer::handleAcceptOnUnixDomain(UnixDomainSession* newSession,
     }
 
     startAcceptOnUnixDomain();
+}
+
+void CommandServer::stop()
+{
+    m_ioServicePool.stop();
+    LOG(info) << "Server was stopped";
 }

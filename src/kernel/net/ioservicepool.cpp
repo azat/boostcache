@@ -48,6 +48,13 @@ void IoServicePool::start()
     }
 }
 
+void IoServicePool::stop()
+{
+    for (std::size_t i = 0; i < m_ioServices.size(); ++i) {
+        m_ioServices[i]->stop();
+    }
+}
+
 boost::asio::io_service& IoServicePool::ioService()
 {
     boost::asio::io_service& io_service = *m_ioServices[m_next];
