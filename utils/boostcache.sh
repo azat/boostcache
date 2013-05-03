@@ -16,6 +16,6 @@ PORT=${2:-"9876"}
 #
 # TODO: avoid extra connection
 #
-COMMANDS=$(echo "COMMANDS" | nc -q1 $HOST $PORT)
+COMMANDS=$(echo "COMMANDS" | nc -q1 $HOST $PORT | tail -n+2)
 
 rlwrap -f <(echo $COMMANDS) nc $HOST $PORT

@@ -99,5 +99,5 @@ std::string Commands::commandsList(const Command::Arguments& UNUSED(arguments))
         asString += pair.first;
         asString += "\n";
     }
-    return asString;
+    return Command::toReplyString(asString);
 }
