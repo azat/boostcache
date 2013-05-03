@@ -43,3 +43,10 @@ run_test "$BOOSTCACHED -w1" "$ONE_CONN_BENCHMARK"
 # Run bc-benchmark, with 3 workers
 # We have multiple connections, this must speedup server
 run_test "$BOOSTCACHED -w3" "$BC_BENCHMARK"
+
+#
+# Run with random keys
+#
+# Run bc-benchmark, with 3 workers
+# We have multiple connections, this must speedup server
+run_test "$BOOSTCACHED -w3" "$BC_BENCHMARK -r 100000000000"
