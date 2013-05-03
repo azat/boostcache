@@ -37,4 +37,9 @@ mkdir .cmake
 cd .cmake
 cmake ..
 make
+
+# Run server
+./boostcached -f
+# Run CLI client
+../utils/boostcache.sh
 ```
