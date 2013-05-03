@@ -28,8 +28,6 @@ namespace Db
     class HashTable : public Interface
     {
     public:
-        typedef std::unordered_map<Key, Value> Table;
-
         HashTable();
 
         std::string get(const Command::Arguments& arguments);
@@ -37,6 +35,7 @@ namespace Db
         std::string del(const Command::Arguments& arguments);
 
     private:
+        typedef std::unordered_map<Key, Value> Table;
         Table m_table;
 
         /**

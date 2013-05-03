@@ -36,9 +36,6 @@ namespace Db
     class Interface : boost::noncopyable
     {
     public:
-        typedef std::string Value;
-        typedef std::string Key;
-
         Interface();
 
         /**
@@ -52,6 +49,9 @@ namespace Db
         std::string del(const Command::Arguments& arguments);
 
     protected:
+        typedef std::string Key;
+        typedef std::string Value;
+
         static std::string valueToReplyString(const Value& value);
     };
 }
