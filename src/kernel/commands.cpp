@@ -80,16 +80,18 @@ void Commands::addDbCommands()
 
 std::string Commands::notImplementedYetCallback(const Command::Arguments& arguments)
 {
-    return str(boost::format("-ERR %s is not implemented\r\n") % arguments[0]);
+    boost::format format = boost::format("%s is not implemented") % arguments[0];
+    return Command::toErrorReplyString(boost::str(format));
 }
 
 std::string Commands::malformedArgumentsCallback(const Command::Arguments& arguments,
                                                  int inputArguments, int expectedArguments)
 {
-    return str(boost::format("-ERR %s malformed number of arguments (%i vs %i)\r\n")
-               % arguments[0]
-               % inputArguments
-               % expectedArguments);
+    boost::format format = boost::format("%s malformed number of arguments (%i vs %i)")
+                                         % arguments[0]
+                                         % inputArguments
+                                         % expectedArguments;
+    return Command::toErrorReplyString(boost::str(format));
 }
 
 std::string Commands::commandsList(const Command::Arguments& UNUSED(arguments))
