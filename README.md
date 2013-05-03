@@ -3,12 +3,15 @@ What is this
 
 Memory object caching system
 
-[![Build Status](https://travis-ci.org/azat/boostcache.png?branch=master)](https://travis-ci.org/azat/boostcache)
-
 Why boostcache?
 ===============
 
 For now it is boost because used boost tree, but maybe in future it will be boost because it is fast.
+
+Build status and benchmarks
+===========================
+
+[![Build Status and Benchmarks](https://travis-ci.org/azat/boostcache.png?branch=master)](https://travis-ci.org/azat/boostcache)
 
 Used libraries
 ==============
