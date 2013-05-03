@@ -15,6 +15,9 @@
 
 namespace PlaceHolders = std::placeholders;
 
+#define ADD_COMMAND(callback, objectPtr, argsNum) \
+    CallbackInfo(std::bind(callback, objectPtr, PlaceHolders::_1), argsNum);
+
 Commands::Callback Commands::find(const std::string& commandName,
                                   int numberOfArguments) const
 {
@@ -42,40 +45,19 @@ Commands::Commands()
 
 void Commands::addGenericCommands()
 {
-    m_commands["COMMANDS"] =       CallbackInfo(std::bind(&Commands::commandsList,
-                                                          this,
-                                                          PlaceHolders::_1),
-                                                0);
+    m_commands["COMMANDS"] = ADD_COMMAND(&Commands::commandsList, this, 0);
 }
 
 void Commands::addDbCommands()
 {
     /* hashtable */
-    m_commands["HGET"] =           CallbackInfo(std::bind(&Db::HashTable::get,
-                                                          &m_dbHashTable,
-                                                          PlaceHolders::_1),
-                                                1);
-    m_commands["HSET"] =           CallbackInfo(std::bind(&Db::HashTable::set,
-                                                          &m_dbHashTable,
-                                                          PlaceHolders::_1),
-                                                2);
-    m_commands["HDEL"] =           CallbackInfo(std::bind(&Db::HashTable::del,
-                                                          &m_dbHashTable,
-                                                          PlaceHolders::_1),
-                                                1);
+    m_commands["HGET"] =   ADD_COMMAND(&Db::HashTable::get, &m_dbHashTable, 1);
+    m_commands["HSET"] =   ADD_COMMAND(&Db::HashTable::set, &m_dbHashTable, 2);
+    m_commands["HDEL"] =   ADD_COMMAND(&Db::HashTable::del, &m_dbHashTable, 1);
     /* avltree */
-    m_commands["ATGET"] =          CallbackInfo(std::bind(&Db::AvlTree::get,
-                                                          &m_dbAvlTree,
-                                                          PlaceHolders::_1),
-                                                1);
-    m_commands["ATSET"] =          CallbackInfo(std::bind(&Db::AvlTree::set,
-                                                          &m_dbAvlTree,
-                                                          PlaceHolders::_1),
-                                                2);
-    m_commands["ATDEL"] =          CallbackInfo(std::bind(&Db::AvlTree::del,
-                                                          &m_dbAvlTree,
-                                                          PlaceHolders::_1),
-                                                1);
+    m_commands["ATGET"] =  ADD_COMMAND(&Db::AvlTree::get, &m_dbAvlTree, 1);
+    m_commands["ATSET"] =  ADD_COMMAND(&Db::AvlTree::set, &m_dbAvlTree, 2);
+    m_commands["ATDEL"] =  ADD_COMMAND(&Db::AvlTree::del, &m_dbAvlTree, 1);
 }
 
 std::string Commands::notImplementedYetCallback(const Command::Arguments& arguments)
