@@ -201,8 +201,7 @@ std::string Command::toString() const
     for_each(m_commandArguments.begin(), m_commandArguments.end(),
              [&arguments, &i] (std::string argument)
              {
-                  arguments += ++i;
-                  arguments += " " "'";
+                  arguments += "'";
                   arguments += argument;
                   arguments += "'" "\n";
              }
