@@ -36,9 +36,14 @@ namespace Db
 
         std::string get(const Command::Arguments& arguments);
         std::string set(const Command::Arguments& arguments);
+        std::string del(const Command::Arguments& arguments);
 
     private:
         static std::hash<Key> m_keyHashFunction;
+
+        class Node;
+        typedef std::list<Node> Nodes;
+        Nodes m_nodes;
 
         /**
          * TODO: move to private class or just from header away
@@ -50,11 +55,22 @@ namespace Db
             struct Data
             {
                 size_t internalKey;
+                /**
+                 * Position of element in m_nodes
+                 * Need for erasing from list.
+                 */
+                Nodes::iterator listIterator;
                 Value value;
 
-                Data(Key key, Value value = "")
+                Data(Key key, Value value)
                     : internalKey(m_keyHashFunction(key))
                     , value(value)
+                {}
+                /**
+                 * Avoid extra std::string::string()
+                 */
+                Data(Key key)
+                    : internalKey(m_keyHashFunction(key))
                 {}
             };
 
@@ -64,6 +80,10 @@ namespace Db
             Node(Data data) : m_data(data) {}
 
             const Data &get() const
+            {
+                return m_data;
+            }
+            Data &get()
             {
                 return m_data;
             }
@@ -82,12 +102,25 @@ namespace Db
             Data m_data;
         };
 
+        struct DeleteDisposer
+        {
+        public:
+            DeleteDisposer(Nodes &nodes) : m_nodes(nodes)
+            {}
+
+            void operator() (Node *deleteMe)
+            {
+                m_nodes.erase(deleteMe->get().listIterator);
+            }
+
+        private:
+            Nodes &m_nodes;
+        };
+        DeleteDisposer m_deleteDisposer;
+
         typedef boost::intrusive::member_hook< Node, boost::intrusive::avl_set_member_hook<>, &Node::member_hook > MemberHook;
         typedef boost::intrusive::avltree< Node, MemberHook > Tree;
         std::unique_ptr<Tree> m_tree;
-
-        typedef std::list<Node> Nodes;
-        Nodes m_nodes;
 
         /**
          * TODO: maybe move to ThreadSafe wrapper

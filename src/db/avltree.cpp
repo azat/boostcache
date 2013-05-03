@@ -16,6 +16,7 @@ namespace Db
 
     AvlTree::AvlTree()
         : Interface()
+        , m_deleteDisposer(m_nodes)
         , m_tree(new Tree)
     {
     }
@@ -48,8 +49,25 @@ namespace Db
 
             m_nodes.push_back(Node(Node::Data(arguments[1] /* key */,
                                               arguments[2] /* value */)));
+            m_nodes.back().get().listIterator = --m_nodes.end();
             m_tree->insert_unique(m_nodes.back());
         }
+
+        return Command::REPLY_OK;
+    }
+
+    std::string AvlTree::del(const Command::Arguments& arguments)
+    {
+        // get exclusive lock
+        boost::upgrade_lock<boost::shared_mutex> lock(m_access);
+        boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+
+        Node findMe(arguments[1]);
+        Tree::const_iterator found = m_tree->find(findMe);
+        if (found == m_tree->end()) {
+            return Command::REPLY_FALSE;
+        }
+        m_tree->erase_and_dispose(found, m_deleteDisposer);
 
         return Command::REPLY_OK;
     }
