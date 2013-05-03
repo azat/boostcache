@@ -41,9 +41,26 @@ class Commands : boost::noncopyable
 
 public:
     typedef std::function<std::string(const Command::Arguments&)> Callback;
-    typedef std::unordered_map<std::string, Callback> HashTable;
+    struct CallbackInfo
+    {
+        Callback callback;
+        /**
+         * Number of arguments that command is required
+         * -1 means any number of arguments
+         *
+         * @TODO: make it minimum number of arguments required?
+         */
+        int numberOfArguments;
 
-    Callback find(const std::string& commandName) const;
+        CallbackInfo(Callback callback = NULL, int numberOfArguments = 0)
+            : callback(callback)
+            , numberOfArguments(numberOfArguments)
+        {}
+    };
+    typedef std::unordered_map<std::string, CallbackInfo> HashTable;
+
+    Callback find(const std::string& commandName,
+                  int numberOfArguments) const;
 
 private:
     /**
@@ -55,6 +72,13 @@ private:
      * Just print warning, that such command not supported yet.
      */
     static std::string notImplementedYetCallback(const Command::Arguments& arguments);
+
+    /**
+     * Just print warning, about malformed arguments
+     * Not enough arguments, extra arguments, e.t.c.
+     */
+    static std::string malformedArgumentsCallback(const Command::Arguments& arguments,
+                                                  int inputArguments, int expectedArguments);
 
     /******* DB ******/
     Db::HashTable m_dbHashTable;

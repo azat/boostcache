@@ -37,11 +37,6 @@ namespace Db
 
     std::string AvlTree::set(const Command::Arguments& arguments)
     {
-        // TODO: avoid this check in every command (see Commands notes)
-        if (arguments.size() != 3) {
-            return Command::REPLY_ERROR;
-        }
-
         // get exclusive lock
         boost::upgrade_lock<boost::shared_mutex> lock(m_access);
         boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);

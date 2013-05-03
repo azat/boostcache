@@ -174,8 +174,11 @@ void Command::executeCommand()
      */
 
     Commands& commands = TheCommands::instance();
-    m_finishCallback((commands.find(m_commandArguments[0]))(
-                     m_commandArguments));
+    m_finishCallback((commands.find(m_commandArguments[0],
+                                    m_commandArguments.size() - 1))
+    (
+         m_commandArguments
+    ));
 
     reset();
 }

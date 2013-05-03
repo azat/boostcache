@@ -33,18 +33,11 @@ namespace Db
 
     std::string HashTable::set(const Command::Arguments& arguments)
     {
-        // TODO: avoid this check in every command (see Commands notes)
-        if (arguments.size() != 3) {
-            return Command::REPLY_ERROR;
-        }
+        // get exclusive lock
+        boost::upgrade_lock<boost::shared_mutex> lock(m_access);
+        boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
 
-        {
-            // get exclusive lock
-            boost::upgrade_lock<boost::shared_mutex> lock(m_access);
-            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-
-            m_table[arguments[1] /* key */] = arguments[2] /* value */;
-        }
+        m_table[arguments[1] /* key */] = arguments[2] /* value */;
 
         return Command::REPLY_OK;
     }
