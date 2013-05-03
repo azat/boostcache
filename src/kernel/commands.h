@@ -41,6 +41,11 @@ class Commands : boost::noncopyable
 
 public:
     typedef std::function<std::string(const Command::Arguments&)> Callback;
+
+    Callback find(const std::string& commandName,
+                  int numberOfArguments) const;
+
+private:
     struct CallbackInfo
     {
         Callback callback;
@@ -58,11 +63,6 @@ public:
         {}
     };
     typedef std::unordered_map<std::string, CallbackInfo> HashTable;
-
-    Callback find(const std::string& commandName,
-                  int numberOfArguments) const;
-
-private:
     /**
      * Hashtable of all supported commands
      */
