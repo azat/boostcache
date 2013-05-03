@@ -42,16 +42,21 @@ namespace Db
             return Command::REPLY_ERROR;
         }
 
-        {
-            // get exclusive lock
-            boost::upgrade_lock<boost::shared_mutex> lock(m_access);
-            boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+        // get exclusive lock
+        boost::upgrade_lock<boost::shared_mutex> lock(m_access);
+        boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
 
-            m_nodes.push_back(Node(Node::Data(arguments[1] /* key */,
-                                              arguments[2] /* value */)));
-            m_nodes.back().get().listIterator = --m_nodes.end();
-            m_tree->insert_unique(m_nodes.back());
+        Node findMe(arguments[1]);
+        Tree::iterator found = m_tree->find(findMe);
+        if (found != m_tree->end()) {
+            found->get().value = arguments[2] /* value */;
+            return Command::REPLY_OK;
         }
+
+        m_nodes.push_back(Node(Node::Data(arguments[1] /* key */,
+                                          arguments[2] /* value */)));
+        m_nodes.back().get().listIterator = --m_nodes.end();
+        m_tree->insert_unique(m_nodes.back());
 
         return Command::REPLY_OK;
     }
