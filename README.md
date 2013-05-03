@@ -41,6 +41,8 @@ cd .cmake
 cmake ..
 make
 
+# Add autocompletion for bash
+. ../utils/bash_completion
 # Run server
 ./boostcached -f
 # Run CLI client
