@@ -4,7 +4,7 @@ set -e
 
 PORT=9876
 HOST=localhost
-LIMIT=1000000
+LIMIT=100000
 
 if ! $( netstat -an | egrep -q "tcp.*:$PORT.*LISTEN" ); then
     echo "First start boostcached (I can't find it at $PORT port)"
