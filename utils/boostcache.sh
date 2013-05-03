@@ -8,10 +8,14 @@
 # - rlwrap to add autocompletion
 #
 
+set -e
+
 HOST=${1:-"localhost"}
 PORT=${2:-"9876"}
 
-COMMANDS="HGET HSET HDEL
-          ATGET ATSET ATDEL"
+#
+# TODO: avoid extra connection
+#
+COMMANDS=$(echo "COMMANDS" | nc -q1 $HOST $PORT)
 
 rlwrap -f <(echo $COMMANDS) nc $HOST $PORT
