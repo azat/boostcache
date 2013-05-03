@@ -10,19 +10,19 @@ ONE_CONN_BENCHMARK=${1:-"$SELF/one_conn_awk_bench.sh"}
 #
 # Helper function
 #
-# Start server, run test, and kill server
+# Start server, run benchmark, and kill server
 #
 # @param server
-# @param test
+# @param benchmark
 #
-run_test()
+run_benchmark()
 {
     echo "Starting server '$1'"
     eval "$1 &"
     SERVER_PID="$!"
     trap "echo Killing server; ps u $SERVER_PID &> /dev/null && kill $SERVER_PID" EXIT
     sleep 2
-    echo "Starting test '$2'"
+    echo "Starting benchmark '$2'"
     $2
     kill $SERVER_PID
 }
@@ -35,18 +35,18 @@ $BOOSTCACHED -V
 #
 # Run one_connection, with 1 worker
 # We have one connection, so we don't need in more than 1 worker.
-run_test "$BOOSTCACHED -w1" "$ONE_CONN_BENCHMARK"
+run_benchmark "$BOOSTCACHED -w1" "$ONE_CONN_BENCHMARK"
 
 #
 # Multiple clients
 #
 # Run bc-benchmark, with 3 workers
 # We have multiple connections, this must speedup server
-run_test "$BOOSTCACHED -w3" "$BC_BENCHMARK"
+run_benchmark "$BOOSTCACHED -w3" "$BC_BENCHMARK"
 
 #
 # Run with random keys
 #
 # Run bc-benchmark, with 3 workers
 # We have multiple connections, this must speedup server
-run_test "$BOOSTCACHED -w3" "$BC_BENCHMARK -r 100000000000"
+run_benchmark "$BOOSTCACHED -w3" "$BC_BENCHMARK -r 100000000000"

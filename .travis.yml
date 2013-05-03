@@ -27,7 +27,7 @@ script:
     - cd .cmake
     - cmake ..
     - make
-    - ../utils/run_tests.sh
+    - ../utils/run_benchmarks.sh
    # TODO: add gtest
 
 branches:
