@@ -9,6 +9,7 @@
  */
 
 #include "commands.h"
+#include "util/compiler.h"
 
 #include <boost/format.hpp>
 
@@ -35,7 +36,16 @@ Commands::Callback Commands::find(const std::string& commandName,
 
 Commands::Commands()
 {
+    addGenericCommands();
     addDbCommands();
+}
+
+void Commands::addGenericCommands()
+{
+    m_commands["COMMANDS"] =       CallbackInfo(std::bind(&Commands::commandsList,
+                                                          this,
+                                                          PlaceHolders::_1),
+                                                0);
 }
 
 void Commands::addDbCommands()
@@ -80,4 +90,14 @@ std::string Commands::malformedArgumentsCallback(const Command::Arguments& argum
                % arguments[0]
                % inputArguments
                % expectedArguments);
+}
+
+std::string Commands::commandsList(const Command::Arguments& UNUSED(arguments))
+{
+    std::string asString;
+    for (const HashTablePair &pair : m_commands) {
+        asString += pair.first;
+        asString += "\n";
+    }
+    return asString;
 }

@@ -8,6 +8,7 @@
  * file that was distributed with this source code.
  */
 
+
 #pragma once
 
 #include "command.h" // Command::Arguments
@@ -20,6 +21,7 @@
 #include <string>
 #include <functional>
 #include <unordered_map>
+
 
 /**
  * All supported commands, includes interface to get it from hashtable
@@ -63,6 +65,7 @@ private:
         {}
     };
     typedef std::unordered_map<std::string, CallbackInfo> HashTable;
+    typedef std::pair<std::string, CallbackInfo> HashTablePair;
     /**
      * Hashtable of all supported commands
      */
@@ -80,12 +83,19 @@ private:
     static std::string malformedArgumentsCallback(const Command::Arguments& arguments,
                                                   int inputArguments, int expectedArguments);
 
+    /**
+     * Print list of commands
+     * @TODO: add number of arguments like "COMMAND1 arg1 arg2" and so on.
+     */
+    std::string commandsList(const Command::Arguments& arguments);
+
     /******* DB ******/
     Db::HashTable m_dbHashTable;
     Db::AvlTree m_dbAvlTree;
 
 
     Commands();
+    void addGenericCommands();
     void addDbCommands();
 };
 
