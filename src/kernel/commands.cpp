@@ -25,7 +25,7 @@ Commands::Callback Commands::find(const std::string& commandName,
     }
 
     const int expectedArguments = command->second.numberOfArguments;
-    if ((expectedArguments > 0) && (expectedArguments != numberOfArguments)) {
+    if ((expectedArguments >= 0) && (expectedArguments != numberOfArguments)) {
         return std::bind(malformedArgumentsCallback,
                          PlaceHolders::_1, numberOfArguments, expectedArguments);
     }
