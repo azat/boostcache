@@ -15,7 +15,6 @@
 
 #include <boost/intrusive/avl_set_hook.hpp>
 #include <boost/intrusive/avltree.hpp>
-#include <boost/utility.hpp>
 #include <boost/thread/pthread/shared_mutex.hpp>
 #include <memory>
 #include <utility>
