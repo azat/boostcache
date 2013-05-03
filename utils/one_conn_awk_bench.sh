@@ -67,6 +67,6 @@ run_test_client "HGET %i_key"
 run_test_client "HDEL %i_key"
 
 # Avl tree
-run_test_client "ARSET %i_key %i_value"
-run_test_client "ARGET %i_key"
-run_test_client "ARDEL %i_key"
+run_test_client "ATSET %i_key %i_value"
+run_test_client "ATGET %i_key"
+run_test_client "ATDEL %i_key"
