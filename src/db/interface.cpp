@@ -10,8 +10,7 @@
 
 
 #include "interface.h"
-
-#include <boost/format.hpp>
+#include "util/compiler.h"
 
 
 namespace Db
@@ -36,10 +35,5 @@ namespace Db
     std::string Interface::del(const Command::Arguments& UNUSED(arguments))
     {
         return Command::REPLY_ERROR_NOTSUPPORTED;
-    }
-
-    std::string Interface::valueToReplyString(const Value& value)
-    {
-        return str(boost::format("$%i\r\n%s\r\n") % value.size() % value);
     }
 }

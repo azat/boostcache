@@ -72,6 +72,12 @@ public:
     static const char *REPLY_ERROR_NOTSUPPORTED;
 
 
+    /**
+     * TODO: optimize
+     */
+    static std::string toReplyString(const std::string& string);
+    static std::string toErrorReplyString(const std::string& string);
+
     Command()
     {
         reset();

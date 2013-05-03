@@ -14,6 +14,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/format.hpp>
 
 
 const char *Command::REPLY_FALSE              = ":0\r\n";
@@ -25,6 +26,16 @@ const char *Command::REPLY_ERROR_NOTSUPPORTED = "-ERR Not supported\r\n";
 
 
 namespace qi = boost::spirit::qi;
+
+std::string Command::toReplyString(const std::string& string)
+{
+    return str(boost::format("$%i\r\n%s\r\n") % string.size() % string);
+}
+std::string Command::toErrorReplyString(const std::string& string)
+{
+    return str(boost::format("-ERR %s\r\n") % string);
+}
+
 
 bool Command::feedAndParseCommand(const char *buffer, size_t size)
 {

@@ -51,7 +51,5 @@ namespace Db
     protected:
         typedef std::string Key;
         typedef std::string Value;
-
-        static std::string valueToReplyString(const Value& value);
     };
 }

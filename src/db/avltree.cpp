@@ -32,7 +32,7 @@ namespace Db
         if (found == m_tree->end()) {
             return Command::REPLY_NIL;
         }
-        return valueToReplyString(found->get().value);
+        return Command::toReplyString(found->get().value);
     }
 
     std::string AvlTree::set(const Command::Arguments& arguments)

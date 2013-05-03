@@ -28,7 +28,7 @@ namespace Db
         if (value == m_table.end()) {
             return Command::REPLY_NIL;
         }
-        return valueToReplyString(value->second);
+        return Command::toReplyString(value->second);
     }
 
     std::string HashTable::set(const Command::Arguments& arguments)
