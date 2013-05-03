@@ -44,6 +44,8 @@ namespace Db
         /**
          * TODO: make this virtual
          * (measure performance regression)
+         *
+         * TODO: add bulk get/set/del commands
          */
         std::string get(const Command::Arguments& arguments);
         std::string set(const Command::Arguments& arguments);
