@@ -12,8 +12,7 @@
 #include "util/log.h"
 #include "kernel/net/commandserver.h"
 
-#include <boost/exception/diagnostic_information.hpp>
-
+#include <exception>
 #include <unistd.h>
 
 using namespace Server;
@@ -36,8 +35,8 @@ int main(int argc, char **argv)
             options.getValue<int>("workers")
         ));
         server.start();
-    } catch (const boost::exception &exception) {
-        LOG(fatal) << boost::diagnostic_information(exception);
+    } catch (const std::exception &exception) {
+        LOG(fatal) << exception.what();
 
         return EXIT_FAILURE;
     }
