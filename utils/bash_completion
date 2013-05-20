@@ -19,6 +19,7 @@ _get_options()
         | awk -F= '{for (i=1; i<=NF; i++) print $i}' \
         | tr -d ',' | tr -d '[' | tr -d ']' \
         | tr -d '(' | tr -d ')' \
+        | tr '|' $'\n' \
         | grep -- ^- | grep -v ^-$ | grep -v ^--$ \
         | sort -u
 }
