@@ -88,6 +88,7 @@ private:
      * @TODO: add number of arguments like "COMMAND1 arg1 arg2" and so on.
      */
     std::string commandsList(const Command::Arguments& arguments);
+    std::string pingPong(const Command::Arguments& arguments);
 
     /******* DB ******/
     Db::HashTable m_dbHashTable;

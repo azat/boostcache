@@ -46,6 +46,7 @@ Commands::Commands()
 void Commands::addGenericCommands()
 {
     m_commands["COMMANDS"] = ADD_COMMAND(&Commands::commandsList, this, 0);
+    m_commands["PING"]     = ADD_COMMAND(&Commands::pingPong, this, 0);
 }
 
 void Commands::addDbCommands()
@@ -84,4 +85,9 @@ std::string Commands::commandsList(const Command::Arguments& UNUSED(arguments))
         asString += "\n";
     }
     return Command::toReplyString(asString);
+}
+
+std::string Commands::pingPong(const Command::Arguments& UNUSED(arguments))
+{
+    return "PONG";
 }
