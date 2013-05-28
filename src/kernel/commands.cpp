@@ -89,5 +89,5 @@ std::string Commands::commandsList(const Command::Arguments& UNUSED(arguments))
 
 std::string Commands::pingPong(const Command::Arguments& UNUSED(arguments))
 {
-    return "PONG";
+    return "+PONG\r\n";
 }
