@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 include(ExternalProject)
 include(AddCompilerFlags)
 include(CheckCXXCompilerFlag)
-include(FindLibrariesOrFatalError)
+include(FindLibrary)
 include(AddFilesGlobRecursiveToList)
 include(GitVersion)
 
@@ -19,7 +19,11 @@ message(STATUS "Making ${PROJECT_NAME} on ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PR
 
 find_package(Boost REQUIRED COMPONENTS program_options system log thread)
 
-FindLibrariesOrFatalError("boost_program_options boost_system boost_log boost_thread")
+FindLibrary(FAIL_ON_ERROR NAMES
+            boost_program_options
+            boost_system
+            boost_log
+            boost_thread)
 
 # The version number.
 set(BoostCache_VERSION_MAJOR 0)
