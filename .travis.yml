@@ -25,8 +25,8 @@ before_script:
 script:
     - mkdir .cmake
     - cd .cmake
-    - cmake ..
-    - make
+    - cmake -DCMAKE_BUILD_TYPE=Distribution ..
+    - make VERBOSE=1
     - ../utils/run_benchmarks.sh
    # TODO: add gtest
 
