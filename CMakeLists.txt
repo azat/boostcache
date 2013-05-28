@@ -53,6 +53,13 @@ AddCompilerFlags(FAIL_ON_ERROR FLAGS
 AddCompilerFlags(FLAGS -rdynamic
                  LANGUAGES C CXX)
 # Per BUILD_TYPE
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to 'Debug' as none was specified.")
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Profile" "Debug" "Release" "Distribution")
+endif()
+
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE PROFILE FLAGS
                  -g3 --coverage
                  LANGUAGES C CXX)
@@ -65,7 +72,6 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
                  -ofast -march=native
                  LANGUAGES C CXX)
-
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
 # boostcache sources
