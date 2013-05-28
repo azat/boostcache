@@ -43,10 +43,29 @@ set(BOOSTCACHE_LIBRARY_OUTPUT_PATH ${BOOSTCACHE_BUILD_DIR} CACHE PATH "Build dir
 include_directories(${BOOSTCACHE_SOURCE_DIR})
 include_directories(${BOOSTCACHE_BINARY_DIR})
 
-AddCompilerFlags(FAIL_ON_ERROR FLAGS -Wall -Wextra -Werror LANGUAGES C CXX)
-AddCompilerFlags(FAIL_ON_ERROR FLAGS -g3 -ofast LANGUAGES C CXX)
-AddCompilerFlags(FLAGS -rdynamic LANGUAGES C CXX)
-AddCompilerFlags(FAIL_ON_ERROR FLAGS -std=c++11 LANGUAGES CXX)
+# Common compiler flags
+AddCompilerFlags(FAIL_ON_ERROR FLAGS
+                 -Wall -Wextra -Werror
+                 LANGUAGES C CXX)
+AddCompilerFlags(FAIL_ON_ERROR FLAGS
+                 -std=c++11
+                 LANGUAGES CXX)
+AddCompilerFlags(FLAGS -rdynamic
+                 LANGUAGES C CXX)
+# Per BUILD_TYPE
+AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE PROFILE FLAGS
+                 -g3 --coverage
+                 LANGUAGES C CXX)
+AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DEBUG FLAGS
+                 -g3
+                 LANGUAGES C CXX)
+AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
+                 -ofast -g3
+                 LANGUAGES C CXX)
+AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
+                 -ofast -march=native
+                 LANGUAGES C CXX)
+
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
 # boostcache sources
