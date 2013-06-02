@@ -26,7 +26,6 @@ function get_machine_info()
     else
         indent "cat /proc/cpuinfo"
     fi
-    exit
 }
 
 # Start server, run benchmark, and kill server
