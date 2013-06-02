@@ -17,5 +17,15 @@ PORT=${2:-"9876"}
 # TODO: avoid extra connection
 #
 COMMANDS=$(echo "COMMANDS" | nc -q1 $HOST $PORT | tail -n+2)
+VERSION=$(echo "VERSION VERBOSE" \
+            | nc -q1 $HOST $PORT \
+            | tail -n+2 \
+            | awk '{print $NF}')
+
+cat - <<EOF
+boostcache ${VERSION}
+
+To exit from boostcache, hit Ctrl-C
+EOF
 
 rlwrap -m"> " -S "boostcache> " -f <(echo $COMMANDS) nc $HOST $PORT
