@@ -12,11 +12,21 @@ SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
 # Helper function
 #
 
+function indent()
+{
+    $1 | awk '{if ($0 == "") { exit; } print "\t" $0}'
+}
 
 function get_machine_info()
 {
     echo "CPU info"
-    awk '{if ($0 == "") { exit; } print "\t" $0}' /proc/cpuinfo
+
+    if $( which lscpu &>/dev/null ); then
+        indent "lscpu"
+    else
+        indent "cat /proc/cpuinfo"
+    fi
+    exit
 }
 
 # Start server, run benchmark, and kill server
