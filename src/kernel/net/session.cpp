@@ -12,6 +12,7 @@
 
 #include <boost/asio/write.hpp>
 #include <functional>
+#include <valgrind/callgrind.h>
 
 namespace PlaceHolders = std::placeholders;
 namespace Asio = boost::asio;
@@ -26,12 +27,14 @@ Session<SocketType>::Session(boost::asio::io_service& ioService)
 template <typename SocketType>
 void Session<SocketType>::start()
 {
+    CALLGRIND_TOGGLE_COLLECT;
     asyncRead();
 }
 
 template <typename SocketType>
 void Session<SocketType>::asyncRead()
 {
+    CALLGRIND_TOGGLE_COLLECT;
     m_socket.async_read_some(Asio::buffer(m_buffer, MAX_BUFFER_LENGTH),
                              std::bind(&Session::handleRead, this,
                                        PlaceHolders::_1,
@@ -41,6 +44,7 @@ void Session<SocketType>::asyncRead()
 template <typename SocketType>
 void Session<SocketType>::asyncWrite(const std::string& message)
 {
+    CALLGRIND_TOGGLE_COLLECT;
     Asio::async_write(m_socket,
                       Asio::buffer(message),
                       std::bind(&Session::handleWrite, this,
@@ -55,6 +59,13 @@ void Session<SocketType>::handleRead(const boost::system::error_code& error, siz
         return;
     }
 
+    CALLGRIND_TOGGLE_COLLECT;
+    Asio::async_write(m_socket,
+                      Asio::buffer("+\n"),
+                      std::bind(&Session::handleWrite, this,
+                                PlaceHolders::_1));
+    return;
+
     if (m_command.feedAndParseCommand(m_buffer, bytesTransferred)) {
         asyncRead();
     }
@@ -68,6 +79,7 @@ void Session<SocketType>::handleWrite(const boost::system::error_code& error)
         return;
     }
 
+    CALLGRIND_TOGGLE_COLLECT;
     asyncRead();
 }
 
