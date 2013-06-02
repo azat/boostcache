@@ -10,6 +10,7 @@
 
 #include "commands.h"
 #include "util/compiler.h"
+#include "util/version.h"
 
 #include <boost/format.hpp>
 
@@ -47,6 +48,12 @@ void Commands::addGenericCommands()
 {
     m_commands["COMMANDS"] = ADD_COMMAND(&Commands::commandsList, this, 0);
     m_commands["PING"]     = ADD_COMMAND(&Commands::pingPong, this, 0);
+    /**
+     * -1 because this command has an optional argument
+     * @TODO: handle optional arguments more pretty
+     * @TODO: somehow told which optional arguments command have
+     */
+    m_commands["VERSION"]  = ADD_COMMAND(&Commands::version, this, -1);
 }
 
 void Commands::addDbCommands()
@@ -90,4 +97,16 @@ std::string Commands::commandsList(const Command::Arguments& UNUSED(arguments))
 std::string Commands::pingPong(const Command::Arguments& UNUSED(arguments))
 {
     return "+PONG\r\n";
+}
+
+std::string Commands::version(const Command::Arguments& arguments)
+{
+    /**
+     * TODO: add helper for checking arguments
+     */
+    bool verbose = (arguments.size() == 2 && arguments[1] == "VERBOSE");
+    /**
+     * TODO: maybe don't wrap this into reply string, like PONG?
+     */
+    return Command::toReplyString(Util::versionString(verbose));
 }

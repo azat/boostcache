@@ -89,6 +89,7 @@ private:
      */
     std::string commandsList(const Command::Arguments& arguments);
     std::string pingPong(const Command::Arguments& arguments);
+    std::string version(const Command::Arguments& arguments);
 
     /******* DB ******/
     Db::HashTable m_dbHashTable;
