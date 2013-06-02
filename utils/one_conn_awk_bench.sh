@@ -62,3 +62,6 @@ run_test_client "HDEL %i_key"
 run_test_client "ATSET %i_key %i_value"
 run_test_client "ATGET %i_key"
 run_test_client "ATDEL %i_key"
+
+# Other
+run_test_client "PING"
