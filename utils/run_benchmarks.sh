@@ -4,8 +4,8 @@ set -e
 
 SELF=${0%/*}
 BOOSTCACHED=${1:-"$SELF/../.cmake/boostcached"}
-BC_BENCHMARK=${1:-"$SELF/../src/benchmark/bc-benchmark"}
-ONE_CONN_BENCHMARK=${1:-"$SELF/one_conn_awk_bench.sh"}
+BC_BENCHMARK=${2:-"$SELF/../src/benchmark/bc-benchmark"}
+ONE_CONN_BENCHMARK=${3:-"$SELF/one_conn_awk_bench.sh"}
 SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
 
 #
