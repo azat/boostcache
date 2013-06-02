@@ -18,4 +18,4 @@ PORT=${2:-"9876"}
 #
 COMMANDS=$(echo "COMMANDS" | nc -q1 $HOST $PORT | tail -n+2)
 
-rlwrap -S "boostcache> " -f <(echo $COMMANDS) nc $HOST $PORT
+rlwrap -m"> " -S "boostcache> " -f <(echo $COMMANDS) nc $HOST $PORT
