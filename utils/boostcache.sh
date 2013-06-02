@@ -22,10 +22,14 @@ VERSION=$(echo "VERSION VERBOSE" \
             | tail -n+2 \
             | awk '{print $NF}')
 
+# TODO: exit by Ctrl-D
 cat - <<EOF
 boostcache ${VERSION}
 
 To exit from boostcache, hit Ctrl-C
 EOF
 
-rlwrap -m"> " -S "boostcache> " -f <(echo $COMMANDS) nc $HOST $PORT
+rlwrap -m"> " \
+       -S "boostcache> " \
+       -f <(echo $COMMANDS) \
+       nc $HOST $PORT
