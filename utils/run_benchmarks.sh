@@ -32,13 +32,6 @@ run_benchmark()
 $BOOSTCACHED -V
 
 #
-# One client
-#
-# Run one_connection, with 1 worker
-# We have one connection, so we don't need in more than 1 worker.
-#run_benchmark "$BOOSTCACHED -w1" "$ONE_CONN_BENCHMARK"
-
-#
 # bc-benchmark
 #
 BC_BENCHMARK_OPTIONS=(
@@ -56,3 +49,10 @@ for OPTIONS in "${BC_BENCHMARK_OPTIONS[@]}"; do
     # We have multiple connections, this must speedup server
     run_benchmark "$BOOSTCACHED -w3" "$BC_BENCHMARK $OPTIONS"
 done
+
+#
+# One client
+#
+# Run one_connection, with 1 worker
+# We have one connection, so we don't need in more than 1 worker.
+run_benchmark "$BOOSTCACHED -w1" "$ONE_CONN_BENCHMARK"
