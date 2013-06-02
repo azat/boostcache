@@ -36,18 +36,23 @@ $BOOSTCACHED -V
 #
 # Run one_connection, with 1 worker
 # We have one connection, so we don't need in more than 1 worker.
-run_benchmark "$BOOSTCACHED -w1" "$ONE_CONN_BENCHMARK"
+#run_benchmark "$BOOSTCACHED -w1" "$ONE_CONN_BENCHMARK"
 
 #
-# Multiple clients
+# bc-benchmark
 #
-# Run bc-benchmark, with 3 workers
-# We have multiple connections, this must speedup server
-run_benchmark "$BOOSTCACHED -w3" "$BC_BENCHMARK -s $SOCKET"
+BC_BENCHMARK_OPTIONS=(
+    ""
+    "-r 100000000000" # Randomize keys
+    "-s $SOCKET"
+    "-s $SOCKET -r 100000000000"
+)
 
-#
-# Run with random keys
-#
-# Run bc-benchmark, with 3 workers
-# We have multiple connections, this must speedup server
-run_benchmark "$BOOSTCACHED -w3" "$BC_BENCHMARK -s $SOCKET -r 100000000000"
+for OPTIONS in "${BC_BENCHMARK_OPTIONS[@]}"; do
+    #
+    # Multiple clients
+    #
+    # Run bc-benchmark, with 3 workers
+    # We have multiple connections, this must speedup server
+    run_benchmark "$BOOSTCACHED -w3" "$BC_BENCHMARK $OPTIONS"
+done
