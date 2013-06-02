@@ -62,11 +62,12 @@ function run_test_client()
 get_machine_info
 
 # Hash table
-run_test_client "HSET %i_key %i_value"
-run_test_client "HGET %i_key"
-run_test_client "HDEL %i_key"
-
-# Avl tree
-run_test_client "ATSET %i_key %i_value"
-run_test_client "ATGET %i_key"
-run_test_client "ATDEL %i_key"
+# run_test_client "HSET %i_key %i_value"
+# run_test_client "HGET %i_key"
+# run_test_client "HDEL %i_key"
+#
+# # Avl tree
+# run_test_client "ATSET %i_key %i_value"
+# run_test_client "ATGET %i_key"
+# run_test_client "ATDEL %i_key"
+run_test_client "PING"
