@@ -11,6 +11,14 @@ SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
 #
 # Helper function
 #
+
+
+function get_machine_info()
+{
+    echo "CPU info"
+    awk '{if ($0 == "") { exit; } print "\t" $0}' /proc/cpuinfo
+}
+
 # Start server, run benchmark, and kill server
 #
 # @param server
@@ -28,6 +36,10 @@ run_benchmark()
     kill $SERVER_PID
 }
 
+#
+# Some information
+#
+get_machine_info
 # Check version, and existing of binary (see "set -e")
 $BOOSTCACHED -V
 
