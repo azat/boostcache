@@ -65,3 +65,4 @@ run_test_client "ATDEL %i_key"
 
 # Other
 run_test_client "PING"
+run_test_client "NOT_EXISTED_COMMAND"
