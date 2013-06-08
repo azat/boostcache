@@ -45,7 +45,7 @@ prepare_graph()
         cat > "$PLOTS_ROOT/$CMD.plot" <<EOL
 set title "${CMD}"
 set xlabel "Clients"
-set ylabel "Seconds"
+set ylabel "Requests per second"
 
 # Line style for axes
 set style line 80 lt 0
