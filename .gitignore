@@ -92,4 +92,4 @@ gmon.out
 # plots
 *.plot
 *.plot.data
-*.plot.png
+*.png
