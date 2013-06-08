@@ -120,6 +120,8 @@ for CLIENTS in 1 5 10 20 30 40 50 100; do
         WORKERS=${WORKERS_CONF[$i]}
 
         run_benchmark "$BOOSTCACHED -w $WORKERS -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
+            # emulate carriage return
+            sed 's/^.*\r//' | \
             awk '{printf "%s %s\n", $1, $2}' | build_graph $CLIENTS $WORKERS
     done
 done
