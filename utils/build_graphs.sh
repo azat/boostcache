@@ -69,7 +69,7 @@ set style line 2 lt rgb "#00A000" lw 2 pt 9
 set style line 3 lt rgb "#5060D0" lw 2 pt 5
 set style line 4 lt rgb "#F25900" lw 2 pt 13
 
-set terminal pngcairo transparent enhanced size 480,320 font "Gill Sans,9" rounded dashed
+set terminal pngcairo transparent enhanced size 760,480 font "Gill Sans,9" rounded dashed
 set output "$PLOTS_ROOT/${CMD}.plot.png"
 
 plot \\
