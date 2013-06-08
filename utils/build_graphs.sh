@@ -84,11 +84,13 @@ EOL
                 LINEWRAP=", \\"
             fi
 
-            cat >> "$PLOTS_ROOT/$CMD.plot" <<EOL
+            cat >> "$PLOTS_ROOT/$CMD.plot" <<-EOL
     "$PLOTS_ROOT/${CMD}.workers_${WORKERS}.plot.data" \
         title "${WORKERS} workers" \
         ls ${LINESTYLE} \
-        with linespoint${LINEWRAP}
+        with linespoint, \
+        '' using 1:2:(sprintf("%.0fK", \$2/1000)) with labels notitle \
+        ${LINEWRAP}
 EOL
         done
     done
