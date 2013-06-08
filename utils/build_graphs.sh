@@ -62,7 +62,7 @@ EOL
 
             cat >> "$PLOTS_ROOT/$CMD.plot" <<EOL
     "$PLOTS_ROOT/${CMD}.workers_${WORKERS}.plot.data" \
-        title "${CMD} (${WORKERS} workers)" \
+        title "${WORKERS} workers" \
         with linespoint${LINEWRAP}
 EOL
         done
