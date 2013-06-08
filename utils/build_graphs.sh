@@ -7,6 +7,9 @@
 set -e
 
 SELF=${0%/*}
+if [ ! ${SELF:0:1} = "/" ]; then
+    SELF="$PWD/$SELF/"
+fi
 BOOSTCACHED=${1:-"$SELF/../.cmake/boostcached"}
 BC_BENCHMARK=${2:-"$SELF/../src/benchmark/bc-benchmark"}
 SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
