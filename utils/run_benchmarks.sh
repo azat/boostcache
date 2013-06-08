@@ -54,6 +54,7 @@ $BOOSTCACHED -V
 
 #
 # bc-benchmark
+# Multiple clients
 #
 BC_BENCHMARK_OPTIONS=(
     ""
@@ -63,10 +64,8 @@ BC_BENCHMARK_OPTIONS=(
 )
 
 for OPTIONS in "${BC_BENCHMARK_OPTIONS[@]}"; do
-    #
-    # Multiple clients
-    #
-    # Run bc-benchmark, with 3 workers
+    run_benchmark "$BOOSTCACHED -w1" "$BC_BENCHMARK $OPTIONS"
+    # Run boostcache daemon, with 3 workers
     # We have multiple connections, this must speedup server
     run_benchmark "$BOOSTCACHED -w3" "$BC_BENCHMARK $OPTIONS"
 done
