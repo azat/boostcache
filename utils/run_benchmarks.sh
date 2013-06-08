@@ -35,12 +35,17 @@ function get_machine_info()
 #
 run_benchmark()
 {
-    echo "Starting server '$1'"
+    echo "*********************************************"
+    echo "* Starting server '$1'"
+
     eval "$1 &"
     SERVER_PID="$!"
     trap "echo Killing server; ps u $SERVER_PID &> /dev/null && kill $SERVER_PID" EXIT
     sleep 2
-    echo "Starting benchmark '$2'"
+
+    echo "* Starting benchmark '$2'"
+    echo "*********************************************"
+
     $2
     kill $SERVER_PID
 }
