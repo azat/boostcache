@@ -14,7 +14,7 @@ PLOTS_ROOT="$SELF/plots"
 BOOSTCACHED=${1:-"$SELF/../.cmake/boostcached"}
 BC_BENCHMARK=${2:-"$SELF/../src/benchmark/bc-benchmark"}
 SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
-WORKERS_CONF=(1 2 4 5 10)
+WORKERS_CONF=(1 2 4 10)
 WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
 COMMANDS="HSET HGET HDEL ATSET ATGET ATDEL PING NOT_EXISTED_COMMAND"
 
