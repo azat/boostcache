@@ -89,7 +89,7 @@ EOL
         title "${WORKERS} workers" \
         ls ${LINESTYLE} \
         with linespoint, \
-        '' using 1:2:(sprintf("%.0fK", \$2/1000)) with labels notitle \
+        '' using 1:2:(sprintf("%.0fK", \$2/1000)) with labels offset 0.5,0.5 notitle \
         ${LINEWRAP}
 EOL
         done
