@@ -70,9 +70,9 @@ BC_BENCHMARK_OPTIONS=(
 
 for OPTIONS in "${BC_BENCHMARK_OPTIONS[@]}"; do
     run_benchmark "$BOOSTCACHED -w1" "$BC_BENCHMARK $OPTIONS"
-    # Run boostcache daemon, with 3 workers
+    # Run boostcache daemon, with 2 workers
     # We have multiple connections, this must speedup server
-    run_benchmark "$BOOSTCACHED -w3" "$BC_BENCHMARK $OPTIONS"
+    run_benchmark "$BOOSTCACHED -w2" "$BC_BENCHMARK $OPTIONS"
 done
 
 #
