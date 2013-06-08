@@ -103,3 +103,8 @@ for PLOT in "$PLOTS_ROOT"/*.plot; do
     gnuplot -p "$PLOT"
 done
 
+# Join all plots into one picture using imagick
+montage -label '%f' "$PLOTS_ROOT"/*.plot.png \
+    -shadow -background none -geometry +0+0 \
+    "$PLOTS_ROOT"/boostcache.png
+
