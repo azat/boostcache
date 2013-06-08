@@ -47,7 +47,6 @@ set ylabel "Seconds"
 set terminal pngcairo  transparent enhanced font "arial,10" fontscale 1.0 size 500, 350
 set output "$PLOTS_ROOT/${CMD}.plot.png"
 
-# with linespoint
 plot [] [] "$PLOTS_ROOT/${CMD}.plot.data" using 1:2 with linespoint
 EOL
     done
