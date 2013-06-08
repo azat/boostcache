@@ -16,6 +16,7 @@ BC_BENCHMARK=${2:-"$SELF/../src/benchmark/bc-benchmark"}
 SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
 WORKERS_CONF=(1 2 4 5 10)
 WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
+COMMANDS="HSET HGET HDEL ATSET ATGET ATDEL PING NOT_EXISTED_COMMAND"
 
 mkdir -p "$PLOTS_ROOT"
 
@@ -40,7 +41,7 @@ prepare_graph()
     rm -f "$PLOTS_ROOT"/*.plot
     rm -f "$PLOTS_ROOT"/*.plot.png
 
-    for CMD in HSET HGET HDEL ATSET ATGET ATDEL; do
+    for CMD in $COMMANDS; do
         cat > "$PLOTS_ROOT/$CMD.plot" <<EOL
 set title "${CMD}"
 set xlabel "Clients"
