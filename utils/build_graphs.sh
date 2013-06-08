@@ -14,6 +14,8 @@ PLOTS_ROOT="$SELF/plots"
 BOOSTCACHED=${1:-"$SELF/../.cmake/boostcached"}
 BC_BENCHMARK=${2:-"$SELF/../src/benchmark/bc-benchmark"}
 SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
+WORKERS_CONF=(1 2 4 5 10)
+WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
 
 mkdir -p "$PLOTS_ROOT"
 
@@ -44,19 +46,36 @@ set title "${CMD}"
 set xlabel "Clients"
 set ylabel "Seconds"
 
-set terminal pngcairo  transparent enhanced font "arial,10" fontscale 1.0 size 500, 350
+set terminal pngcairo transparent enhanced font "arial,10" fontscale 1.0 size 500, 350
 set output "$PLOTS_ROOT/${CMD}.plot.png"
 
-plot [] [] "$PLOTS_ROOT/${CMD}.plot.data" using 1:2 title "${CMD}" with linespoint
+plot \\
 EOL
+
+        for (( i=0; i < $WORKERS_CONF_LENGTH; ++i )); do
+            WORKERS=${WORKERS_CONF[$i]}
+
+            LINEWRAP=""
+            if [[ $WORKERS_CONF_LENGTH -gt $((i + 1)) ]]; then
+                LINEWRAP=", \\"
+            fi
+
+            cat >> "$PLOTS_ROOT/$CMD.plot" <<EOL
+    "$PLOTS_ROOT/${CMD}.workers_${WORKERS}.plot.data" \
+        title "${CMD} (${WORKERS} workers)" \
+        with linespoint${LINEWRAP}
+EOL
+        done
     done
 }
 
 # @param clients
+# @param workers
 #
 build_graph()
 {
     local CLIENTS=$1
+    local WORKERS=$2
 
     while read LINE; do
         CMD=$(echo $LINE | awk '{print $1}' | tr -d :)
@@ -66,17 +85,21 @@ build_graph()
             continue
         fi
 
-        printf "%d %.4f\n" $CLIENTS $TIME >> "$PLOTS_ROOT/$CMD.plot.data"
+        printf "%d %.4f\n" $CLIENTS $TIME >> "$PLOTS_ROOT/${CMD}.workers_${WORKERS}.plot.data"
     done
 }
 
 prepare_graph
-# TODO: workers loop
-for CLIENTS in 1 5 10 20 30 40 50 100 200; do
-    run_benchmark "$BOOSTCACHED -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
-        awk '{printf "%s %s\n", $1, $2}' | build_graph $CLIENTS $WORKERS
+for CLIENTS in 1 5 10 20 30 40 50 100; do
+    for (( i=0; i < $WORKERS_CONF_LENGTH; ++i )); do
+        WORKERS=${WORKERS_CONF[$i]}
+
+        run_benchmark "$BOOSTCACHED -w $WORKERS -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
+            awk '{printf "%s %s\n", $1, $2}' | build_graph $CLIENTS $WORKERS
+    done
 done
 
 for PLOT in "$PLOTS_ROOT"/*.plot; do
     gnuplot -p "$PLOT"
 done
+
