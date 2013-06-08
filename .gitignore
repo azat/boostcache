@@ -88,3 +88,8 @@ gmon.out
 
 # doxygen
 /.doxygen
+
+# plots
+*.plot
+*.plot.data
+*.plot.png
