@@ -68,7 +68,7 @@ build_graph()
 prepare_graph
 # TODO: workers loop
 for CLIENTS in 1 5 10 20 30 40 50 100 200; do
-    run_benchmark "$BOOSTCACHED" "$BC_BENCHMARK -q -c $CLIENTS" | \
+    run_benchmark "$BOOSTCACHED -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
         awk '{printf "%s %s\n", $1, $2}' | build_graph $CLIENTS $WORKERS
 done
 
