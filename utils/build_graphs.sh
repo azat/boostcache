@@ -46,7 +46,29 @@ set title "${CMD}"
 set xlabel "Clients"
 set ylabel "Seconds"
 
-set terminal pngcairo transparent enhanced font "arial,10" fontscale 1.0 size 500, 350
+# Line style for axes
+set style line 80 lt 0
+set style line 80 lt rgb "#808080"
+
+# Line style for grid
+set style line 81 lt 3  # dashed
+set style line 81 lt rgb "#808080" lw 0.5 # grey
+
+set grid back linestyle 81
+set border 3 back linestyle 80
+set xtics nomirror
+set ytics nomirror
+
+set style line 1 lt 1
+set style line 2 lt 1
+set style line 3 lt 1
+set style line 4 lt 1
+set style line 1 lt rgb "#A00000" lw 2 pt 7
+set style line 2 lt rgb "#00A000" lw 2 pt 9
+set style line 3 lt rgb "#5060D0" lw 2 pt 5
+set style line 4 lt rgb "#F25900" lw 2 pt 13
+
+set terminal pngcairo transparent enhanced size 480,320 font "Gill Sans,9" rounded dashed
 set output "$PLOTS_ROOT/${CMD}.plot.png"
 
 plot \\
@@ -54,6 +76,7 @@ EOL
 
         for (( i=0; i < $WORKERS_CONF_LENGTH; ++i )); do
             WORKERS=${WORKERS_CONF[$i]}
+            LINESTYLE=$((i + 1))
 
             LINEWRAP=""
             if [[ $WORKERS_CONF_LENGTH -gt $((i + 1)) ]]; then
@@ -63,6 +86,7 @@ EOL
             cat >> "$PLOTS_ROOT/$CMD.plot" <<EOL
     "$PLOTS_ROOT/${CMD}.workers_${WORKERS}.plot.data" \
         title "${WORKERS} workers" \
+        ls ${LINESTYLE} \
         with linespoint${LINEWRAP}
 EOL
         done
@@ -105,6 +129,6 @@ done
 
 # Join all plots into one picture using imagick
 montage "$PLOTS_ROOT"/*.plot.png \
-    -shadow -background none -geometry +0+0 \
+    -background none -geometry +0+0 \
     "$PLOTS_ROOT"/boostcache.png
 
