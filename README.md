@@ -46,6 +46,6 @@ make
 # Run server
 ./boostcached -f
 # Run CLI client
-../utils/boostcache.sh
+../utils/boostcache
 Go ahead!
 ```
