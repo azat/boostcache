@@ -97,6 +97,9 @@ add_executable(boostcached ${BOOSTCACHE_SERVER_SOURCES})
 target_link_libraries(boostcached ${LIBS})
 install(TARGETS boostcached RUNTIME DESTINATION bin)
 install(PROGRAMS "${BOOSTCACHE_UTILS_DIR}/boostcache" DESTINATION bin)
+install(FILES "${BOOSTCACHE_UTILS_DIR}/bash_completion"
+        RENAME "boostcache"
+        DESTINATION "/etc/bash_completion.d")
 
 set(BENCHMARK_TRASH_DIR "${BOOSTCACHE_BUILD_DIR}")
 set(BENCHMARK_SRC_DIR "${BOOSTCACHE_SOURCE_DIR}/benchmark")
