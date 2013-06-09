@@ -35,6 +35,7 @@ set(BOOSTCACHE_ROOT_DIR "${CMAKE_SOURCE_DIR}")
 set(BOOSTCACHE_BINARY_DIR "${BOOSTCACHE_ROOT_DIR}/build")
 set(BOOSTCACHE_BUILD_DIR "${BOOSTCACHE_ROOT_DIR}/build")
 set(BOOSTCACHE_SOURCE_DIR "${BOOSTCACHE_ROOT_DIR}/src")
+set(BOOSTCACHE_UTILS_DIR "${BOOSTCACHE_ROOT_DIR}/utils")
 set(BOOSTCACHE_LIBRARY_DIR "${BOOSTCACHE_ROOT_DIR}/lib")
 set(BOOSTCACHE_EXECUTABLE_OUTPUT_PATH ${BOOSTCACHE_BUILD_DIR} CACHE PATH "Build directory" FORCE)
 set(BOOSTCACHE_LIBRARY_OUTPUT_PATH ${BOOSTCACHE_BUILD_DIR} CACHE PATH "Build directory" FORCE)
@@ -94,6 +95,8 @@ file(GLOB_RECURSE BOOSTCACHE_SERVER_SOURCES "${BOOSTCACHE_SOURCE_DIR}/server/*.c
 list(APPEND BOOSTCACHE_SERVER_SOURCES ${BOOSTCACHE_SOURCES})
 add_executable(boostcached ${BOOSTCACHE_SERVER_SOURCES})
 target_link_libraries(boostcached ${LIBS})
+install(TARGETS boostcached RUNTIME DESTINATION bin)
+install(PROGRAMS "${BOOSTCACHE_UTILS_DIR}/boostcache" DESTINATION bin)
 
 set(BENCHMARK_TRASH_DIR "${BOOSTCACHE_BUILD_DIR}")
 set(BENCHMARK_SRC_DIR "${BOOSTCACHE_SOURCE_DIR}/benchmark")
@@ -120,3 +123,29 @@ ExternalProject_Add(benchmark
     INSTALL_DIR "${BENCHMARK_SRC_DIR}"
     INSTALL_COMMAND ""
 )
+install(PROGRAMS "${BENCHMARK_SRC_DIR}/bc-benchmark" DESTINATION bin)
+
+# Package
+include(GenerateDebianControl)
+set(CPACK_PACKAGE_NAME "boostcache-git")
+file(READ "${BOOSTCACHE_ROOT_DIR}/README.md" README)
+GenerateDebianControl(${README} DEBIAN_CONTROL)
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${DEBIAN_CONTROL}")
+set(CPACK_PACKAGE_VERSION "${BoostCache_GIT_VERSION}")
+GitToDebVersion(CPACK_PACKAGE_VERSION)
+set(CPACK_PACKAGE_MAINTAINER "a3at.mail@gmail.com")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS    "libc6 (>= 2.13),"
+                                    "libgcc1 (>= 4.7-2),"
+                                    "libstdc++6 (>= 4.8),"
+                                    "libboost-program-options1.53-dev,"
+                                    "libboost-system1.53-dev,"
+                                    "libboost-log1.53-dev,"
+                                    "libboost-thread1.53-dev")
+JoinArguments(CPACK_DEBIAN_PACKAGE_DEPENDS)
+# TODO: strip in productin
+set(CPACK_STRIP_FILES NO)
+set(CPACK_DEBIAN_PACKAGE_DEBUG YES)
+set(CPACK_PACKAGE_HOMEPAGE "https://github.com/azat/boostcache")
+set(CPACK_GENERATOR "DEB")
+include(CPack)
