@@ -69,9 +69,9 @@ private:
     void startAcceptOnTcp();
     void startAcceptOnUnixDomain();
 
-    void handleAcceptOnTcp(TcpSession* newSession,
+    void handleAcceptOnTcp(TcpSession *newSession,
                            const boost::system::error_code &error);
-    void handleAcceptOnUnixDomain(UnixDomainSession* newSession,
+    void handleAcceptOnUnixDomain(UnixDomainSession *newSession,
                                   const boost::system::error_code &error);
 
     void stop();

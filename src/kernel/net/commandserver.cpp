@@ -100,7 +100,7 @@ void CommandServer::createUnixDomainEndpoint()
 
 void CommandServer::startAcceptOnTcp()
 {
-    TcpSession* newSession = new TcpSession(m_ioServicePool.ioService());
+    TcpSession *newSession = new TcpSession(m_ioServicePool.ioService());
     m_tcpAcceptor.async_accept(newSession->socket(),
                                std::bind(&CommandServer::handleAcceptOnTcp,
                                          this,
@@ -110,7 +110,7 @@ void CommandServer::startAcceptOnTcp()
 
 void CommandServer::startAcceptOnUnixDomain()
 {
-    UnixDomainSession* newSession = new UnixDomainSession(m_ioServicePool.ioService());
+    UnixDomainSession *newSession = new UnixDomainSession(m_ioServicePool.ioService());
     m_unixDomainAcceptor.async_accept(newSession->socket(),
                                       std::bind(&CommandServer::handleAcceptOnUnixDomain,
                                                 this,
@@ -118,7 +118,7 @@ void CommandServer::startAcceptOnUnixDomain()
                                                 PlaceHolders::_1));
 }
 
-void CommandServer::handleAcceptOnTcp(TcpSession* newSession,
+void CommandServer::handleAcceptOnTcp(TcpSession *newSession,
                                       const boost::system::error_code &error)
 {
     if (!error) {
@@ -134,7 +134,7 @@ void CommandServer::handleAcceptOnTcp(TcpSession* newSession,
     startAcceptOnTcp();
 }
 
-void CommandServer::handleAcceptOnUnixDomain(UnixDomainSession* newSession,
+void CommandServer::handleAcceptOnUnixDomain(UnixDomainSession *newSession,
                                              const boost::system::error_code &error)
 {
     if (!error) {
