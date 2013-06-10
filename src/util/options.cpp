@@ -80,7 +80,7 @@ namespace Util
             if (fileFormat.size()) {
                 Util::installLoggerFile(fileFormat);
             }
-        } catch(const std::exception& exception) {
+        } catch(const std::exception &exception) {
             if (PRINT_HELP_ON_ERROR) {
                 std::cerr << (*this);
             }

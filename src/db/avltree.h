@@ -34,9 +34,9 @@ namespace Db
     public:
         AvlTree();
 
-        std::string get(const CommandHandler::Arguments& arguments);
-        std::string set(const CommandHandler::Arguments& arguments);
-        std::string del(const CommandHandler::Arguments& arguments);
+        std::string get(const CommandHandler::Arguments &arguments);
+        std::string set(const CommandHandler::Arguments &arguments);
+        std::string del(const CommandHandler::Arguments &arguments);
 
     private:
         static std::hash<Key> m_keyHashFunction;
@@ -88,12 +88,12 @@ namespace Db
                 return m_data;
             }
 
-            friend bool operator <(const Node& left, const Node& right)
+            friend bool operator <(const Node &left, const Node &right)
             {
                 return (left.m_data.internalKey < right.m_data.internalKey);
             }
 
-            friend bool operator ==(const Node& left, const Node& right)
+            friend bool operator ==(const Node &left, const Node &right)
             {
                 return (left.m_data.internalKey == right.m_data.internalKey);
             }

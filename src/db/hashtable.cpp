@@ -19,7 +19,7 @@ namespace Db
     {
     }
 
-    std::string HashTable::get(const CommandHandler::Arguments& arguments)
+    std::string HashTable::get(const CommandHandler::Arguments &arguments)
     {
         // get shared lock
         boost::shared_lock<boost::shared_mutex> lock(m_access);
@@ -31,7 +31,7 @@ namespace Db
         return CommandHandler::toReplyString(value->second);
     }
 
-    std::string HashTable::set(const CommandHandler::Arguments& arguments)
+    std::string HashTable::set(const CommandHandler::Arguments &arguments)
     {
         // get exclusive lock
         boost::upgrade_lock<boost::shared_mutex> lock(m_access);
@@ -42,7 +42,7 @@ namespace Db
         return CommandHandler::REPLY_OK;
     }
 
-    std::string HashTable::del(const CommandHandler::Arguments& arguments)
+    std::string HashTable::del(const CommandHandler::Arguments &arguments)
     {
         // get exclusive lock
         boost::upgrade_lock<boost::shared_mutex> lock(m_access);

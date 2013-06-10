@@ -119,7 +119,7 @@ void CommandServer::startAcceptOnUnixDomain()
 }
 
 void CommandServer::handleAcceptOnTcp(TcpSession* newSession,
-                                      const boost::system::error_code& error)
+                                      const boost::system::error_code &error)
 {
     if (!error) {
         LOG(debug) << "Client connected " << newSession
@@ -135,7 +135,7 @@ void CommandServer::handleAcceptOnTcp(TcpSession* newSession,
 }
 
 void CommandServer::handleAcceptOnUnixDomain(UnixDomainSession* newSession,
-                                             const boost::system::error_code& error)
+                                             const boost::system::error_code &error)
 {
     if (!error) {
         LOG(debug) << "Client connected " << newSession

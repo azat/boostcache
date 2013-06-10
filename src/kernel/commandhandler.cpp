@@ -28,11 +28,11 @@ const char *CommandHandler::REPLY_ERROR_NOTSUPPORTED = "-ERR Not supported\r\n";
 
 namespace qi = boost::spirit::qi;
 
-std::string CommandHandler::toReplyString(const std::string& string)
+std::string CommandHandler::toReplyString(const std::string &string)
 {
     return str(boost::format("$%i\r\n%s\r\n") % string.size() % string);
 }
-std::string CommandHandler::toErrorReplyString(const std::string& string)
+std::string CommandHandler::toErrorReplyString(const std::string &string)
 {
     return str(boost::format("-ERR %s\r\n") % string);
 }
@@ -75,7 +75,7 @@ bool CommandHandler::feedAndParseCommand(const char *buffer, size_t size)
     return false;
 }
 
-bool CommandHandler::parseInline(std::istringstream& stream)
+bool CommandHandler::parseInline(std::istringstream &stream)
 {
     m_type = INLINE;
 
@@ -98,7 +98,7 @@ bool CommandHandler::parseInline(std::istringstream& stream)
     return true;
 }
 
-bool CommandHandler::parseNumberOfArguments(std::istringstream& stream)
+bool CommandHandler::parseNumberOfArguments(std::istringstream &stream)
 {
     m_type = MULTI_BULK;
 
@@ -124,7 +124,7 @@ bool CommandHandler::parseNumberOfArguments(std::istringstream& stream)
     return true;
 }
 
-bool CommandHandler::parseArguments(std::istringstream& stream)
+bool CommandHandler::parseArguments(std::istringstream &stream)
 {
     char crLf[2];
     char *argument = NULL;
@@ -185,7 +185,7 @@ void CommandHandler::executeCommand()
      * As a temporary decision for one hashtable db I will just not use 0 index.
      */
 
-    Commands& commands = TheCommands::instance();
+    Commands &commands = TheCommands::instance();
     m_finishCallback((commands.find(m_commandArguments[0],
                                     m_commandArguments.size() - 1))
     (
@@ -223,7 +223,7 @@ void CommandHandler::reset()
     m_commandArguments.clear();
 }
 
-bool CommandHandler::handleStreamIsValid(const std::istringstream& stream)
+bool CommandHandler::handleStreamIsValid(const std::istringstream &stream)
 {
     if (stream.good()) {
         return true;

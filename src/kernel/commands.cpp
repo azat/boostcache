@@ -19,7 +19,7 @@ namespace PlaceHolders = std::placeholders;
 #define ADD_COMMAND(callback, objectPtr, argsNum) \
     CallbackInfo(std::bind(callback, objectPtr, PlaceHolders::_1), argsNum);
 
-Commands::Callback Commands::find(const std::string& commandName,
+Commands::Callback Commands::find(const std::string &commandName,
                                   int numberOfArguments) const
 {
     HashTable::const_iterator command = m_commands.find(commandName);
@@ -68,13 +68,13 @@ void Commands::addDbCommands()
     m_commands["ATDEL"] =  ADD_COMMAND(&Db::AvlTree::del, &m_dbAvlTree, 1);
 }
 
-std::string Commands::notImplementedYetCallback(const CommandHandler::Arguments& arguments)
+std::string Commands::notImplementedYetCallback(const CommandHandler::Arguments &arguments)
 {
     boost::format format = boost::format("%s is not implemented") % arguments[0];
     return CommandHandler::toErrorReplyString(boost::str(format));
 }
 
-std::string Commands::malformedArgumentsCallback(const CommandHandler::Arguments& arguments,
+std::string Commands::malformedArgumentsCallback(const CommandHandler::Arguments &arguments,
                                                  int inputArguments, int expectedArguments)
 {
     boost::format format = boost::format("%s malformed number of arguments (%i vs %i)")
@@ -84,7 +84,7 @@ std::string Commands::malformedArgumentsCallback(const CommandHandler::Arguments
     return CommandHandler::toErrorReplyString(boost::str(format));
 }
 
-std::string Commands::commandsList(const CommandHandler::Arguments& UNUSED(arguments))
+std::string Commands::commandsList(const CommandHandler::Arguments &UNUSED(arguments))
 {
     std::string asString;
     for (const HashTablePair &pair : m_commands) {
@@ -94,12 +94,12 @@ std::string Commands::commandsList(const CommandHandler::Arguments& UNUSED(argum
     return CommandHandler::toReplyString(asString);
 }
 
-std::string Commands::pingPong(const CommandHandler::Arguments& UNUSED(arguments))
+std::string Commands::pingPong(const CommandHandler::Arguments &UNUSED(arguments))
 {
     return "+PONG\r\n";
 }
 
-std::string Commands::version(const CommandHandler::Arguments& arguments)
+std::string Commands::version(const CommandHandler::Arguments &arguments)
 {
     /**
      * TODO: add helper for checking arguments

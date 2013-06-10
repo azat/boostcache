@@ -17,7 +17,7 @@ namespace PlaceHolders = std::placeholders;
 namespace Asio = boost::asio;
 
 template <typename SocketType>
-Session<SocketType>::Session(boost::asio::io_service& ioService)
+Session<SocketType>::Session(boost::asio::io_service &ioService)
     : m_socket(ioService)
 {
     m_commandHandler.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
@@ -39,7 +39,7 @@ void Session<SocketType>::asyncRead()
 }
 
 template <typename SocketType>
-void Session<SocketType>::asyncWrite(const std::string& message)
+void Session<SocketType>::asyncWrite(const std::string &message)
 {
     Asio::async_write(m_socket,
                       Asio::buffer(message),
@@ -48,7 +48,7 @@ void Session<SocketType>::asyncWrite(const std::string& message)
 }
 
 template <typename SocketType>
-void Session<SocketType>::handleRead(const boost::system::error_code& error, size_t bytesTransferred)
+void Session<SocketType>::handleRead(const boost::system::error_code &error, size_t bytesTransferred)
 {
     if (error) {
         delete this;
@@ -61,7 +61,7 @@ void Session<SocketType>::handleRead(const boost::system::error_code& error, siz
 }
 
 template <typename SocketType>
-void Session<SocketType>::handleWrite(const boost::system::error_code& error)
+void Session<SocketType>::handleWrite(const boost::system::error_code &error)
 {
     if (error) {
         delete this;

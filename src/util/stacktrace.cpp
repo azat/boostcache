@@ -24,7 +24,7 @@ namespace Util
 {
     static const int MAX_BACK_TRACE_FRAMES = 20;
 
-    void printStackTrace(std::ostream& os)
+    void printStackTrace(std::ostream &os)
     {
         void *b[MAX_BACK_TRACE_FRAMES];
 
@@ -46,7 +46,7 @@ namespace Util
 
 namespace Util
 {
-    void printStackTrace(std::ostream& os)
+    void printStackTrace(std::ostream &os)
     {
     }
 }

@@ -42,7 +42,7 @@ namespace Util
         Type getValue(const char *optionKey) const;
         bool getValue(const char *optionKey) const;
 
-        void help(std::ostream& out)
+        void help(std::ostream &out)
         {
             out << (*this);
         }

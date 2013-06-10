@@ -30,9 +30,9 @@ namespace Db
     public:
         HashTable();
 
-        std::string get(const CommandHandler::Arguments& arguments);
-        std::string set(const CommandHandler::Arguments& arguments);
-        std::string del(const CommandHandler::Arguments& arguments);
+        std::string get(const CommandHandler::Arguments &arguments);
+        std::string set(const CommandHandler::Arguments &arguments);
+        std::string del(const CommandHandler::Arguments &arguments);
 
     private:
         typedef std::unordered_map<Key, Value> Table;

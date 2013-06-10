@@ -25,7 +25,7 @@ template <typename SocketType>
 class Session : boost::noncopyable
 {
 public:
-    Session(boost::asio::io_service& ioService);
+    Session(boost::asio::io_service &ioService);
 
     void start();
 
@@ -47,9 +47,9 @@ private:
     CommandHandler m_commandHandler;
 
     void asyncRead();
-    void asyncWrite(const std::string& message);
-    void handleRead(const boost::system::error_code& error, size_t bytesTransferred);
-    void handleWrite(const boost::system::error_code& error);
+    void asyncWrite(const std::string &message);
+    void handleRead(const boost::system::error_code &error, size_t bytesTransferred);
+    void handleWrite(const boost::system::error_code &error);
 };
 
 typedef Session<boost::asio::local::stream_protocol::socket> UnixDomainSession;

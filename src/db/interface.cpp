@@ -22,17 +22,17 @@ namespace Db
     /**
      * TODO: add @arguments into error?
      */
-    std::string Interface::get(const CommandHandler::Arguments& UNUSED(arguments))
+    std::string Interface::get(const CommandHandler::Arguments &UNUSED(arguments))
     {
         return CommandHandler::REPLY_ERROR_NOTSUPPORTED;
     }
 
-    std::string Interface::set(const CommandHandler::Arguments& UNUSED(arguments))
+    std::string Interface::set(const CommandHandler::Arguments &UNUSED(arguments))
     {
         return CommandHandler::REPLY_ERROR_NOTSUPPORTED;
     }
 
-    std::string Interface::del(const CommandHandler::Arguments& UNUSED(arguments))
+    std::string Interface::del(const CommandHandler::Arguments &UNUSED(arguments))
     {
         return CommandHandler::REPLY_ERROR_NOTSUPPORTED;
     }

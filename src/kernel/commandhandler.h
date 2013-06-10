@@ -75,8 +75,8 @@ public:
     /**
      * TODO: optimize
      */
-    static std::string toReplyString(const std::string& string);
-    static std::string toErrorReplyString(const std::string& string);
+    static std::string toReplyString(const std::string &string);
+    static std::string toErrorReplyString(const std::string &string);
 
     CommandHandler()
     {
@@ -123,21 +123,21 @@ private:
      *
      * Possible line separator: LF OR CRLF
      */
-    bool parseInline(std::istringstream& stream);
+    bool parseInline(std::istringstream &stream);
     /**
      * Return true if we can go next, i.e. number of arguments
      * successfully parsed
      *
      * Possible line separator: CRLF
      */
-    bool parseNumberOfArguments(std::istringstream& stream);
+    bool parseNumberOfArguments(std::istringstream &stream);
     /**
      * Return true if we can go next, i.e. all arguments
      * successfully parsed
      *
      * Possible line separator: CRLF
      */
-    bool parseArguments(std::istringstream& stream);
+    bool parseArguments(std::istringstream &stream);
     void executeCommand();
     std::string toString() const;
     /**
@@ -149,5 +149,5 @@ private:
      * Check is stream good, and do some stuff otherwise
      * @return true if stream is good
      */
-    bool handleStreamIsValid(const std::istringstream& stream);
+    bool handleStreamIsValid(const std::istringstream &stream);
 };
