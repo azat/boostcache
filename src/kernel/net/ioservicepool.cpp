@@ -57,12 +57,12 @@ void IoServicePool::stop()
 
 boost::asio::io_service& IoServicePool::ioService()
 {
-    boost::asio::io_service &io_service = *m_ioServices[m_next];
+    boost::asio::io_service &ioService = *m_ioServices[m_next];
 
     ++m_next;
     if (m_next == m_ioServices.size()) {
         m_next = 0;
     }
 
-    return io_service;
+    return ioService;
 }
