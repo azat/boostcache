@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "command.h" // Command::Arguments
+#include "commandhandler.h" // CommandHandler::Arguments
 #include "wrapper/singleton.h"
 
 #include "db/hashtable.h"
@@ -42,7 +42,7 @@ class Commands : boost::noncopyable
     friend class Wrapper::Singleton<Commands>;
 
 public:
-    typedef std::function<std::string(const Command::Arguments&)> Callback;
+    typedef std::function<std::string(const CommandHandler::Arguments&)> Callback;
 
     Callback find(const std::string& commandName,
                   int numberOfArguments) const;
@@ -74,22 +74,22 @@ private:
     /**
      * Just print warning, that such command not supported yet.
      */
-    static std::string notImplementedYetCallback(const Command::Arguments& arguments);
+    static std::string notImplementedYetCallback(const CommandHandler::Arguments& arguments);
 
     /**
      * Just print warning, about malformed arguments
      * Not enough arguments, extra arguments, e.t.c.
      */
-    static std::string malformedArgumentsCallback(const Command::Arguments& arguments,
+    static std::string malformedArgumentsCallback(const CommandHandler::Arguments& arguments,
                                                   int inputArguments, int expectedArguments);
 
     /**
      * Print list of commands
      * @TODO: add number of arguments like "COMMAND1 arg1 arg2" and so on.
      */
-    std::string commandsList(const Command::Arguments& arguments);
-    std::string pingPong(const Command::Arguments& arguments);
-    std::string version(const Command::Arguments& arguments);
+    std::string commandsList(const CommandHandler::Arguments& arguments);
+    std::string pingPong(const CommandHandler::Arguments& arguments);
+    std::string version(const CommandHandler::Arguments& arguments);
 
     /******* DB ******/
     Db::HashTable m_dbHashTable;

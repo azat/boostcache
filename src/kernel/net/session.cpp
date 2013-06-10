@@ -20,7 +20,7 @@ template <typename SocketType>
 Session<SocketType>::Session(boost::asio::io_service& ioService)
     : m_socket(ioService)
 {
-    m_command.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
+    m_commandHandler.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
 }
 
 template <typename SocketType>
@@ -55,7 +55,7 @@ void Session<SocketType>::handleRead(const boost::system::error_code& error, siz
         return;
     }
 
-    if (m_command.feedAndParseCommand(m_buffer, bytesTransferred)) {
+    if (m_commandHandler.feedAndParseCommand(m_buffer, bytesTransferred)) {
         asyncRead();
     }
 }

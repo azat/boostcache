@@ -19,19 +19,19 @@ namespace Db
     {
     }
 
-    std::string HashTable::get(const Command::Arguments& arguments)
+    std::string HashTable::get(const CommandHandler::Arguments& arguments)
     {
         // get shared lock
         boost::shared_lock<boost::shared_mutex> lock(m_access);
 
         Table::const_iterator value = m_table.find(arguments[1]);
         if (value == m_table.end()) {
-            return Command::REPLY_NIL;
+            return CommandHandler::REPLY_NIL;
         }
-        return Command::toReplyString(value->second);
+        return CommandHandler::toReplyString(value->second);
     }
 
-    std::string HashTable::set(const Command::Arguments& arguments)
+    std::string HashTable::set(const CommandHandler::Arguments& arguments)
     {
         // get exclusive lock
         boost::upgrade_lock<boost::shared_mutex> lock(m_access);
@@ -39,10 +39,10 @@ namespace Db
 
         m_table[arguments[1] /* key */] = arguments[2] /* value */;
 
-        return Command::REPLY_OK;
+        return CommandHandler::REPLY_OK;
     }
 
-    std::string HashTable::del(const Command::Arguments& arguments)
+    std::string HashTable::del(const CommandHandler::Arguments& arguments)
     {
         // get exclusive lock
         boost::upgrade_lock<boost::shared_mutex> lock(m_access);
@@ -50,10 +50,10 @@ namespace Db
 
         Table::const_iterator value = m_table.find(arguments[1]);
         if (value == m_table.end()) {
-            return Command::REPLY_FALSE;
+            return CommandHandler::REPLY_FALSE;
         }
 
         m_table.erase(value);
-        return Command::REPLY_TRUE;
+        return CommandHandler::REPLY_TRUE;
     }
 }

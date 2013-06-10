@@ -68,38 +68,38 @@ void Commands::addDbCommands()
     m_commands["ATDEL"] =  ADD_COMMAND(&Db::AvlTree::del, &m_dbAvlTree, 1);
 }
 
-std::string Commands::notImplementedYetCallback(const Command::Arguments& arguments)
+std::string Commands::notImplementedYetCallback(const CommandHandler::Arguments& arguments)
 {
     boost::format format = boost::format("%s is not implemented") % arguments[0];
-    return Command::toErrorReplyString(boost::str(format));
+    return CommandHandler::toErrorReplyString(boost::str(format));
 }
 
-std::string Commands::malformedArgumentsCallback(const Command::Arguments& arguments,
+std::string Commands::malformedArgumentsCallback(const CommandHandler::Arguments& arguments,
                                                  int inputArguments, int expectedArguments)
 {
     boost::format format = boost::format("%s malformed number of arguments (%i vs %i)")
                                          % arguments[0]
                                          % inputArguments
                                          % expectedArguments;
-    return Command::toErrorReplyString(boost::str(format));
+    return CommandHandler::toErrorReplyString(boost::str(format));
 }
 
-std::string Commands::commandsList(const Command::Arguments& UNUSED(arguments))
+std::string Commands::commandsList(const CommandHandler::Arguments& UNUSED(arguments))
 {
     std::string asString;
     for (const HashTablePair &pair : m_commands) {
         asString += pair.first;
         asString += "\n";
     }
-    return Command::toReplyString(asString);
+    return CommandHandler::toReplyString(asString);
 }
 
-std::string Commands::pingPong(const Command::Arguments& UNUSED(arguments))
+std::string Commands::pingPong(const CommandHandler::Arguments& UNUSED(arguments))
 {
     return "+PONG\r\n";
 }
 
-std::string Commands::version(const Command::Arguments& arguments)
+std::string Commands::version(const CommandHandler::Arguments& arguments)
 {
     /**
      * TODO: add helper for checking arguments
@@ -108,5 +108,5 @@ std::string Commands::version(const Command::Arguments& arguments)
     /**
      * TODO: maybe don't wrap this into reply string, like PONG?
      */
-    return Command::toReplyString(Util::versionString(verbose));
+    return CommandHandler::toReplyString(Util::versionString(verbose));
 }

@@ -8,7 +8,8 @@
  * file that was distributed with this source code.
  */
 
-#include "command.h"
+#include "commandhandler.h"
+
 #include "commands.h"
 #include "util/log.h"
 
@@ -17,27 +18,27 @@
 #include <boost/format.hpp>
 
 
-const char *Command::REPLY_FALSE              = ":0\r\n";
-const char *Command::REPLY_TRUE               = ":1\r\n";
-const char *Command::REPLY_NIL                = "$-1\r\n";
-const char *Command::REPLY_OK                 = "+OK\r\n";
-const char *Command::REPLY_ERROR              = "-ERR\r\n";
-const char *Command::REPLY_ERROR_NOTSUPPORTED = "-ERR Not supported\r\n";
+const char *CommandHandler::REPLY_FALSE              = ":0\r\n";
+const char *CommandHandler::REPLY_TRUE               = ":1\r\n";
+const char *CommandHandler::REPLY_NIL                = "$-1\r\n";
+const char *CommandHandler::REPLY_OK                 = "+OK\r\n";
+const char *CommandHandler::REPLY_ERROR              = "-ERR\r\n";
+const char *CommandHandler::REPLY_ERROR_NOTSUPPORTED = "-ERR Not supported\r\n";
 
 
 namespace qi = boost::spirit::qi;
 
-std::string Command::toReplyString(const std::string& string)
+std::string CommandHandler::toReplyString(const std::string& string)
 {
     return str(boost::format("$%i\r\n%s\r\n") % string.size() % string);
 }
-std::string Command::toErrorReplyString(const std::string& string)
+std::string CommandHandler::toErrorReplyString(const std::string& string)
 {
     return str(boost::format("-ERR %s\r\n") % string);
 }
 
 
-bool Command::feedAndParseCommand(const char *buffer, size_t size)
+bool CommandHandler::feedAndParseCommand(const char *buffer, size_t size)
 {
     m_commandString.append(buffer, size);
     LOG(trace) << "Try to read/parser command(" << m_commandString.length() << ") "
@@ -74,7 +75,7 @@ bool Command::feedAndParseCommand(const char *buffer, size_t size)
     return false;
 }
 
-bool Command::parseInline(std::istringstream& stream)
+bool CommandHandler::parseInline(std::istringstream& stream)
 {
     m_type = INLINE;
 
@@ -97,7 +98,7 @@ bool Command::parseInline(std::istringstream& stream)
     return true;
 }
 
-bool Command::parseNumberOfArguments(std::istringstream& stream)
+bool CommandHandler::parseNumberOfArguments(std::istringstream& stream)
 {
     m_type = MULTI_BULK;
 
@@ -123,7 +124,7 @@ bool Command::parseNumberOfArguments(std::istringstream& stream)
     return true;
 }
 
-bool Command::parseArguments(std::istringstream& stream)
+bool CommandHandler::parseArguments(std::istringstream& stream)
 {
     char crLf[2];
     char *argument = NULL;
@@ -173,7 +174,7 @@ bool Command::parseArguments(std::istringstream& stream)
     return !m_numberOfArgumentsLeft;
 }
 
-void Command::executeCommand()
+void CommandHandler::executeCommand()
 {
     LOG(trace) << "Execute new command, for " << this;
 
@@ -194,7 +195,7 @@ void Command::executeCommand()
     reset();
 }
 
-std::string Command::toString() const
+std::string CommandHandler::toString() const
 {
     std::string arguments;
     int i;
@@ -210,7 +211,7 @@ std::string Command::toString() const
     return arguments;
 }
 
-void Command::reset()
+void CommandHandler::reset()
 {
     m_type = NOT_SET;
     m_commandString.clear();
@@ -222,7 +223,7 @@ void Command::reset()
     m_commandArguments.clear();
 }
 
-bool Command::handleStreamIsValid(const std::istringstream& stream)
+bool CommandHandler::handleStreamIsValid(const std::istringstream& stream)
 {
     if (stream.good()) {
         return true;
@@ -240,7 +241,7 @@ bool Command::handleStreamIsValid(const std::istringstream& stream)
     return false;
 }
 
-void Command::splitString(const std::string &string, std::vector<std::string>& destination)
+void CommandHandler::splitString(const std::string &string, std::vector<std::string>& destination)
 {
     const char *cString = string.c_str();
     const char *lastCString = cString;

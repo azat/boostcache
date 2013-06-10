@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "kernel/command.h" // Command::Arguments
+#include "kernel/commandhandler.h" // CommandHandler::Arguments
 
 #include <boost/noncopyable.hpp>
 #include <string>
@@ -31,7 +31,7 @@ namespace Db
      *
      * TODO: make multi-value (value something like std::vector)
      *
-     * TODO: see Command::executeCommand() notes
+     * TODO: see CommandHandler::executeCommand() notes
      */
     class Interface : boost::noncopyable
     {
@@ -44,9 +44,9 @@ namespace Db
          *
          * TODO: add bulk get/set/del commands
          */
-        std::string get(const Command::Arguments& arguments);
-        std::string set(const Command::Arguments& arguments);
-        std::string del(const Command::Arguments& arguments);
+        std::string get(const CommandHandler::Arguments& arguments);
+        std::string set(const CommandHandler::Arguments& arguments);
+        std::string del(const CommandHandler::Arguments& arguments);
 
     protected:
         typedef std::string Key;

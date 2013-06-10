@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "kernel/command.h"
+#include "kernel/commandhandler.h"
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
@@ -44,7 +44,7 @@ private:
         MAX_BUFFER_LENGTH = 1 << 10 /* 1024 */
     };
     char m_buffer[MAX_BUFFER_LENGTH];
-    Command m_command;
+    CommandHandler m_commandHandler;
 
     void asyncRead();
     void asyncWrite(const std::string& message);

@@ -45,7 +45,7 @@
  * TODO: more error-friendly parsing
  * TODO: work on compatitiblity with redis protocol
  */
-class Command : boost::noncopyable
+class CommandHandler : boost::noncopyable
 {
 public:
     typedef std::function<void(const std::string&)> FinishCallback;
@@ -78,7 +78,7 @@ public:
     static std::string toReplyString(const std::string& string);
     static std::string toErrorReplyString(const std::string& string);
 
-    Command()
+    CommandHandler()
     {
         reset();
     }
