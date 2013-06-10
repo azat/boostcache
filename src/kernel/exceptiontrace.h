@@ -18,10 +18,10 @@
 #include "kernel/exception.h"
 #include "util/stacktrace.h"
 
-class WithTraceException : public Exception
+class ExceptionTrace : public Exception
 {
 public:
-    WithTraceException(std::string message = "", long code = 0) : Exception(message, code)
+    ExceptionTrace(std::string message = "", long code = 0) : Exception(message, code)
     {
         Util::printStackTrace();
     }

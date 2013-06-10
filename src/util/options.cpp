@@ -15,7 +15,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
-#include "kernel/with_trace_exception.h"
+#include "kernel/exceptiontrace.h"
 #include "util/options.h"
 #include "util/log.h"
 #include "util/version.h"
@@ -185,7 +185,7 @@ namespace Util
         TEST_AND_PRINT(type, name, float, output);
         TEST_AND_PRINT(type, name, bool, output);
 
-        throw WithTraceException("Unknown type");
+        throw ExceptionTrace("Unknown type");
     }
 
     void Options::dumpOptions()
