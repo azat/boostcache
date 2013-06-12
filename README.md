@@ -13,6 +13,8 @@ Build status and benchmarks
 
 [![Build Status and Benchmarks](https://travis-ci.org/azat/boostcache.png?branch-master)](https://travis-ci.org/azat/boostcache)
 
+![boostcache benchmarks](http://tiny.cc/boostcache-benchmarks "benchmarks")
+
 Used libraries
 --------------
 
