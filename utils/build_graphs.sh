@@ -11,8 +11,12 @@ if [ ! ${SELF:0:1} = "/" ]; then
     SELF="$PWD/$SELF/"
 fi
 PLOTS_ROOT="$SELF/plots"
-BOOSTCACHED=${1:-"$SELF/../.cmake/boostcached"}
-BC_BENCHMARK=${2:-"$SELF/../src/benchmark/bc-benchmark"}
+# Available next:
+# - png
+# - dumb
+FORMAT=${1:-"png"}
+BOOSTCACHED=${2:-"$SELF/../.cmake/boostcached"}
+BC_BENCHMARK=${3:-"$SELF/../src/benchmark/bc-benchmark"}
 SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
 WORKERS_CONF=(1 2 4 10)
 WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
@@ -42,6 +46,17 @@ prepare_graph()
     rm -f "$PLOTS_ROOT"/*.plot.png
 
     for CMD in $COMMANDS; do
+        TERMINAL_OPTIONS=""
+        if [ $FORMAT = "png" ]; then
+            TERMINAL_OPTIONS=$(cat <<EOL
+set terminal pngcairo transparent enhanced size 760,480 font 'Gill Sans,9' rounded dashed
+set output "$PLOTS_ROOT/${CMD}.plot.png"
+EOL
+            )
+        elif [ $FORMAT = "dumb" ]; then
+            TERMINAL_OPTIONS="set terminal dumb"
+        fi
+
         cat > "$PLOTS_ROOT/$CMD.plot" <<EOL
 set title "${CMD}"
 set xlabel "Clients"
@@ -69,8 +84,7 @@ set style line 2 lt rgb "#00A000" lw 2 pt 9
 set style line 3 lt rgb "#5060D0" lw 2 pt 5
 set style line 4 lt rgb "#F25900" lw 2 pt 13
 
-set terminal pngcairo transparent enhanced size 760,480 font "Gill Sans,9" rounded dashed
-set output "$PLOTS_ROOT/${CMD}.plot.png"
+$TERMINAL_OPTIONS
 
 plot \\
 EOL
@@ -132,8 +146,10 @@ for PLOT in "$PLOTS_ROOT"/*.plot; do
     gnuplot -p "$PLOT"
 done
 
-# Join all plots into one picture using imagick
-montage "$PLOTS_ROOT"/*.plot.png \
-    -background none -geometry +0+0 \
-    "$PLOTS_ROOT"/boostcache.png
+if [ $FORMAT = "png" ]; then
+    # Join all plots into one picture using imagick
+    montage "$PLOTS_ROOT"/*.plot.png \
+        -background none -geometry +0+0 \
+        "$PLOTS_ROOT"/boostcache.png
+fi
 
