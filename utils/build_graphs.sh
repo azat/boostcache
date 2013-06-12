@@ -14,13 +14,45 @@ PLOTS_ROOT="$SELF/plots"
 # Available next:
 # - png
 # - dumb
-FORMAT=${1:-"png"}
-BOOSTCACHED=${2:-"$SELF/../.cmake/boostcached"}
-BC_BENCHMARK=${3:-"$SELF/../src/benchmark/bc-benchmark"}
-SOCKET=${4:-"$SELF/../.cmake/boostcached.sock"}
+FORMAT="png"
+BOOSTCACHED="$SELF/../.cmake/boostcached"
+BC_BENCHMARK="$SELF/../src/benchmark/bc-benchmark"
+SOCKET="$SELF/../.cmake/boostcached.sock"
 WORKERS_CONF=(1 2 4 10)
 WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
 COMMANDS="HSET HGET HDEL ATSET ATGET ATDEL PING NOT_EXISTED_COMMAND"
+
+function printHelp()
+{
+    echo "Usage: $0 [ OPTS ]"
+    echo
+    echo " -f    - set format (png, dumb)" 2>&1
+    echo " -b    - boostcached binary" 2>&1
+    echo " -B    - bc-benchmark binray" 2>&1
+    echo " -s    - default socket for boostcached" 2>&1
+    echo " -w    - workers" 2>&1
+    echo " -c    - commands to benchmarking" 2>&1
+    exit 1
+}
+
+function parseOptions()
+{
+    while getopts "h?f:b:B:s:w:c:" o
+        do case "$o" in
+            h)  printHelp;;
+            f)  FORMAT="$OPTARG";;
+            b)  BOOSTCACHED="$OPTARG";;
+            B)  BC_BENCHMARK="$OPTARG";;
+            s)  SOCKET="$OPTARG";;
+            w)  WORKERS_CONF=($OPTARG);;
+            c)  COMMANDS="$OPTARG";;
+        esac
+    done
+
+    WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
+}
+
+parseOptions "$@"
 
 mkdir -p "$PLOTS_ROOT"
 
