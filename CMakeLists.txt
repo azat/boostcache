@@ -68,10 +68,10 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DEBUG FLAGS
                  -g3
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
-                 -ofast -g3
+                 -Ofast -g3
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
-                 -ofast -march=native
+                 -Ofast -march=native
                  LANGUAGES C CXX)
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
