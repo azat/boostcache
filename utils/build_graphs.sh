@@ -176,16 +176,49 @@ function plot_graphs()
 
 function build_graphs()
 {
+    RESULTS_TEMP=$(mktemp)
+
     for CLIENTS in 1 5 10 20 30 40 50 100; do
         for (( i=0; i < $WORKERS_CONF_LENGTH; ++i )); do
             WORKERS=${WORKERS_CONF[$i]}
 
-            run_benchmark "$BOOSTCACHED -w $WORKERS -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
-                # emulate carriage return
-                sed 's/^.*\r//' | \
-                awk '{printf "%s %s\n", $1, $2}' | build_graph_data $CLIENTS $WORKERS
+            # Try to avoid randomization
+            for _RAND in {1..2}; do
+                run_benchmark "$BOOSTCACHED -w $WORKERS -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
+                    # emulate carriage return
+                    sed 's/^.*\r//' | \
+                    awk '{printf "%s %s\n", $1, $2}' >> \
+                    $RESULTS_TEMP
+            done
+
+            unset -v AVG
+            declare -A AVG
+
+            while read LINE; do
+                CMD=$(echo $LINE | awk '{print $1}' | tr -d :)
+                TIME=$(echo $LINE | awk '{print $2}' | sed -r 's/[^0-9.,]//g')
+
+                if [ -e $CMD ]; then
+                    continue
+                fi
+
+                if [ -e ${AVG[$CMD]} ]; then
+                    AVG[$CMD]=0
+                fi
+                # Bash don't have float point arithemits [?]
+                AVG[$CMD]=$(echo "${AVG[$CMD]}+$TIME" | bc -l)
+            done < $RESULTS_TEMP
+
+            echo -n > $RESULTS_TEMP
+
+            for CMD in "${!AVG[@]}"; do
+                printf "%s %.4f\n" $CMD $(echo "${AVG[$CMD]}/2" | bc -l) | \
+                       build_graph_data $CLIENTS $WORKERS
+            done
         done
     done
+
+    rm $RESULTS_TEMP
 }
 
 parse_options "$@"
