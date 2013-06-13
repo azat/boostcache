@@ -61,7 +61,7 @@ mkdir -p "$PLOTS_ROOT"
 # @param server
 # @param benchmark
 #
-run_benchmark()
+function run_benchmark()
 {
     eval "$1 &"
     SERVER_PID="$!"
@@ -71,7 +71,7 @@ run_benchmark()
     kill $SERVER_PID
 }
 
-prepare_graph()
+function prepare_graph()
 {
     rm -f "$PLOTS_ROOT"/*.plot.data
     rm -f "$PLOTS_ROOT"/*.plot
@@ -145,7 +145,7 @@ EOL
 # @param clients
 # @param workers
 #
-build_graph()
+function build_graph()
 {
     local CLIENTS=$1
     local WORKERS=$2
