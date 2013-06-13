@@ -22,7 +22,9 @@ WORKERS_CONF=(1 2 4 10)
 WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
 COMMANDS="HSET HGET HDEL ATSET ATGET ATDEL PING NOT_EXISTED_COMMAND"
 
-function printHelp()
+mkdir -p "$PLOTS_ROOT"
+
+function print_help()
 {
     echo "Usage: $0 [ OPTS ]"
     echo
@@ -35,11 +37,11 @@ function printHelp()
     exit 1
 }
 
-function parseOptions()
+function parse_options()
 {
     while getopts "h?f:b:B:s:w:c:" o
         do case "$o" in
-            h)  printHelp;;
+            h)  print_help;;
             f)  FORMAT="$OPTARG";;
             b)  BOOSTCACHED="$OPTARG";;
             B)  BC_BENCHMARK="$OPTARG";;
@@ -51,10 +53,6 @@ function parseOptions()
 
     WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
 }
-
-parseOptions "$@"
-
-mkdir -p "$PLOTS_ROOT"
 
 # Start server, run benchmark, and kill server
 #
@@ -145,7 +143,7 @@ EOL
 # @param clients
 # @param workers
 #
-function build_graph()
+function build_graph_data()
 {
     local CLIENTS=$1
     local WORKERS=$2
@@ -162,26 +160,35 @@ function build_graph()
     done
 }
 
-prepare_graph
-for CLIENTS in 1 5 10 20 30 40 50 100; do
-    for (( i=0; i < $WORKERS_CONF_LENGTH; ++i )); do
-        WORKERS=${WORKERS_CONF[$i]}
-
-        run_benchmark "$BOOSTCACHED -w $WORKERS -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
-            # emulate carriage return
-            sed 's/^.*\r//' | \
-            awk '{printf "%s %s\n", $1, $2}' | build_graph $CLIENTS $WORKERS
+function plot_graphs()
+{
+    for PLOT in "$PLOTS_ROOT"/*.plot; do
+        gnuplot -p "$PLOT"
     done
-done
 
-for PLOT in "$PLOTS_ROOT"/*.plot; do
-    gnuplot -p "$PLOT"
-done
+    if [ $FORMAT = "png" ]; then
+        # Join all plots into one picture using imagick
+        montage "$PLOTS_ROOT"/*.plot.png \
+            -background none -geometry +0+0 \
+            "$PLOTS_ROOT"/boostcache.png
+    fi
+}
 
-if [ $FORMAT = "png" ]; then
-    # Join all plots into one picture using imagick
-    montage "$PLOTS_ROOT"/*.plot.png \
-        -background none -geometry +0+0 \
-        "$PLOTS_ROOT"/boostcache.png
-fi
+function build_graphs()
+{
+    for CLIENTS in 1 5 10 20 30 40 50 100; do
+        for (( i=0; i < $WORKERS_CONF_LENGTH; ++i )); do
+            WORKERS=${WORKERS_CONF[$i]}
 
+            run_benchmark "$BOOSTCACHED -w $WORKERS -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
+                # emulate carriage return
+                sed 's/^.*\r//' | \
+                awk '{printf "%s %s\n", $1, $2}' | build_graph_data $CLIENTS $WORKERS
+        done
+    done
+}
+
+parse_options "$@"
+prepare_graph
+build_graphs
+plot_graphs
