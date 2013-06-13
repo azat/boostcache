@@ -22,6 +22,7 @@ WORKERS_CONF=(1 2 4 10)
 WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
 COMMANDS="HSET HGET HDEL ATSET ATGET ATDEL PING NOT_EXISTED_COMMAND"
 RANDOM_ITERATIONS=4
+CLIENTS_CONF="1 5 10 20 30 40 50 100"
 
 mkdir -p "$PLOTS_ROOT"
 
@@ -36,12 +37,13 @@ function print_help()
     echo " -w    - workers" 2>&1
     echo " -c    - commands to benchmarking" 2>&1
     echo " -r    - number of random iterations" 2>&1
+    echo " -C    - clients" 2>&1
     exit 1
 }
 
 function parse_options()
 {
-    while getopts "h?f:b:B:s:w:c:r:" o
+    while getopts "h?f:b:B:s:w:c:r:C:" o
         do case "$o" in
             h)  print_help;;
             f)  FORMAT="$OPTARG";;
@@ -51,6 +53,7 @@ function parse_options()
             w)  WORKERS_CONF=($OPTARG);;
             c)  COMMANDS="$OPTARG";;
             r)  RANDOM_ITERATIONS="$OPTARG";;
+            C)  CLIENTS_CONF="$OPTARG";;
         esac
     done
 
@@ -181,7 +184,7 @@ function build_graphs()
 {
     RESULTS_TEMP=$(mktemp)
 
-    for CLIENTS in 1 5 10 20 30 40 50 100; do
+    for CLIENTS in $CLIENTS_CONF; do
         for (( i=0; i < $WORKERS_CONF_LENGTH; ++i )); do
             WORKERS=${WORKERS_CONF[$i]}
 
