@@ -21,6 +21,7 @@ SOCKET="$SELF/../.cmake/boostcached.sock"
 WORKERS_CONF=(1 2 4 10)
 WORKERS_CONF_LENGTH=${#WORKERS_CONF[@]}
 COMMANDS="HSET HGET HDEL ATSET ATGET ATDEL PING NOT_EXISTED_COMMAND"
+RANDOM_ITERATIONS=4
 
 mkdir -p "$PLOTS_ROOT"
 
@@ -34,12 +35,13 @@ function print_help()
     echo " -s    - default socket for boostcached" 2>&1
     echo " -w    - workers" 2>&1
     echo " -c    - commands to benchmarking" 2>&1
+    echo " -r    - number of random iterations" 2>&1
     exit 1
 }
 
 function parse_options()
 {
-    while getopts "h?f:b:B:s:w:c:" o
+    while getopts "h?f:b:B:s:w:c:r:" o
         do case "$o" in
             h)  print_help;;
             f)  FORMAT="$OPTARG";;
@@ -48,6 +50,7 @@ function parse_options()
             s)  SOCKET="$OPTARG";;
             w)  WORKERS_CONF=($OPTARG);;
             c)  COMMANDS="$OPTARG";;
+            r)  RANDOM_ITERATIONS="$OPTARG";;
         esac
     done
 
@@ -183,7 +186,7 @@ function build_graphs()
             WORKERS=${WORKERS_CONF[$i]}
 
             # Try to avoid randomization
-            for _RAND in {1..2}; do
+            for _RAND in $(seq 1 $RANDOM_ITERATIONS); do
                 run_benchmark "$BOOSTCACHED -w $WORKERS -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
                     # emulate carriage return
                     sed 's/^.*\r//' | \
@@ -212,7 +215,7 @@ function build_graphs()
             echo -n > $RESULTS_TEMP
 
             for CMD in "${!AVG[@]}"; do
-                printf "%s %.4f\n" $CMD $(echo "${AVG[$CMD]}/2" | bc -l) | \
+                printf "%s %.4f\n" $CMD $(echo "${AVG[$CMD]}/$RANDOM_ITERATIONS" | bc -l) | \
                        build_graph_data $CLIENTS $WORKERS
             done
         done
