@@ -76,6 +76,12 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
                  LANGUAGES C CXX)
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+# Common flags
+string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPER)
+message(STATUS " C flags  : ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+message(STATUS " CXX flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+
 # boostcache sources
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/client/*.cpp")
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/kernel/*.cpp")
