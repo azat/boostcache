@@ -59,7 +59,7 @@ private:
          */
         int numberOfArguments;
 
-        CallbackInfo(Callback callback = NULL, int numberOfArguments = 0)
+        CallbackInfo(Callback callback = nullptr, int numberOfArguments = 0)
             : callback(callback)
             , numberOfArguments(numberOfArguments)
         {}
