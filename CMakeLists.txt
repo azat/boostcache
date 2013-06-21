@@ -76,6 +76,11 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
                  LANGUAGES C CXX)
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    AddCompilerFlags(FAIL_ON_ERROR FLAGS "-stdlib=libc++" LANGUAGES CXX)
+    FindLibrary(FAIL_ON_ERROR NAMES c++abi)
+endif()
+
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 # Common flags
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPER)
