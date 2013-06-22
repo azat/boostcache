@@ -92,7 +92,7 @@ bool CommandHandler::parseInline(const char *begin, const char *end)
     if (*(lfPtr-1) == '\r') {
         --lfPtr;
     }
-    splitString(begin, lfPtr, m_commandArguments);
+    split(begin, lfPtr, m_commandArguments);
 
     if (!m_commandArguments.size() || !m_commandArguments[0].size() /* no command */) {
         return false;
@@ -219,23 +219,19 @@ void CommandHandler::reset()
     m_commandArguments.clear();
 }
 
-void CommandHandler::splitString(const char *begin, const char *end, std::vector<std::string>& destination)
+void CommandHandler::split(const char *begin, const char *end,
+                           std::vector<std::string>& destination, char delimiter)
 {
-    const char *cString = begin;
-    const char *lastCString = cString;
+    const char *found;
 
     while (true) {
-        if (*cString == ' ' || cString == end) {
-            destination.push_back(std::string(lastCString, cString - lastCString));
+        found = (const char *)memchr((const void *)begin, delimiter, end - begin) ?: end;
+        destination.push_back(std::string(begin, found - begin));
 
-            if (cString == end) {
-                break;
-            }
-
-            // Avoid copying whitespace
-            lastCString = (cString + 1);
+        if (found == end) {
+            break;
         }
 
-        ++cString;
+        begin = (found + 1 /* skip delimiter */);
     }
 }

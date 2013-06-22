@@ -116,7 +116,6 @@ private:
     FinishCallback m_finishCallback;
 
 
-    static void splitString(const char *begin, const char *end, std::vector<std::string>& destination);
     /**
      * Return true if command successfully parsed
      *
@@ -144,4 +143,7 @@ private:
      * i.e. "Connection failover"
      */
     void reset();
+
+    static void split(const char *begin, const char *end,
+                      std::vector<std::string>& destination, char delimiter = ' ');
 };
