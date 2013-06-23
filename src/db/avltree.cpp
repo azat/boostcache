@@ -69,6 +69,6 @@ namespace Db
         }
         m_tree->erase_and_dispose(found, m_deleteDisposer);
 
-        return CommandHandler::REPLY_OK;
+        return CommandHandler::REPLY_TRUE;
     }
 }
