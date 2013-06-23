@@ -229,13 +229,18 @@ void CommandHandler::split(const char *begin, const char *end,
     const char *found;
 
     while (true) {
-        found = (const char *)memchr((const void *)begin, delimiter, end - begin) ?: end;
-        destination.push_back(std::string(begin, found - begin));
-
         if (found == end) {
             break;
         }
 
-        begin = (found + 1 /* skip delimiter */);
+        found = (const char *)memchr((const void *)begin, delimiter, end - begin) ?: end;
+        destination.push_back(std::string(begin, found - begin));
+
+        // trim
+        do {
+            ++found;
+        } while (*found == delimiter);
+
+        begin = found;
     }
 }
