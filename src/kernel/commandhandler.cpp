@@ -237,9 +237,9 @@ void CommandHandler::split(const char *begin, const char *end,
         destination.push_back(std::string(begin, found - begin));
 
         // trim
-        do {
+        while (*found == delimiter) {
             ++found;
-        } while (*found == delimiter);
+        }
 
         begin = found;
     }
