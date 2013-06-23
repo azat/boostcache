@@ -147,4 +147,5 @@ private:
 
     static void split(const char *begin, const char *end,
                       std::vector<std::string>& destination, char delimiter = ' ');
+    static int toInt(const char *begin, const char *end);
 };

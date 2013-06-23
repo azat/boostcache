@@ -13,7 +13,6 @@
 #include "commands.h"
 #include "util/log.h"
 
-#include <boost/spirit/include/qi.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
 #include <cstring>
@@ -26,8 +25,6 @@ const char *CommandHandler::REPLY_OK                 = "+OK\r\n";
 const char *CommandHandler::REPLY_ERROR              = "-ERR\r\n";
 const char *CommandHandler::REPLY_ERROR_NOTSUPPORTED = "-ERR Not supported\r\n";
 
-
-namespace qi = boost::spirit::qi;
 
 std::string CommandHandler::toReplyString(const std::string &string)
 {
@@ -118,7 +115,8 @@ const char* CommandHandler::parseNumberOfArguments(const char *begin, const char
         return nullptr;
     }
 
-    if (!qi::parse((const char* const)begin, lfPtr, '*' >> qi::int_ >> "\r", m_numberOfArguments)) {
+    if ((*begin != '*') ||
+        ((m_numberOfArguments = toInt(begin + 1, lfPtr)) <= 0)) {
         LOG(debug) << "Don't have number of arguments, for " << this;
         reset();
         return nullptr;
@@ -138,12 +136,12 @@ const char* CommandHandler::parseNumberOfArguments(const char *begin, const char
 
 bool CommandHandler::parseArguments(const char *begin, const char *end)
 {
-    const char *argumentsBegin = begin;
+    const char *c = begin;
     const char *lfPtr;
 
     while (m_numberOfArgumentsLeft &&
-           (lfPtr = (const char *)memchr((const void *)argumentsBegin, '\n', end - argumentsBegin))) {
-        if (!qi::parse(argumentsBegin, lfPtr, '$' >> qi::int_ >> "\r", m_lastArgumentLength)) {
+           (lfPtr = (const char *)memchr((const void *)c, '\n', end - c))) {
+        if ((*c != '$') || ((m_lastArgumentLength = toInt(c + 1, lfPtr)) <= 0)) {
             LOG(debug) << "Can't find valid argument length, for " << this;
             reset();
             break;
@@ -165,9 +163,9 @@ bool CommandHandler::parseArguments(const char *begin, const char *end)
         LOG(trace) << "Saving " << m_commandArguments.back() << " argument, for " << this;
 
         // Update some counters/offsets
-        argumentsBegin = (lfPtr + m_lastArgumentLength + 2);
+        c = (lfPtr + m_lastArgumentLength + 2);
         --m_numberOfArgumentsLeft;
-        m_commandOffset += (argumentsBegin - begin);
+        m_commandOffset += (c - begin);
         m_lastArgumentLength = -1;
     }
 
@@ -243,4 +241,20 @@ void CommandHandler::split(const char *begin, const char *end,
 
         begin = found;
     }
+}
+
+int CommandHandler::toInt(const char *begin, const char *end)
+{
+    int num = 0;
+
+    if (*(end - 1) != '\r') {
+        return -1;
+    }
+
+    while (*begin != '\r') {
+        num = (num * 10) + (*begin - '0');
+        ++begin;
+    }
+
+    return num;
 }
