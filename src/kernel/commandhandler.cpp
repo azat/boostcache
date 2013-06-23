@@ -146,21 +146,23 @@ bool CommandHandler::parseArguments(const char *begin, const char *end)
             reset();
             break;
         }
-        LOG(trace) << "Reading " << m_lastArgumentLength << " bytes, for " << this;
         ++lfPtr; // Seek LF
+        LOG(trace) << "Reading " << m_lastArgumentLength << " bytes, "
+                   << "for " << this << " (bulk)";
 
         if ((m_lastArgumentLength + 2 /* CRLF */) > (end - lfPtr)) {
             break;
         }
         if (memcmp(lfPtr + m_lastArgumentLength, "\r\n", 2) != 0) {
-            LOG(debug) << "Malfomed end of argument, for " << this;
+            LOG(debug) << "Malfomed end of argument, for " << this << " (bulk)";
             reset();
             break;
         }
 
         // Save command argument
         m_commandArguments.push_back(std::string(lfPtr, m_lastArgumentLength));
-        LOG(trace) << "Saving " << m_commandArguments.back() << " argument, for " << this;
+        LOG(trace) << "Saving " << m_commandArguments.back() << " argument, "
+                   << "for " << this << " (bulk)";
 
         // Update some counters/offsets
         c = (lfPtr + m_lastArgumentLength + 2);
