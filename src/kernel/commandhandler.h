@@ -75,6 +75,7 @@ public:
      * TODO: optimize
      */
     static std::string toReplyString(const std::string &string);
+    static std::string toInlineReplyString(const std::string &string);
     static std::string toErrorReplyString(const std::string &string);
 
     CommandHandler()

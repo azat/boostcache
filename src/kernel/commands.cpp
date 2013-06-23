@@ -96,7 +96,7 @@ std::string Commands::commandsList(const CommandHandler::Arguments &UNUSED(argum
 
 std::string Commands::pingPong(const CommandHandler::Arguments &UNUSED(arguments))
 {
-    return "+PONG\r\n";
+    return CommandHandler::toInlineReplyString("PONG");
 }
 
 std::string Commands::version(const CommandHandler::Arguments &arguments)
@@ -105,8 +105,6 @@ std::string Commands::version(const CommandHandler::Arguments &arguments)
      * TODO: add helper for checking arguments
      */
     bool verbose = (arguments.size() == 2 && arguments[1] == "VERBOSE");
-    /**
-     * TODO: maybe don't wrap this into reply string, like PONG?
-     */
-    return CommandHandler::toReplyString(Util::versionString(verbose));
+
+    return CommandHandler::toInlineReplyString(Util::versionString(verbose));
 }

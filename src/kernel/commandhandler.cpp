@@ -37,6 +37,10 @@ std::string CommandHandler::toErrorReplyString(const std::string &string)
 {
     return str(boost::format("-ERR %s\r\n") % string);
 }
+std::string CommandHandler::toInlineReplyString(const std::string &string)
+{
+    return str(boost::format("+%s\r\n") % string);
+}
 
 
 bool CommandHandler::feedAndParseCommand(const char *buffer, size_t size)
