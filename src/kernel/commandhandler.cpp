@@ -16,6 +16,7 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
+#include <cstring>
 
 
 const char *CommandHandler::REPLY_FALSE              = ":0\r\n";
@@ -41,33 +42,34 @@ std::string CommandHandler::toErrorReplyString(const std::string &string)
 bool CommandHandler::feedAndParseCommand(const char *buffer, size_t size)
 {
     m_commandString.append(buffer, size);
+
     LOG(trace) << "Try to read/parser command(" << m_commandString.length() << ") "
                "with " << m_numberOfArguments << " arguments, "
                "for " << this;
 
-    std::istringstream stream(m_commandString);
-    stream.seekg(m_commandOffset);
-    if (!handleStreamIsValid(stream)) {
-        // Need to feed more data
+    const char *begin = &m_commandString.c_str()[ m_commandOffset ];
+    const char *end   = &m_commandString.c_str()[ m_commandString.size() ];
+    if (!begin) {
+        LOG(trace) << "Parse: need more data, for " << this;
         return true;
     }
 
     // Try to read new command
     if (m_numberOfArguments < 0) {
         // We have inline request, because it is not start with '*'
-        if (m_commandString[0] != '*') {
-            if (!parseInline(stream)) {
+        if (*begin != '*') {
+            if (!parseInline(begin, end)) {
                 reset();
                 return true;
             }
-        } else if (!parseNumberOfArguments(stream)) {
-            // Need to feed more data
+        } else if (!(begin = parseNumberOfArguments(begin, end))) {
+            LOG(trace) << "Number of arguments: need more data, for " << this;
             return true;
         }
     }
 
-    if ((m_type == MULTI_BULK) && !parseArguments(stream)) {
-        // Need to feed more data
+    if ((m_type == MULTI_BULK) && !parseArguments(begin, end)) {
+        LOG(trace) << "Arguments: need more data, for " << this;
         return true;
     }
 
@@ -75,18 +77,22 @@ bool CommandHandler::feedAndParseCommand(const char *buffer, size_t size)
     return false;
 }
 
-bool CommandHandler::parseInline(std::istringstream &stream)
+bool CommandHandler::parseInline(const char *begin, const char *end)
 {
     m_type = INLINE;
 
-    std::getline(stream, m_lineBuffer);
-    if (!handleStreamIsValid(stream)) {
+    const char *lfPtr = (const char *)memchr((const void *)begin, '\n', end - begin);
+    if (!lfPtr) {
+        LOG(debug) << "LF not found, for " << this;
         return false;
     }
-    m_commandOffset = stream.tellg();
+    m_commandOffset += (lfPtr - begin);
 
-    boost::trim_right(m_lineBuffer);
-    splitString(m_lineBuffer, m_commandArguments);
+    // trim
+    if (*(lfPtr-1) == '\r') {
+        --lfPtr;
+    }
+    splitString(begin, lfPtr, m_commandArguments);
 
     if (!m_commandArguments.size() || !m_commandArguments[0].size() /* no command */) {
         return false;
@@ -98,77 +104,67 @@ bool CommandHandler::parseInline(std::istringstream &stream)
     return true;
 }
 
-bool CommandHandler::parseNumberOfArguments(std::istringstream &stream)
+const char* CommandHandler::parseNumberOfArguments(const char *begin, const char *end)
 {
     m_type = MULTI_BULK;
 
-    std::getline(stream, m_lineBuffer);
-    qi::parse(m_lineBuffer.begin(), m_lineBuffer.end(),
-              '*' >> qi::int_ >> "\r",
-              m_numberOfArguments);
-
-    if (m_numberOfArguments < 0) {
-        LOG(debug) << "Don't have number of arguments, for " << this;
-
-        reset();
-        return false;
+    const char *lfPtr = (const char *)memchr((const void *)begin, '\n', end - begin);
+    if (!lfPtr) {
+        LOG(debug) << "LF not found, for " << this;
+        return nullptr;
     }
+
+    if (!qi::parse((const char* const)begin, lfPtr, '*' >> qi::int_ >> "\r", m_numberOfArguments)) {
+        LOG(debug) << "Don't have number of arguments, for " << this;
+        reset();
+        return nullptr;
+    }
+    ++lfPtr; // Seek LF
 
     m_commandArguments.reserve(m_numberOfArguments);
     m_numberOfArgumentsLeft = m_numberOfArguments;
-    m_commandOffset = stream.tellg();
+
+    m_commandOffset += (lfPtr - begin);
 
     LOG(trace) << "Have " << m_numberOfArguments << " arguments, "
                << "for " << this << " (bulk)";
 
-    return true;
+    return lfPtr;
 }
 
-bool CommandHandler::parseArguments(std::istringstream &stream)
+bool CommandHandler::parseArguments(const char *begin, const char *end)
 {
-    char crLf[2];
-    char *argument = NULL;
-    int argumentLength = 0;
+    const char *argumentsBegin = begin;
+    const char *lfPtr;
 
-    while (m_numberOfArgumentsLeft && std::getline(stream, m_lineBuffer)) {
-        if (!qi::parse(m_lineBuffer.begin(), m_lineBuffer.end(),
-                       '$' >> qi::int_ >> "\r",
-                       m_lastArgumentLength)
-        ) {
+    while (m_numberOfArgumentsLeft &&
+           (lfPtr = (const char *)memchr((const void *)argumentsBegin, '\n', end - argumentsBegin))) {
+        if (!qi::parse(argumentsBegin, lfPtr, '$' >> qi::int_ >> "\r", m_lastArgumentLength)) {
             LOG(debug) << "Can't find valid argument length, for " << this;
             reset();
             break;
         }
         LOG(trace) << "Reading " << m_lastArgumentLength << " bytes, for " << this;
+        ++lfPtr; // Seek LF
 
-        if (argumentLength < m_lastArgumentLength) {
-            argument = (char *)realloc(argument, argumentLength + 1 /* NULL byte */
-                                       + m_lastArgumentLength);
-            argumentLength += m_lastArgumentLength;
-        }
-        stream.read(argument, m_lastArgumentLength);
-        argument[m_lastArgumentLength] = 0;
-        if (!handleStreamIsValid(stream)) {
+        if ((m_lastArgumentLength + 2 /* CRLF */) > (end - lfPtr)) {
             break;
         }
-        // Read CRLF separator
-        stream.read(crLf, 2);
-        if (!handleStreamIsValid(stream)) {
-            break;
-        }
-        if (memcmp(crLf, "\r\n", 2) != 0) {
+        if (memcmp(lfPtr + m_lastArgumentLength, "\r\n", 2) != 0) {
             LOG(debug) << "Malfomed end of argument, for " << this;
             reset();
             break;
         }
+
         // Save command argument
-        LOG(trace) << "Saving " << argument << " argument, for " << this;
-        m_commandArguments.push_back(argument);
-        m_lastArgumentLength = -1;
+        m_commandArguments.push_back(std::string(lfPtr, m_lastArgumentLength));
+        LOG(trace) << "Saving " << m_commandArguments.back() << " argument, for " << this;
 
         // Update some counters/offsets
+        argumentsBegin = (lfPtr + m_lastArgumentLength + 2);
         --m_numberOfArgumentsLeft;
-        m_commandOffset = stream.tellg();
+        m_commandOffset += (argumentsBegin - begin);
+        m_lastArgumentLength = -1;
     }
 
     return !m_numberOfArgumentsLeft;
@@ -223,33 +219,16 @@ void CommandHandler::reset()
     m_commandArguments.clear();
 }
 
-bool CommandHandler::handleStreamIsValid(const std::istringstream &stream)
+void CommandHandler::splitString(const char *begin, const char *end, std::vector<std::string>& destination)
 {
-    if (stream.good()) {
-        return true;
-    }
-
-    /**
-     * TODO: add some internal counters for failover,
-     * or smth like this
-     */
-    if (stream.bad()) {
-        LOG(debug) << "Bad stream, for " << this;
-        reset();
-    }
-
-    return false;
-}
-
-void CommandHandler::splitString(const std::string &string, std::vector<std::string>& destination)
-{
-    const char *cString = string.c_str();
+    const char *cString = begin;
     const char *lastCString = cString;
+
     while (true) {
-        if (*cString == ' ' || *cString == '\0') {
+        if (*cString == ' ' || cString == end) {
             destination.push_back(std::string(lastCString, cString - lastCString));
 
-            if (*cString == '\0') {
+            if (cString == end) {
                 break;
             }
 

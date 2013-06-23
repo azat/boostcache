@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <sstream>
 #include <string>
 #include <vector>
 #include <functional>
@@ -117,27 +116,27 @@ private:
     FinishCallback m_finishCallback;
 
 
-    static void splitString(const std::string &string, std::vector<std::string>& destination);
+    static void splitString(const char *begin, const char *end, std::vector<std::string>& destination);
     /**
      * Return true if command successfully parsed
      *
      * Possible line separator: LF OR CRLF
      */
-    bool parseInline(std::istringstream &stream);
+    bool parseInline(const char *begin, const char *end);
     /**
      * Return true if we can go next, i.e. number of arguments
      * successfully parsed
      *
      * Possible line separator: CRLF
      */
-    bool parseNumberOfArguments(std::istringstream &stream);
+    const char* parseNumberOfArguments(const char *begin, const char *end);
     /**
      * Return true if we can go next, i.e. all arguments
      * successfully parsed
      *
      * Possible line separator: CRLF
      */
-    bool parseArguments(std::istringstream &stream);
+    bool parseArguments(const char *begin, const char *end);
     void executeCommand();
     std::string toString() const;
     /**
@@ -145,9 +144,4 @@ private:
      * i.e. "Connection failover"
      */
     void reset();
-    /**
-     * Check is stream good, and do some stuff otherwise
-     * @return true if stream is good
-     */
-    bool handleStreamIsValid(const std::istringstream &stream);
 };
