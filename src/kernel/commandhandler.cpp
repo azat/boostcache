@@ -13,7 +13,6 @@
 #include "commands.h"
 #include "util/log.h"
 
-#include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
 #include <cstring>
 
