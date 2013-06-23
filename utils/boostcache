@@ -19,8 +19,7 @@ PORT=${2:-"9876"}
 COMMANDS=$(echo "COMMANDS" | nc -q1 $HOST $PORT | tail -n+2)
 VERSION=$(echo "VERSION VERBOSE" \
             | nc -q1 $HOST $PORT \
-            | tail -n+2 \
-            | awk '{print $NF}')
+            | tail -c+2)
 
 # TODO: exit by Ctrl-D
 cat - <<EOF
