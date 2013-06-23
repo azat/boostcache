@@ -10,7 +10,7 @@ SELF=${0%/*}
 if [ ! ${SELF:0:1} = "/" ]; then
     SELF="$PWD/$SELF/"
 fi
-PLOTS_ROOT="$SELF/plots"
+PLOTS_ROOT="$SELF/plots-$(git log --format='%h-%f' -n1)"
 # Available next:
 # - png
 # - dumb
