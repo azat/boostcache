@@ -14,6 +14,7 @@
 #include <vector>
 #include <functional>
 #include <boost/noncopyable.hpp>
+#include <boost/asio/buffer.hpp>
 
 /**
  * @brief Protocol format (based on redis protocol):
@@ -47,36 +48,40 @@
 class CommandHandler : boost::noncopyable
 {
 public:
-    typedef std::function<void(const std::string&)> FinishCallback;
+    /**
+     * TODO: use boost::array instead
+     */
+    typedef std::vector<boost::asio::const_buffer> Reply;
+    typedef std::function<void(const Reply&)> FinishCallback;
     typedef std::vector<std::string> Arguments;
 
     /**
      * Some of default replices for commands
      * TODO: wrap this to enum
      */
-    static const char *REPLY_FALSE;
-    static const char *REPLY_TRUE;
+    static const Reply REPLY_FALSE;
+    static const Reply REPLY_TRUE;
     /**
      * Not found
      */
-    static const char *REPLY_NIL;
-    static const char *REPLY_OK;
+    static const Reply REPLY_NIL;
+    static const Reply REPLY_OK;
     /**
      * Use this when debug, and don't want to write full error message
      */
-    static const char *REPLY_ERROR;
+    static const Reply REPLY_ERROR;
     /**
      * Use this for non implemented _yet_ stuff
      */
-    static const char *REPLY_ERROR_NOTSUPPORTED;
+    static const Reply REPLY_ERROR_NOTSUPPORTED;
 
 
     /**
      * TODO: optimize
      */
-    static std::string toReplyString(const std::string &string);
-    static std::string toInlineReplyString(const std::string &string);
-    static std::string toErrorReplyString(const std::string &string);
+    static Reply toReplyString(const std::string &string);
+    static Reply toInlineReplyString(const std::string &string);
+    static Reply toErrorReplyString(const std::string &string);
 
     CommandHandler()
     {
@@ -149,3 +154,5 @@ private:
                       std::vector<std::string>& destination, char delimiter = ' ');
     static int toInt(const char *begin, const char *end);
 };
+
+typedef CommandHandler::Reply CommandReply;

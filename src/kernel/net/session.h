@@ -47,7 +47,7 @@ private:
     CommandHandler m_commandHandler;
 
     void asyncRead();
-    void asyncWrite(const std::string &message);
+    void asyncWrite(const CommandReply &response);
     void handleRead(const boost::system::error_code &error, size_t bytesTransferred);
     void handleWrite(const boost::system::error_code &error);
 };

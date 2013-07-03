@@ -16,26 +16,54 @@
 #include <boost/format.hpp>
 #include <cstring>
 
-
-const char *CommandHandler::REPLY_FALSE              = ":0\r\n";
-const char *CommandHandler::REPLY_TRUE               = ":1\r\n";
-const char *CommandHandler::REPLY_NIL                = "$-1\r\n";
-const char *CommandHandler::REPLY_OK                 = "+OK\r\n";
-const char *CommandHandler::REPLY_ERROR              = "-ERR\r\n";
-const char *CommandHandler::REPLY_ERROR_NOTSUPPORTED = "-ERR Not supported\r\n";
+namespace Asio = boost::asio;
 
 
-std::string CommandHandler::toReplyString(const std::string &string)
+/**
+ * TODO: avoid this dirty initialization
+ */
+const CommandReply CommandHandler::REPLY_FALSE              = CommandReply(1, Asio::buffer(":0\r\n"));
+const CommandReply CommandHandler::REPLY_TRUE               = CommandReply(1, Asio::buffer(":1\r\n"));
+const CommandReply CommandHandler::REPLY_NIL                = CommandReply(1, Asio::buffer("$-1\r\n"));
+const CommandReply CommandHandler::REPLY_OK                 = CommandReply(1, Asio::buffer("+OK\r\n"));
+const CommandReply CommandHandler::REPLY_ERROR              = CommandReply(1, Asio::buffer("-ERR\r\n"));
+const CommandReply CommandHandler::REPLY_ERROR_NOTSUPPORTED = CommandReply(1, Asio::buffer("-ERR Not supported\r\n"));
+
+
+CommandReply CommandHandler::toReplyString(const std::string &string)
 {
-    return str(boost::format("$%i\r\n%s\r\n") % string.size() % string);
+    CommandReply response(5);
+
+    response.push_back(Asio::buffer("$"));
+    response.push_back(Asio::buffer(std::to_string(string.size())));
+    // TODO: class property
+    response.push_back(Asio::buffer("\r\n"));
+    response.push_back(Asio::buffer(string));
+    response.push_back(Asio::buffer("\r\n"));
+
+    return response;
 }
-std::string CommandHandler::toErrorReplyString(const std::string &string)
+CommandReply CommandHandler::toErrorReplyString(const std::string &string)
 {
-    return str(boost::format("-ERR %s\r\n") % string);
+    CommandReply response(3);
+
+    response.push_back(Asio::buffer("-ERR "));
+    response.push_back(Asio::buffer(string));
+    // TODO: class property
+    response.push_back(Asio::buffer("\r\n"));
+
+    return response;
 }
-std::string CommandHandler::toInlineReplyString(const std::string &string)
+CommandReply CommandHandler::toInlineReplyString(const std::string &string)
 {
-    return str(boost::format("+%s\r\n") % string);
+    CommandReply response(3);
+
+    response.push_back(Asio::buffer("+"));
+    response.push_back(Asio::buffer(string));
+    // TODO: class property
+    response.push_back(Asio::buffer("\r\n"));
+
+    return response;
 }
 
 

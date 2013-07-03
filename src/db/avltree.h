@@ -34,9 +34,9 @@ namespace Db
     public:
         AvlTree();
 
-        std::string get(const CommandHandler::Arguments &arguments);
-        std::string set(const CommandHandler::Arguments &arguments);
-        std::string del(const CommandHandler::Arguments &arguments);
+        CommandReply get(const CommandHandler::Arguments &arguments);
+        CommandReply set(const CommandHandler::Arguments &arguments);
+        CommandReply del(const CommandHandler::Arguments &arguments);
 
     private:
         static std::hash<Key> m_keyHashFunction;

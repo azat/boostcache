@@ -39,12 +39,10 @@ void Session<SocketType>::asyncRead()
 }
 
 template <typename SocketType>
-void Session<SocketType>::asyncWrite(const std::string &message)
+void Session<SocketType>::asyncWrite(const CommandReply &response)
 {
-    Asio::async_write(m_socket,
-                      Asio::buffer(message),
-                      std::bind(&Session::handleWrite, this,
-                                PlaceHolders::_1));
+    Asio::async_write(m_socket, response,
+                      std::bind(&Session::handleWrite, this, PlaceHolders::_1));
 }
 
 template <typename SocketType>

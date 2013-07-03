@@ -21,7 +21,7 @@ namespace Db
     {
     }
 
-    std::string AvlTree::get(const CommandHandler::Arguments &arguments)
+    CommandReply AvlTree::get(const CommandHandler::Arguments &arguments)
     {
         Node findMe(arguments[1]);
 
@@ -35,7 +35,7 @@ namespace Db
         return CommandHandler::toReplyString(found->get().value);
     }
 
-    std::string AvlTree::set(const CommandHandler::Arguments &arguments)
+    CommandReply AvlTree::set(const CommandHandler::Arguments &arguments)
     {
         // get exclusive lock
         boost::upgrade_lock<boost::shared_mutex> lock(m_access);
@@ -56,7 +56,7 @@ namespace Db
         return CommandHandler::REPLY_OK;
     }
 
-    std::string AvlTree::del(const CommandHandler::Arguments &arguments)
+    CommandReply AvlTree::del(const CommandHandler::Arguments &arguments)
     {
         // get exclusive lock
         boost::upgrade_lock<boost::shared_mutex> lock(m_access);
