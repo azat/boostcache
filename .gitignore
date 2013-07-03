@@ -93,3 +93,6 @@ gmon.out
 *.plot
 *.plot.data
 *.png
+
+# "stashed"
+/patches
