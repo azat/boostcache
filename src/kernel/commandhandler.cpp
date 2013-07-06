@@ -22,12 +22,17 @@ namespace Asio = boost::asio;
 /**
  * TODO: avoid this dirty initialization
  */
-const CommandReply CommandHandler::REPLY_FALSE              = CommandReply(1, Asio::buffer(":0\r\n"));
-const CommandReply CommandHandler::REPLY_TRUE               = CommandReply(1, Asio::buffer(":1\r\n"));
-const CommandReply CommandHandler::REPLY_NIL                = CommandReply(1, Asio::buffer("$-1\r\n"));
-const CommandReply CommandHandler::REPLY_OK                 = CommandReply(1, Asio::buffer("+OK\r\n"));
-const CommandReply CommandHandler::REPLY_ERROR              = CommandReply(1, Asio::buffer("-ERR\r\n"));
-const CommandReply CommandHandler::REPLY_ERROR_NOTSUPPORTED = CommandReply(1, Asio::buffer("-ERR Not supported\r\n"));
+#define INITIALIZE_REPLY_CONST(constName, value) \
+    const CommandReply CommandHandler::constName = CommandReply(1, Asio::buffer(value))
+
+INITIALIZE_REPLY_CONST(REPLY_FALSE, ":0\r\n");
+INITIALIZE_REPLY_CONST(REPLY_TRUE,  ":1\r\n");
+INITIALIZE_REPLY_CONST(REPLY_NIL,   "$-1\r\n");
+INITIALIZE_REPLY_CONST(REPLY_OK,    "+OK\r\n");
+INITIALIZE_REPLY_CONST(REPLY_ERROR, "-ERR\r\n");
+INITIALIZE_REPLY_CONST(REPLY_ERROR_NOTSUPPORTED, "-ERR Not supported\r\n");
+
+#undef INITIALIZE_REPLY_CONST
 
 
 CommandReply CommandHandler::toReplyString(const std::string &string)
