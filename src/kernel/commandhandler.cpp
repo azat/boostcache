@@ -34,41 +34,37 @@ INITIALIZE_REPLY_CONST(REPLY_ERROR_NOTSUPPORTED, "-ERR Not supported\r\n");
 
 #undef INITIALIZE_REPLY_CONST
 
+CommandReply CommandHandler::reply = {
+    Asio::buffer("$"), Asio::buffer(""), Asio::buffer("\r\n"),
+    Asio::buffer(""), Asio::buffer("\r\n")
+};
+CommandReply CommandHandler::inlineReply = {
+    // TODO: class property "\r\n"
+    Asio::buffer("-ERR"), Asio::buffer(""), Asio::buffer("\r\n")
+};
+CommandReply CommandHandler::errorReply = {
+    Asio::buffer("+"), Asio::buffer(""), Asio::buffer("\r\n"),
+};
+
 
 CommandReply CommandHandler::toReplyString(const std::string &string)
 {
-    CommandReply response(5);
+    reply[1] = Asio::buffer(std::to_string(string.size()));
+    reply[3] = Asio::buffer(string);
 
-    response.push_back(Asio::buffer("$"));
-    response.push_back(Asio::buffer(std::to_string(string.size())));
-    // TODO: class property
-    response.push_back(Asio::buffer("\r\n"));
-    response.push_back(Asio::buffer(string));
-    response.push_back(Asio::buffer("\r\n"));
-
-    return response;
+    return reply;
 }
 CommandReply CommandHandler::toErrorReplyString(const std::string &string)
 {
-    CommandReply response(3);
+    errorReply[1] = Asio::buffer(string);
 
-    response.push_back(Asio::buffer("-ERR "));
-    response.push_back(Asio::buffer(string));
-    // TODO: class property
-    response.push_back(Asio::buffer("\r\n"));
-
-    return response;
+    return errorReply;
 }
 CommandReply CommandHandler::toInlineReplyString(const std::string &string)
 {
-    CommandReply response(3);
+    inlineReply[1] = Asio::buffer(string);
 
-    response.push_back(Asio::buffer("+"));
-    response.push_back(Asio::buffer(string));
-    // TODO: class property
-    response.push_back(Asio::buffer("\r\n"));
-
-    return response;
+    return inlineReply;
 }
 
 

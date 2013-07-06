@@ -79,6 +79,9 @@ public:
     /**
      * TODO: optimize
      */
+    static Reply reply;
+    static Reply inlineReply;
+    static Reply errorReply;
     static Reply toReplyString(const std::string &string);
     static Reply toInlineReplyString(const std::string &string);
     static Reply toErrorReplyString(const std::string &string);
