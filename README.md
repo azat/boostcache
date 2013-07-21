@@ -34,9 +34,7 @@ You can also view into [.travis.yml](.travis.yml),
 but in short you can run next commands on debian like distribution:
 
 ```shell
-sudo add-apt-repository -y ppa:azat/boost-unofficial
-sudo apt-get update
-sudo apt-get install libboost1.53-all-dev
+sudo apt-get install libboost1.54-all-dev
 
 mkdir .cmake
 cd .cmake
@@ -51,3 +49,4 @@ make
 ../utils/boostcache
 Go ahead!
 ```
+

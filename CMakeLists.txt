@@ -148,10 +148,10 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS    "libc6 (>= 2.13),"
                                     "libgcc1 (>= 4.7-2),"
                                     "libstdc++6 (>= 4.8),"
-                                    "libboost-program-options1.53-dev,"
-                                    "libboost-system1.53-dev,"
-                                    "libboost-log1.53-dev,"
-                                    "libboost-thread1.53-dev")
+                                    "libboost-program-options1.54-dev,"
+                                    "libboost-system1.54-dev,"
+                                    "libboost-log1.54-dev,"
+                                    "libboost-thread1.54-dev")
 JoinArguments(CPACK_DEBIAN_PACKAGE_DEPENDS)
 # TODO: strip in productin
 set(CPACK_STRIP_FILES NO)
@@ -160,3 +160,4 @@ set(CPACK_PACKAGE_HOMEPAGE "https://github.com/azat/boostcache")
 set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${CPACK_PACKAGE_HOMEPAGE}")
 set(CPACK_GENERATOR "DEB")
 include(CPack)
+
