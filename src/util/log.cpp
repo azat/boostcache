@@ -15,6 +15,11 @@
 #include <boost/log/expressions.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+
+#if !defined(BOOST_LOG_NO_THREADS)
+#include <boost/log/attributes/current_thread_id.hpp>
+#endif
 
 namespace Util
 {
@@ -29,7 +34,6 @@ namespace Util
         }
 
         namespace trivial = boost::log::trivial;
-        // boost::log::add_common_attributes();
 
         /**
          * Reversing because severity_level::trace = 0, while
@@ -63,6 +67,8 @@ namespace Util
     {
         using namespace boost::log;
 
+        add_common_attributes();
+
         add_file_log
         (
             keywords::file_name = fileFormat,
@@ -72,9 +78,13 @@ namespace Util
             keywords::time_based_rotation = sinks::file::rotation_at_time_point(0, 0, 0),
             keywords::format = (
                 expressions::stream
-                    << "[" << expressions::format_date_time< boost::posix_time::ptime >("TimeStamp", "%Y-%m-%d %H:%M:%S") << "] "
-                    << "[" << trivial::severity << "]\t"
-                    << expressions::smessage
+                    << "[" << expressions::format_date_time< boost::posix_time::ptime >("TimeStamp", "%Y-%m-%d %H:%M:%S.%f") << "] "
+#if !defined(BOOST_LOG_NO_THREADS)
+                    // TODO: make it like in logger to tty/console
+                    << "[" << expressions::attr< thread_id >("ThreadID") << "] "
+#endif
+                    << "[" << trivial::severity << "]    "
+                    << expressions::message
             )
         );
     }
