@@ -23,7 +23,7 @@ Used libraries
 - OR [stxxl library](http://stxxl.sourceforge.net/)
 - [boost asio](http://www.boost.org/libs/asio)
 - [cmake for builds](http://cmake.org/)
-- [boost log (proposal)](http://boost-log.sourceforge.net/)
+- [boost log](http://www.boost.org/libs/log)
 
 Building
 --------
