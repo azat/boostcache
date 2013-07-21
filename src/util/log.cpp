@@ -10,7 +10,10 @@
 
 #include "log.h"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/log/core/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/setup/file.hpp>
 
 namespace Util
@@ -26,6 +29,7 @@ namespace Util
         }
 
         namespace trivial = boost::log::trivial;
+        // boost::log::add_common_attributes();
 
         /**
          * Reversing because severity_level::trace = 0, while
@@ -58,20 +62,21 @@ namespace Util
     void installLoggerFile(const std::string &fileFormat)
     {
         using namespace boost::log;
+
         add_file_log
         (
             keywords::file_name = fileFormat,
             keywords::rotation_size = LOGGER_ROTATION_SIZE,
             keywords::auto_flush = true,
             keywords::open_mode = (std::ios::out | std::ios::app),
-            keywords::time_based_rotation = sinks::file::rotation_at_time_point(0, 0, 0)
-            /**
-             * TODO: for now I have next error from linker:
-             * undefined reference to
-             * `boost::log::v2_mt_posix::basic_formatter<char>
-             * boost::log::v2_mt_posix::parse_formatter<char>(char const*, char const*)'
-             */
-            // keywords::format = "[%TimeStamp%]: %Message%"
+            keywords::time_based_rotation = sinks::file::rotation_at_time_point(0, 0, 0),
+            keywords::format = (
+                expressions::stream
+                    << "[" << expressions::format_date_time< boost::posix_time::ptime >("TimeStamp", "%Y-%m-%d %H:%M:%S") << "] "
+                    << "[" << trivial::severity << "]\t"
+                    << expressions::smessage
+            )
         );
     }
 }
+
