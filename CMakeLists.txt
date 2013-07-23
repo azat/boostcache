@@ -19,13 +19,6 @@ message(STATUS "Making ${PROJECT_NAME} on ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PR
 
 find_package(Boost REQUIRED COMPONENTS program_options system log thread)
 
-FindLibrary(FAIL_ON_ERROR NAMES
-            pthread
-            boost_program_options
-            boost_system
-            boost_log
-            boost_thread)
-
 # The version number.
 set(BoostCache_VERSION_MAJOR 0)
 set(BoostCache_VERSION_MINOR 10)
@@ -101,7 +94,7 @@ configure_file(
 file(GLOB_RECURSE BOOSTCACHE_SERVER_SOURCES "${BOOSTCACHE_SOURCE_DIR}/server/*.cpp")
 list(APPEND BOOSTCACHE_SERVER_SOURCES ${BOOSTCACHE_SOURCES})
 add_executable(boostcached ${BOOSTCACHE_SERVER_SOURCES})
-target_link_libraries(boostcached ${LIBS})
+target_link_libraries(boostcached ${Boost_LIBRARIES})
 install(TARGETS boostcached RUNTIME DESTINATION bin)
 install(PROGRAMS "${BOOSTCACHE_UTILS_DIR}/boostcache" DESTINATION bin)
 install(FILES "${BOOSTCACHE_UTILS_DIR}/bash_completion"
