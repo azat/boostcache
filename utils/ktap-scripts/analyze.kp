@@ -1,0 +1,30 @@
+#!/usr/bin/env ktap
+
+#
+# Analyze queries to boostcache server
+#
+# USAGE: ./analyze.kp PID
+#
+# TODO: add more events/probes/informatation/stats/aggregation
+# TODO: tid(), pid(), cpu(), execname()
+# TODO: extract address of executeCommand(), for now it is 0x4fc156 (or patch ktap.)
+#
+
+self = {}
+
+trace probe:/usr/src/boostcache/boostcached:0x4fc156
+{
+    self[m_start] = gettimeofday_us();
+    self[m_end] = 0;
+}
+
+trace probe:/usr/src/boostcache/boostcached:0x4fc156%return
+{
+    self[m_end] = gettimeofday_us() - self[m_start];
+    printf("query %d ms\n", (self[m_start] - self[m_end]) / 1000000)
+}
+
+trace_end
+{
+    print("ktap stopped.");
+}
