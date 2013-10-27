@@ -11,7 +11,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 include(ExternalProject)
 include(AddCompilerFlags)
 include(CheckCXXCompilerFlag)
-include(FindLibrary)
 include(AddFilesGlobRecursiveToList)
 include(GitVersion)
 
