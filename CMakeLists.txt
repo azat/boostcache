@@ -39,6 +39,7 @@ include_directories(${BOOSTCACHE_SOURCE_DIR})
 include_directories(${BOOSTCACHE_BINARY_DIR})
 
 # Common compiler flags
+set(CMAKE_EXE_LINKER_FLAGS -pthread)
 AddCompilerFlags(FAIL_ON_ERROR FLAGS
                  -Wall -Wextra -Werror
                  LANGUAGES C CXX)
