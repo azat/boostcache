@@ -12,13 +12,15 @@
 
 self = {}
 
-trace probe:/usr/src/boostcache/boostcached:0x4fc156
+trace probe:/usr/src/boostcache/boostcached:0xfc156
 {
+    print("executeCommand()");
+
     self[m_start] = gettimeofday_us();
     self[m_end] = 0;
 }
 
-trace probe:/usr/src/boostcache/boostcached:0x4fc156%return
+trace probe:/usr/src/boostcache/boostcached:0xfc156%return
 {
     self[m_end] = gettimeofday_us() - self[m_start];
     printf("query %d ms\n", (self[m_start] - self[m_end]) / 1000000)
@@ -28,3 +30,4 @@ trace_end
 {
     print("ktap stopped.");
 }
+
