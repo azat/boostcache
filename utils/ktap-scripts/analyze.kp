@@ -15,18 +15,17 @@ stat = {}
 trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*
 {
     self["m_start"] = gettimeofday_us()
-    self["m_end"] = 0
 }
 
 trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*%return
 {
-    self["m_end"] = gettimeofday_us() - self["m_start"]
-    stat[self["m_end"] - self["m_start"] / 1000000] += 1
+    self["m_end"] = gettimeofday_us()
+    stat[(self["m_end"] - self["m_start"])] += 1
 }
 
 trace_end
 {
-    print("value is in ms")
+    print("value is in usec (microseconds)")
     histogram(stat)
 }
 
