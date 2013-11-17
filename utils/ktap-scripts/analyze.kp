@@ -22,7 +22,7 @@ trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*
 trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*%return
 {
     self["m_end"] = gettimeofday_us() - self["m_start"];
-    printf("query %d ms\n", (self["m_start"] - self["m_end"]) / 1000000)
+    printf("query %d ms\n", (self["m_end"] - self["m_start"]) / 1000000)
 }
 
 trace_end
