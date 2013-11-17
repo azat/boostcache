@@ -11,7 +11,7 @@
 
 self = {}
 
-trace probe:/usr/src/boostcache/boostcached:_ZN14CommandHandler14executeCommandEv
+trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*
 {
     print("executeCommand()");
 
@@ -19,7 +19,7 @@ trace probe:/usr/src/boostcache/boostcached:_ZN14CommandHandler14executeCommandE
     self[m_end] = 0;
 }
 
-trace probe:/usr/src/boostcache/boostcached:_ZN14CommandHandler14executeCommandEv%return
+trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*%return
 {
     self[m_end] = gettimeofday_us() - self[m_start];
     printf("query %d ms\n", (self[m_start] - self[m_end]) / 1000000)
