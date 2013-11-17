@@ -3,7 +3,7 @@
 #
 # Analyze queries to boostcache server
 #
-# USAGE: ./analyze.kp PID
+# USAGE: ./analyze.kp
 #
 # TODO: add more events/probes/informatation/stats/aggregation
 # TODO: tid(), pid(), cpu(), execname()
