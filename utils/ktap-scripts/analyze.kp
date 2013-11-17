@@ -10,6 +10,7 @@
 #
 
 self = {}
+stat = {}
 
 trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*
 {
@@ -20,11 +21,12 @@ trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*
 trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*%return
 {
     self["m_end"] = gettimeofday_us() - self["m_start"]
-    printf("query %d ms\n", (self["m_end"] - self["m_start"]) / 1000000)
+    stat[self["m_end"] - self["m_start"] / 1000000] += 1
 }
 
 trace_end
 {
-    print("ktap stopped.")
+    print("value is in ms")
+    histogram(stat)
 }
 
