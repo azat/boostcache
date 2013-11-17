@@ -13,8 +13,6 @@ self = {}
 
 trace probe:/usr/src/boostcache/boostcached:*CommandHandler*executeCommand*
 {
-    print("executeCommand()");
-
     self["m_start"] = gettimeofday_us();
     self["m_end"] = 0;
 }
