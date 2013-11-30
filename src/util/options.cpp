@@ -126,14 +126,14 @@ namespace Util
         std::string config = getValue<std::string>("config");
         if (config.size()) {
             std::ifstream fileStream(config.c_str());
-            if (!fileStream.is_open()) {
+            if (fileStream.is_open()) {
+                std::stringstream stringStream;
+                parseConfigFile(fileStream, stringStream);
+                po::store(po::parse_config_file(stringStream, allOptions), variablesMap);
+                fileStream.close();
+            } else if (!variablesMap["config"].defaulted()) {
                 throw Exception("Could not read from config file");
             }
-
-            std::stringstream stringStream;
-            parseConfigFile(fileStream, stringStream);
-            po::store(po::parse_config_file(stringStream, allOptions), variablesMap);
-            fileStream.close();
         }
 
         po::notify(variablesMap);
