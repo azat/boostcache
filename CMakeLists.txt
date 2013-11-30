@@ -128,6 +128,14 @@ ExternalProject_Add(benchmark
 )
 install(PROGRAMS "${BENCHMARK_SRC_DIR}/bc-benchmark" DESTINATION bin)
 
+macro(AddCustomTarget name)
+    add_custom_target(${name} COMMAND ${ARGN})
+endmacro()
+AddCustomTarget(runbenchmarks ${BOOSTCACHE_UTILS_DIR}/run_benchmarks.sh)
+AddCustomTarget(buildplots ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh)
+AddCustomTarget(buildplots-png ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh -w2 -f png)
+AddCustomTarget(buildplots-dumb ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh -w2 -f dumb)
+
 # Package
 include(GenerateDebianControl)
 set(CPACK_PACKAGE_NAME "boostcache-git")
