@@ -30,9 +30,9 @@ script:
     - cd .cmake
     - cmake -DCMAKE_BUILD_TYPE=Distribution ..
     - make VERBOSE=1
-    - ../utils/run_benchmarks.sh
+    - make runbenchmarks
    # Build graphs in terminal
-    - ../utils/build_graphs.sh -w 2 -f dumb
+    - make buildplots-dumb
    # TODO: add gtest
 
 branches:
