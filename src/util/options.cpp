@@ -112,21 +112,14 @@ namespace Util
 
         additionalOptions();
 
-        /* don't allow guessing - creates ambiguities when some options are
-         * prefixes of others. allow long disguises and don't allow guessing
-         * to get away with our vvvvvvv trick. */
-        int mongoStyle = (
-            (
-                (po::command_line_style::unix_style ^ po::command_line_style::allow_guessing)
-                | po::command_line_style::allow_long_disguise
-            )
-            ^ po::command_line_style::allow_sticky);
+        int style = (po::command_line_style::unix_style ^ po::command_line_style::allow_guessing) |
+                    po::command_line_style::allow_long_disguise;
 
         OptionsDescription allOptions;
         allOptions.add(hiddenOptions);
         allOptions.add(visibleOptions);
         po::store(po::command_line_parser(argc, argv)
-                  .style(mongoStyle)
+                  .style(style)
                   .options(allOptions)
                   .run(), variablesMap);
 
