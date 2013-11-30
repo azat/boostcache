@@ -49,14 +49,14 @@ namespace Util
 
         friend std::ostream& operator <<(std::ostream &out, Options &options)
         {
-            out << options.visibleOptions;
+            out << options.m_visibleOptions;
             return out;
         }
 
         void dumpOptions();
 
     protected:
-        OptionsDescription visibleOptions;
+        OptionsDescription m_visibleOptions;
         virtual void additionalOptions() = 0;
 
     private:
@@ -64,11 +64,10 @@ namespace Util
         static const bool PRINT_HELP_ON_ERROR = false;
         static const size_t MAX_VERBOSE_LEVEL = 20;
 
-        VariablesMap variablesMap;
+        VariablesMap m_variablesMap;
 
-        OptionsDescription hiddenOptions;
-
-        ExpandedOptions expandedOptions;
+        OptionsDescription m_hiddenOptions;
+        ExpandedOptions m_expandedOptions;
 
         // Because of old gcc don't allow to call once contruction from another for the same class.
         // And in future we will add another construtor with default config files to parse in.

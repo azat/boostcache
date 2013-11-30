@@ -26,29 +26,29 @@ namespace Util
     template <class Type>
     Type Options::getValue(const char *optionKey) const
     {
-        // From expandedOptions
-        ExpandedOptions::const_iterator it = expandedOptions.find(optionKey);
-        if (it != expandedOptions.end()) {
+        // From m_expandedOptions
+        ExpandedOptions::const_iterator it = m_expandedOptions.find(optionKey);
+        if (it != m_expandedOptions.end()) {
             return boost::any_cast<Type>(it->second);
         }
 
-        // From variablesMap
-        if (IGNORE_NOT_EXISTED_ITEMS && !variablesMap.count(optionKey)) {
+        // From m_variablesMap
+        if (IGNORE_NOT_EXISTED_ITEMS && !m_variablesMap.count(optionKey)) {
             return Type();
         }
-        return variablesMap[optionKey].as<Type>();
+        return m_variablesMap[optionKey].as<Type>();
     }
 
     bool Options::getValue(const char *optionKey) const
     {
-        // From expandedOptions
-        ExpandedOptions::const_iterator it = expandedOptions.find(optionKey);
-        if (it != expandedOptions.end()) {
+        // From m_expandedOptions
+        ExpandedOptions::const_iterator it = m_expandedOptions.find(optionKey);
+        if (it != m_expandedOptions.end()) {
             return true;
         }
 
-        // From variablesMap
-        if (IGNORE_NOT_EXISTED_ITEMS && !variablesMap.count(optionKey)) {
+        // From m_variablesMap
+        if (IGNORE_NOT_EXISTED_ITEMS && !m_variablesMap.count(optionKey)) {
             return false;
         }
         return true;
@@ -60,12 +60,12 @@ namespace Util
             parseOptions(argc, argv);
 
             // TODO: not sure is it normal to check this here.
-            if (variablesMap.count("help")) {
+            if (m_variablesMap.count("help")) {
                 std::cout << (*this);
                 exit(EXIT_SUCCESS);
             }
 
-            if (variablesMap.count("version")) {
+            if (m_variablesMap.count("version")) {
                 std::cout << versionString(true) << std::endl;
                 exit(EXIT_SUCCESS);
             }
@@ -96,10 +96,10 @@ namespace Util
 
         /* support for -vv -vvvv etc. */
         for (std::string s = "vv"; s.length() <= MAX_VERBOSE_LEVEL; s.append("v")) {
-            hiddenOptions.add_options()(s.c_str(), "verbose");
+            m_hiddenOptions.add_options()(s.c_str(), "verbose");
         }
 
-        visibleOptions.add_options()
+        m_visibleOptions.add_options()
             ("help,h", "Produce help message")
             ("verbose,v",
              "Enable verbosity (optionally specify level, more v - more debug messages)")
@@ -116,12 +116,12 @@ namespace Util
                     po::command_line_style::allow_long_disguise;
 
         OptionsDescription allOptions;
-        allOptions.add(hiddenOptions);
-        allOptions.add(visibleOptions);
+        allOptions.add(m_hiddenOptions);
+        allOptions.add(m_visibleOptions);
         po::store(po::command_line_parser(argc, argv)
                   .style(style)
                   .options(allOptions)
-                  .run(), variablesMap);
+                  .run(), m_variablesMap);
 
         std::string config = getValue<std::string>("config");
         if (config.size()) {
@@ -129,19 +129,19 @@ namespace Util
             if (fileStream.is_open()) {
                 std::stringstream stringStream;
                 parseConfigFile(fileStream, stringStream);
-                po::store(po::parse_config_file(stringStream, allOptions), variablesMap);
+                po::store(po::parse_config_file(stringStream, allOptions), m_variablesMap);
                 fileStream.close();
-            } else if (!variablesMap["config"].defaulted()) {
+            } else if (!m_variablesMap["config"].defaulted()) {
                 throw Exception("Could not read from config file");
             }
         }
 
-        po::notify(variablesMap);
+        po::notify(m_variablesMap);
 
-        expandedOptions["logLevel"] = int(variablesMap.count("verbose") ? 1 : 0);
+        m_expandedOptions["logLevel"] = int(m_variablesMap.count("verbose") ? 1 : 0);
         for (std::string s = "vv"; s.length() <= MAX_VERBOSE_LEVEL; s.append("v")) {
-            if (variablesMap.count(s)) {
-                expandedOptions["logLevel"] = int(s.length());
+            if (m_variablesMap.count(s)) {
+                m_expandedOptions["logLevel"] = int(s.length());
             }
         }
     }
@@ -183,7 +183,7 @@ namespace Util
 
     void Options::dumpOptions()
     {
-        for (VariablesMap::const_iterator iter = variablesMap.begin(); iter != variablesMap.end(); ++iter) {
+        for (VariablesMap::const_iterator iter = m_variablesMap.begin(); iter != m_variablesMap.end(); ++iter) {
             std::string name = (*iter).first;
             const std::type_info &type = iter->second.value().type();
 

@@ -14,7 +14,7 @@ namespace Server
 {
     void Options::additionalOptions()
     {
-        visibleOptions.add_options()
+        m_visibleOptions.add_options()
             ("port,p", boost::program_options::value<int>()->default_value(9876),
              "Port listen to")
             ("host,H", boost::program_options::value<std::string>(),
