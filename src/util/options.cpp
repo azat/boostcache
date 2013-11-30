@@ -104,7 +104,7 @@ namespace Util
             ("verbose,v",
              "Enable verbosity (optionally specify level, more v - more debug messages)")
             ("version,V", "Print version")
-            ("config,c", po::value<std::string>(),
+            ("config,c", po::value<std::string>()->default_value("/etc/boostcached"),
              "Setup custom config file")
             ("logFile,l", po::value<std::string>(),
              "Output log (used instead of stdout, can contain modifiers)")
