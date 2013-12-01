@@ -23,13 +23,12 @@ namespace Local = boost::asio::local;
 
 namespace {
 
-void startAccept(evconnlistener *lev, evutil_socket_t /*fd*/,
+void startAccept(evconnlistener *lev, evutil_socket_t fd,
                  sockaddr * /*addr*/, int /*socklen*/,
                  void * /*arg = CommandServer **/)
 {
-    Session *newSession = new Session(lev);
+    Session *newSession = new Session(lev, fd);
     LOG(debug) << "Client connected " << newSession;
-    newSession->start();
 }
 
 };

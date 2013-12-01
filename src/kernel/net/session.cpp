@@ -16,52 +16,42 @@
 namespace PlaceHolders = std::placeholders;
 namespace Asio = boost::asio;
 
-Session::Session(evconnlistener *lev)
+namespace {
+
+void asyncRead(struct bufferevent * /*bev*/, void *arg)
+{
+    Session *session = (Session *)arg;
+    session->handleRead();
+}
+
+};
+
+Session::Session(evconnlistener *lev, int fd)
     : m_lev(lev)
+    , m_bev(bufferevent_socket_new(evconnlistener_get_base(lev), fd, BEV_OPT_CLOSE_ON_FREE))
+    , m_input(bufferevent_get_input(m_bev))
+    , m_output(bufferevent_get_output(m_bev))
 {
     m_commandHandler.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
-}
 
-void Session::start()
-{
-    asyncRead();
-}
-
-void Session::asyncRead()
-{
-    m_socket.async_read_some(Asio::buffer(m_buffer, MAX_BUFFER_LENGTH),
-                             std::bind(&Session::handleRead, this,
-                                       PlaceHolders::_1,
-                                       PlaceHolders::_2));
+    bufferevent_setcb(m_bev, asyncRead, NULL, NULL, NULL);
+    bufferevent_enable(m_bev, EV_READ | EV_WRITE);
 }
 
 void Session::asyncWrite(const std::string &message)
 {
-    Asio::async_write(m_socket,
-                      Asio::buffer(message),
-                      std::bind(&Session::handleWrite, this,
-                                PlaceHolders::_1));
+    evbuffer_add(m_output, message.c_str(), message.size());
 }
 
-void Session::handleRead(const boost::system::error_code &error, size_t bytesTransferred)
+void Session::handleRead()
 {
-    if (error) {
-        delete this;
-        return;
-    }
+    const char *body = (const char *)evbuffer_pullup(m_input, -1);
+    size_t bytesTransferred = evbuffer_get_length(m_input);
 
-    if (m_commandHandler.feedAndParseCommand(m_buffer, bytesTransferred)) {
-        asyncRead();
-    }
-}
+    /* Will call asyncWrite() as finish callback,
+     * when parsing will be finished. */
+    m_commandHandler.feedAndParseCommand(body, bytesTransferred);
 
-void Session::handleWrite(const boost::system::error_code &error)
-{
-    if (error) {
-        delete this;
-        return;
-    }
-
-    asyncRead();
+    evbuffer_drain(m_input, bytesTransferred);
 }
 
