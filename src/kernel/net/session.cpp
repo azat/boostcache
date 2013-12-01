@@ -10,68 +10,59 @@
 
 #include "session.h"
 
-#include <boost/asio/write.hpp>
+#include "util/log.h"
+
 #include <functional>
 
 namespace PlaceHolders = std::placeholders;
-namespace Asio = boost::asio;
 
-template <typename SocketType>
-Session<SocketType>::Session(boost::asio::io_service &ioService)
-    : m_socket(ioService)
+namespace {
+
+void asyncRead(struct bufferevent * /*bev*/, void *arg)
+{
+    Session *session = (Session *)arg;
+    session->handleRead();
+}
+
+void eventTriggered(struct bufferevent *bev, short events, void *arg)
+{
+    if (events & (BEV_EVENT_ERROR | BEV_EVENT_EOF)) {
+        Session *session = (Session *)arg;
+        LOG(debug) << "Client disconnected " << session;
+
+        bufferevent_free(bev);
+        delete session;
+    }
+}
+
+};
+
+Session::Session(evconnlistener *lev, int fd)
+    : m_lev(lev)
+    , m_bev(bufferevent_socket_new(evconnlistener_get_base(lev), fd, BEV_OPT_CLOSE_ON_FREE))
+    , m_input(bufferevent_get_input(m_bev))
+    , m_output(bufferevent_get_output(m_bev))
 {
     m_commandHandler.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
+
+    bufferevent_setcb(m_bev, asyncRead, NULL, eventTriggered, this);
+    bufferevent_enable(m_bev, EV_READ | EV_WRITE);
 }
 
-template <typename SocketType>
-void Session<SocketType>::start()
+void Session::asyncWrite(const std::string &message)
 {
-    asyncRead();
+    evbuffer_add(m_output, message.c_str(), message.size());
 }
 
-template <typename SocketType>
-void Session<SocketType>::asyncRead()
+void Session::handleRead()
 {
-    m_socket.async_read_some(Asio::buffer(m_buffer, MAX_BUFFER_LENGTH),
-                             std::bind(&Session::handleRead, this,
-                                       PlaceHolders::_1,
-                                       PlaceHolders::_2));
+    const char *body = (const char *)evbuffer_pullup(m_input, -1);
+    size_t bytesTransferred = evbuffer_get_length(m_input);
+
+    /* Will call asyncWrite() as finish callback,
+     * when parsing will be finished. */
+    m_commandHandler.feedAndParseCommand(body, bytesTransferred);
+
+    evbuffer_drain(m_input, bytesTransferred);
 }
 
-template <typename SocketType>
-void Session<SocketType>::asyncWrite(const std::string &message)
-{
-    Asio::async_write(m_socket,
-                      Asio::buffer(message),
-                      std::bind(&Session::handleWrite, this,
-                                PlaceHolders::_1));
-}
-
-template <typename SocketType>
-void Session<SocketType>::handleRead(const boost::system::error_code &error, size_t bytesTransferred)
-{
-    if (error) {
-        delete this;
-        return;
-    }
-
-    if (m_commandHandler.feedAndParseCommand(m_buffer, bytesTransferred)) {
-        asyncRead();
-    }
-}
-
-template <typename SocketType>
-void Session<SocketType>::handleWrite(const boost::system::error_code &error)
-{
-    if (error) {
-        delete this;
-        return;
-    }
-
-    asyncRead();
-}
-
-
-// Explicit instantiations
-template class Session<boost::asio::local::stream_protocol::socket>;
-template class Session<boost::asio::ip::tcp::socket>;

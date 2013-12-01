@@ -12,45 +12,31 @@
 
 #include "kernel/commandhandler.h"
 
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/local/stream_protocol.hpp>
 #include <boost/noncopyable.hpp>
-#include <string>
+
+#include <event2/listener.h>
+#include <event2/bufferevent.h>
+#include <event2/buffer.h>
 
 /**
  * Session handler for CommandServer
  */
-template <typename SocketType>
 class Session : boost::noncopyable
 {
 public:
-    Session(boost::asio::io_service &ioService);
+    Session(evconnlistener *lev, int fd);
 
-    void start();
-
-    SocketType& socket()
-    {
-        return m_socket;
-    }
+    void handleRead();
 
 private:
-    SocketType m_socket;
-    /**
-     * TODO: We can avoid this, by using buffers with std::string
-     */
-    enum Constants
-    {
-        MAX_BUFFER_LENGTH = 1 << 10 /* 1024 */
-    };
-    char m_buffer[MAX_BUFFER_LENGTH];
+    evconnlistener *m_lev;
+    bufferevent *m_bev;
+
+    evbuffer *m_input;
+    evbuffer *m_output;
+
     CommandHandler m_commandHandler;
 
-    void asyncRead();
     void asyncWrite(const std::string &message);
-    void handleRead(const boost::system::error_code &error, size_t bytesTransferred);
-    void handleWrite(const boost::system::error_code &error);
 };
 
-typedef Session<boost::asio::local::stream_protocol::socket> UnixDomainSession;
-typedef Session<boost::asio::ip::tcp::socket> TcpSession;

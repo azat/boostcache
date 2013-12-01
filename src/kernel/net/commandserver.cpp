@@ -11,24 +11,29 @@
 
 #include "commandserver.h"
 #include "util/log.h"
+#include "util/assert.h"
 
-#include <functional>
-#include <vector>
-#include <sstream>
+#include <arpa/inet.h>
+#include <sys/un.h>
+#include <cstring>
 
 
-namespace PlaceHolders = std::placeholders;
-namespace Ip = boost::asio::ip;
-namespace Local = boost::asio::local;
+namespace {
+
+void startAccept(evconnlistener *lev, evutil_socket_t fd,
+                 sockaddr * /*addr*/, int /*socklen*/,
+                 void * /*arg = CommandServer **/)
+{
+    Session *newSession = new Session(lev, fd);
+    LOG(debug) << "Client connected " << newSession;
+}
+
+};
 
 CommandServer::CommandServer(const Options &options)
     : m_options(options)
-    , m_ioServicePool(m_options.numOfWorkers)
-    , m_tcpAcceptor(m_ioServicePool.ioService())
-    , m_unixDomainAcceptor(m_tcpAcceptor.get_io_service())
-    , m_stopSignals(m_tcpAcceptor.get_io_service())
+    , m_base(event_base_new())
 {
-    setupStopSignals();
     createTcpEndpoint();
     createUnixDomainEndpoint();
 }
@@ -41,48 +46,27 @@ void CommandServer::start()
 {
     LOG(info) << "Starting server with " << m_options.numOfWorkers << " workers";
 
-    /**
-     * TODO: more test/benchmarks
-     * Maybe this will be slower then single-threaded application in some cases
-     *
-     * TODO: Also this is just simple/raw implementation, it is not final.
-     * A lot of work need to do.
-     */
-    m_ioServicePool.start();
-}
+    evconnlistener_enable(m_tcpAcceptor);
+    evconnlistener_enable(m_unixDomainAcceptor);
 
-void CommandServer::setupStopSignals()
-{
-    m_stopSignals.add(SIGINT);
-    m_stopSignals.add(SIGTERM);
-#if defined(SIGQUIT)
-    m_stopSignals.add(SIGQUIT);
-#endif
-
-    m_stopSignals.async_wait(std::bind(&CommandServer::stop, this));
+    event_base_loop(m_base, 0);
 }
 
 void CommandServer::createTcpEndpoint()
 {
-    std::stringstream streamForPort;
-    streamForPort << m_options.port;
+    struct sockaddr_in addr;
+    /* TODO: support IPv6 */
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(m_options.port);
+    ASSERT(inet_pton(AF_INET, m_options.host.c_str(), &addr.sin_addr) == 1);
 
-    Ip::tcp::resolver resolver(m_tcpAcceptor.get_io_service());
-    // TODO: support ipv6
-    Ip::tcp::resolver::query query(Ip::tcp::v4(),
-                                   m_options.host,
-                                   streamForPort.str(),
-                                   Ip::resolver_query_base::numeric_service);
-    Ip::tcp::endpoint endpoint = *resolver.resolve(query);
+    m_tcpAcceptor = evconnlistener_new_bind(m_base,
+                                            startAccept, this,
+                                            FLAGS, BACKLOG,
+                                            (struct sockaddr *)&addr, sizeof(addr));
+    BUG(m_tcpAcceptor);
 
-    m_tcpAcceptor.open(endpoint.protocol());
-    m_tcpAcceptor.set_option(Ip::tcp::acceptor::reuse_address(true));
-    m_tcpAcceptor.bind(endpoint);
-    m_tcpAcceptor.listen();
-
-    LOG(info) << "Listening on " << endpoint;
-
-    startAcceptOnTcp();
+    LOG(info) << "Listening on " << m_options.host << ":" << m_options.port;
 }
 
 void CommandServer::createUnixDomainEndpoint()
@@ -90,72 +74,16 @@ void CommandServer::createUnixDomainEndpoint()
     // TODO: unlink only "*.sock"
     ::unlink(m_options.socket.c_str());
 
-    Local::stream_protocol::endpoint unixDomainEndpoint(m_options.socket);
+    struct sockaddr_un addr;
+    addr.sun_family = AF_UNIX;
+    strncpy(addr.sun_path, m_options.socket.c_str(), sizeof(addr.sun_path));
 
-    m_unixDomainAcceptor.open(unixDomainEndpoint.protocol());
-    m_unixDomainAcceptor.bind(unixDomainEndpoint);
-    m_unixDomainAcceptor.listen();
+    m_unixDomainAcceptor = evconnlistener_new_bind(m_base,
+                                                   startAccept, this,
+                                                   FLAGS, BACKLOG,
+                                                   (struct sockaddr *)&addr, sizeof(addr));
+    BUG(m_unixDomainAcceptor);
 
-    LOG(info) << "Listening on " << unixDomainEndpoint;
-
-    startAcceptOnUnixDomain();
-}
-
-void CommandServer::startAcceptOnTcp()
-{
-    TcpSession *newSession = new TcpSession(m_ioServicePool.ioService());
-    m_tcpAcceptor.async_accept(newSession->socket(),
-                               std::bind(&CommandServer::handleAcceptOnTcp,
-                                         this,
-                                         newSession,
-                                         PlaceHolders::_1));
-}
-
-void CommandServer::startAcceptOnUnixDomain()
-{
-    UnixDomainSession *newSession = new UnixDomainSession(m_ioServicePool.ioService());
-    m_unixDomainAcceptor.async_accept(newSession->socket(),
-                                      std::bind(&CommandServer::handleAcceptOnUnixDomain,
-                                                this,
-                                                newSession,
-                                                PlaceHolders::_1));
-}
-
-void CommandServer::handleAcceptOnTcp(TcpSession *newSession,
-                                      const boost::system::error_code &error)
-{
-    if (!error) {
-        LOG(debug) << "Client connected " << newSession
-                   << " on " << m_tcpAcceptor.local_endpoint();
-        newSession->start();
-    } else {
-        LOG(error) << "Client session error on "
-                   << m_tcpAcceptor.local_endpoint();
-        delete newSession;
-    }
-
-    startAcceptOnTcp();
-}
-
-void CommandServer::handleAcceptOnUnixDomain(UnixDomainSession *newSession,
-                                             const boost::system::error_code &error)
-{
-    if (!error) {
-        LOG(debug) << "Client connected " << newSession
-                   << " on " << m_unixDomainAcceptor.local_endpoint();
-        newSession->start();
-    } else {
-        LOG(error) << "Client session error on "
-                   << m_unixDomainAcceptor.local_endpoint();
-        delete newSession;
-    }
-
-    startAcceptOnUnixDomain();
-}
-
-void CommandServer::stop()
-{
-    m_ioServicePool.stop();
-    LOG(info) << "Server was stopped";
+    LOG(info) << "Listening on " << m_options.socket;
 }
 
