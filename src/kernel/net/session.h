@@ -18,24 +18,21 @@
 #include <boost/noncopyable.hpp>
 #include <string>
 
+#include <event2/event.h>
+#include <event2/listener.h>
+
 /**
  * Session handler for CommandServer
  */
-template <typename SocketType>
 class Session : boost::noncopyable
 {
 public:
-    Session(boost::asio::io_service &ioService);
+    Session(evconnlistener *lev);
 
     void start();
 
-    SocketType& socket()
-    {
-        return m_socket;
-    }
-
 private:
-    SocketType m_socket;
+    evconnlistener *m_lev;
     /**
      * TODO: We can avoid this, by using buffers with std::string
      */
@@ -52,5 +49,3 @@ private:
     void handleWrite(const boost::system::error_code &error);
 };
 
-typedef Session<boost::asio::local::stream_protocol::socket> UnixDomainSession;
-typedef Session<boost::asio::ip::tcp::socket> TcpSession;

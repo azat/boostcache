@@ -11,7 +11,6 @@
 #pragma once
 
 #include "session.h"
-#include "ioservicepool.h"
 
 #include <string>
 
@@ -20,6 +19,9 @@
 #include <boost/asio/local/stream_protocol.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/noncopyable.hpp>
+
+#include <event2/event.h>
+#include <event2/listener.h>
 
 /**
  * @brief Async command server
@@ -53,26 +55,30 @@ public:
     void start();
 
 private:
+    /* TODO: ~LEV_OPT_THREADSAFE */
+    static const unsigned FLAGS = LEV_OPT_LEAVE_SOCKETS_BLOCKING |
+                                  LEV_OPT_CLOSE_ON_FREE |
+                                  LEV_OPT_CLOSE_ON_EXEC |
+                                  LEV_OPT_REUSEABLE |
+                                  LEV_OPT_THREADSAFE |
+                                  LEV_OPT_DISABLED;
+    static const int BACKLOG = -1;
+
     Options m_options;
 
-    IoServicePool m_ioServicePool;
-    boost::asio::ip::tcp::acceptor m_tcpAcceptor;
-    boost::asio::local::stream_protocol::acceptor m_unixDomainAcceptor;
-
-    boost::asio::signal_set m_stopSignals;
-
-    void setupStopSignals();
+    /**
+     * TODO: Because of migration to libevent:
+     *
+     * - we didn't have normal stop
+     * - memory leaks
+     * - more verbose error messages
+     * - [?] multi-threadding support (workers)
+     */
+    event_base *m_base;
+    evconnlistener *m_tcpAcceptor;
+    evconnlistener *m_unixDomainAcceptor;
 
     void createTcpEndpoint();
     void createUnixDomainEndpoint();
-
-    void startAcceptOnTcp();
-    void startAcceptOnUnixDomain();
-
-    void handleAcceptOnTcp(TcpSession *newSession,
-                           const boost::system::error_code &error);
-    void handleAcceptOnUnixDomain(UnixDomainSession *newSession,
-                                  const boost::system::error_code &error);
-
-    void stop();
 };
+
