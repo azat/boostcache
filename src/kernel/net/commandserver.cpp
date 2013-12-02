@@ -15,7 +15,6 @@
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/local/stream_protocol.hpp>
 
 #include <functional>
 #include <vector>
@@ -24,7 +23,6 @@
 
 namespace PlaceHolders = std::placeholders;
 namespace Ip = boost::asio::ip;
-namespace Local = boost::asio::local;
 
 namespace {
 
@@ -86,17 +84,15 @@ void CommandServer::createUnixDomainEndpoint()
     // TODO: unlink only "*.sock"
     ::unlink(m_options.socket.c_str());
 
-    Local::stream_protocol::endpoint endpoint(m_options.socket);
-
     struct sockaddr_un addr;
     addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_path, endpoint.path().c_str(), sizeof(addr.sun_path));
+    strncpy(addr.sun_path, m_options.socket.c_str(), sizeof(addr.sun_path));
     m_unixDomainAcceptor = evconnlistener_new_bind(m_base,
                                                    startAccept, this,
                                                    FLAGS, BACKLOG,
                                                    (sockaddr *)&addr, sizeof(addr));
     ASSERT(m_unixDomainAcceptor);
 
-    LOG(info) << "Listening on " << endpoint;
+    LOG(info) << "Listening on " << m_options.socket;
 }
 
