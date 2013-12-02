@@ -52,6 +52,8 @@ void CommandServer::start()
 
     evconnlistener_enable(m_tcpAcceptor);
     evconnlistener_enable(m_unixDomainAcceptor);
+
+    event_base_loop(m_base, 0);
 }
 
 void CommandServer::createTcpEndpoint()
