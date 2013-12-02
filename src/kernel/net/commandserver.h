@@ -66,6 +66,7 @@ private:
      * TODO: Because of migration to libevent:
      *
      * - we didn't have normal stop
+     * - signal handlers
      * - memory leaks
      * - more verbose error messages
      * - [?] multi-threadding support (workers)
