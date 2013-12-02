@@ -64,7 +64,7 @@ void CommandServer::createTcpEndpoint()
                                             startAccept, this,
                                             FLAGS, BACKLOG,
                                             (struct sockaddr *)&addr, sizeof(addr));
-    ASSERT(m_tcpAcceptor);
+    BUG(m_tcpAcceptor);
 
     LOG(info) << "Listening on " << m_options.host << ":" << m_options.port;
 }
@@ -82,7 +82,7 @@ void CommandServer::createUnixDomainEndpoint()
                                                    startAccept, this,
                                                    FLAGS, BACKLOG,
                                                    (struct sockaddr *)&addr, sizeof(addr));
-    ASSERT(m_unixDomainAcceptor);
+    BUG(m_unixDomainAcceptor);
 
     LOG(info) << "Listening on " << m_options.socket;
 }
