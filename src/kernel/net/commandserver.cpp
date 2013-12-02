@@ -21,7 +21,6 @@
 #include <sstream>
 
 
-namespace PlaceHolders = std::placeholders;
 namespace Ip = boost::asio::ip;
 
 namespace {
