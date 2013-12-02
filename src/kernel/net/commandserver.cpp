@@ -13,6 +13,10 @@
 #include "util/log.h"
 #include "util/assert.h"
 
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/local/stream_protocol.hpp>
+
 #include <functional>
 #include <vector>
 #include <sstream>

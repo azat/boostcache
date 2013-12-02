@@ -14,10 +14,6 @@
 
 #include <string>
 
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/local/stream_protocol.hpp>
-#include <boost/asio/signal_set.hpp>
 #include <boost/noncopyable.hpp>
 
 #include <event2/event.h>
