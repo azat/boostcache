@@ -10,6 +10,8 @@
 
 #include "session.h"
 
+#include "util/log.h"
+
 #include <boost/asio/write.hpp>
 #include <functional>
 
@@ -24,6 +26,17 @@ void asyncRead(struct bufferevent * /*bev*/, void *arg)
     session->handleRead();
 }
 
+void eventTriggered(struct bufferevent *bev, short events, void *arg)
+{
+    if (events & (BEV_EVENT_ERROR | BEV_EVENT_EOF)) {
+        Session *session = (Session *)arg;
+        LOG(debug) << "Client disconnected " << session;
+
+        bufferevent_free(bev);
+        delete session;
+    }
+}
+
 };
 
 Session::Session(evconnlistener *lev, int fd)
@@ -34,7 +47,7 @@ Session::Session(evconnlistener *lev, int fd)
 {
     m_commandHandler.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
 
-    bufferevent_setcb(m_bev, asyncRead, NULL, NULL, this);
+    bufferevent_setcb(m_bev, asyncRead, NULL, eventTriggered, this);
     bufferevent_enable(m_bev, EV_READ | EV_WRITE);
 }
 
