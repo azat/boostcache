@@ -11,6 +11,7 @@
 
 #include "commandserver.h"
 #include "util/log.h"
+#include "util/assert.h"
 
 #include <functional>
 #include <vector>
@@ -69,6 +70,7 @@ void CommandServer::createTcpEndpoint()
                                             startAccept, this,
                                             FLAGS, BACKLOG,
                                             addr, sizeof(*addr));
+    ASSERT(m_tcpAcceptor);
 
     LOG(info) << "Listening on " << endpoint;
 }
@@ -85,6 +87,7 @@ void CommandServer::createUnixDomainEndpoint()
                                                    startAccept, this,
                                                    FLAGS, BACKLOG,
                                                    addr, sizeof(*addr));
+    ASSERT(m_unixDomainAcceptor);
 
     LOG(info) << "Listening on " << endpoint;
 }
