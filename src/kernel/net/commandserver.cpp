@@ -16,6 +16,7 @@
 #include <arpa/inet.h>
 #include <sys/un.h>
 #include <cstring>
+#include <csignal>
 
 
 namespace {
@@ -36,6 +37,8 @@ CommandServer::CommandServer(const Options &options)
 {
     createTcpEndpoint();
     createUnixDomainEndpoint();
+
+    BUG(signal(SIGPIPE, SIG_IGN) != SIG_ERR);
 }
 
 CommandServer::~CommandServer()
