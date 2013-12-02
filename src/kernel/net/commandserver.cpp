@@ -82,11 +82,13 @@ void CommandServer::createUnixDomainEndpoint()
 
     Local::stream_protocol::endpoint endpoint(m_options.socket);
 
-    struct sockaddr *addr = endpoint.data();
+    struct sockaddr_un addr;
+    addr.sun_family = AF_UNIX;
+    strncpy(addr.sun_path, endpoint.path().c_str(), sizeof(addr.sun_path));
     m_unixDomainAcceptor = evconnlistener_new_bind(m_base,
                                                    startAccept, this,
                                                    FLAGS, BACKLOG,
-                                                   addr, sizeof(*addr));
+                                                   (sockaddr *)&addr, sizeof(addr));
     ASSERT(m_unixDomainAcceptor);
 
     LOG(info) << "Listening on " << endpoint;
