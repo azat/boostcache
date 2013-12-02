@@ -13,15 +13,10 @@
 #include "util/log.h"
 #include "util/assert.h"
 
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include <arpa/inet.h>
+#include <sys/un.h>
+#include <cstring>
 
-#include <functional>
-#include <vector>
-#include <sstream>
-
-
-namespace Ip = boost::asio::ip;
 
 namespace {
 
@@ -59,23 +54,19 @@ void CommandServer::start()
 
 void CommandServer::createTcpEndpoint()
 {
-    std::stringstream streamForPort;
-    streamForPort << m_options.port;
+    struct sockaddr_in addr;
+    /* TODO: support IPv6 */
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(m_options.port);
+    ASSERT(inet_pton(AF_INET, m_options.host.c_str(), &addr.sin_addr) == 1);
 
-    boost::asio::io_service io;
-    Ip::tcp::resolver resolver(io);
-    // TODO: support ipv6
-    Ip::tcp::resolver::query query(Ip::tcp::v4(), m_options.host, streamForPort.str());
-    Ip::tcp::endpoint endpoint = *resolver.resolve(query);
-
-    struct sockaddr *addr = endpoint.data();
     m_tcpAcceptor = evconnlistener_new_bind(m_base,
                                             startAccept, this,
                                             FLAGS, BACKLOG,
-                                            addr, sizeof(*addr));
+                                            (struct sockaddr *)&addr, sizeof(addr));
     ASSERT(m_tcpAcceptor);
 
-    LOG(info) << "Listening on " << endpoint;
+    LOG(info) << "Listening on " << m_options.host << ":" << m_options.port;
 }
 
 void CommandServer::createUnixDomainEndpoint()
@@ -86,10 +77,11 @@ void CommandServer::createUnixDomainEndpoint()
     struct sockaddr_un addr;
     addr.sun_family = AF_UNIX;
     strncpy(addr.sun_path, m_options.socket.c_str(), sizeof(addr.sun_path));
+
     m_unixDomainAcceptor = evconnlistener_new_bind(m_base,
                                                    startAccept, this,
                                                    FLAGS, BACKLOG,
-                                                   (sockaddr *)&addr, sizeof(addr));
+                                                   (struct sockaddr *)&addr, sizeof(addr));
     ASSERT(m_unixDomainAcceptor);
 
     LOG(info) << "Listening on " << m_options.socket;

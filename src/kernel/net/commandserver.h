@@ -70,6 +70,7 @@ private:
      * - memory leaks
      * - more verbose error messages
      * - [?] multi-threadding support (workers)
+     * - [?] domains resolving
      */
     event_base *m_base;
     evconnlistener *m_tcpAcceptor;
