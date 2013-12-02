@@ -34,7 +34,7 @@ Session::Session(evconnlistener *lev, int fd)
 {
     m_commandHandler.setFinishCallback(std::bind(&Session::asyncWrite, this, PlaceHolders::_1));
 
-    bufferevent_setcb(m_bev, asyncRead, NULL, NULL, NULL);
+    bufferevent_setcb(m_bev, asyncRead, NULL, NULL, this);
     bufferevent_enable(m_bev, EV_READ | EV_WRITE);
 }
 
