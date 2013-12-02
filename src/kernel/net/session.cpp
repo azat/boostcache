@@ -12,11 +12,9 @@
 
 #include "util/log.h"
 
-#include <boost/asio/write.hpp>
 #include <functional>
 
 namespace PlaceHolders = std::placeholders;
-namespace Asio = boost::asio;
 
 namespace {
 

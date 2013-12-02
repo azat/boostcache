@@ -12,13 +12,8 @@
 
 #include "kernel/commandhandler.h"
 
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/local/stream_protocol.hpp>
 #include <boost/noncopyable.hpp>
-#include <string>
 
-#include <event2/event.h>
 #include <event2/listener.h>
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
