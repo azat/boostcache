@@ -17,7 +17,7 @@ namespace Server
         m_visibleOptions.add_options()
             ("port,p", boost::program_options::value<int>()->default_value(9876),
              "Port listen to")
-            ("host,H", boost::program_options::value<std::string>(),
+            ("host,H", boost::program_options::value<std::string>()->default_value("127.0.0.1"),
              "Host listen to")
             ("socket,s", boost::program_options::value<std::string>()->default_value("boostcached.sock"),
              "Socket listen to")
