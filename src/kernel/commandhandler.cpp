@@ -214,7 +214,22 @@ std::string CommandHandler::toString() const
 void CommandHandler::reset()
 {
     m_type = NOT_SET;
-    m_commandString.clear();
+    /**
+     * This is test support of bulk write and then bulk read.
+     * It means that first client send all requests, after this
+     * read all responses.
+     *
+     * TODO: This is very un-optimal, since erase()
+     * will do memmove() I think.
+     * (However it can just move pointer to the begining of string)
+     *
+     * TODO: after this partial erase we need something like fullReset()
+     * on errors.
+     *
+     * TODO: we need to re-parse buffer, since it's not empty
+     */
+    m_commandString.erase(0, m_commandOffset);
+    LOG(trace) << "Erased " << m_commandOffset;
     m_commandOffset = 0;
     m_numberOfArguments = -1;
     m_numberOfArgumentsLeft = -1;
