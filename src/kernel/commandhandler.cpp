@@ -48,7 +48,7 @@ bool CommandHandler::feedAndParseCommand(const char *buffer, size_t size)
                "for " << this;
 
     const char *begin = &m_commandString.c_str()[ m_commandOffset ];
-    const char *end   = &m_commandString.c_str()[ m_commandString.size() ];
+    const char *end   = &m_commandString.c_str()[ m_commandString.size() - m_commandOffset ];
     if (!begin) {
         LOG(trace) << "Parse: need more data, for " << this;
         return true;
