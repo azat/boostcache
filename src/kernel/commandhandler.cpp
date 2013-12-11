@@ -137,6 +137,7 @@ bool CommandHandler::parseArguments(const char *begin, const char *end)
 {
     const char *c = begin;
     const char *lfPtr;
+    size_t prevCommandOffset = m_commandOffset;
 
     while (m_numberOfArgumentsLeft &&
            (lfPtr = (const char *)memchr((const void *)c, '\n', end - c))) {
@@ -166,7 +167,7 @@ bool CommandHandler::parseArguments(const char *begin, const char *end)
         // Update some counters/offsets
         c = (lfPtr + m_lastArgumentLength + 2);
         --m_numberOfArgumentsLeft;
-        m_commandOffset += (c - begin);
+        m_commandOffset = prevCommandOffset + (c - begin);
         m_lastArgumentLength = -1;
     }
 
