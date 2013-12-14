@@ -86,9 +86,6 @@ gmon.out
 # internal
 *-internal/
 
-# doxygen
-/.doxygen
-
 # plots
 *.plot
 *.plot.data
@@ -96,3 +93,6 @@ gmon.out
 
 # "stashed"
 /patches
+
+!.gitignore
+.*
