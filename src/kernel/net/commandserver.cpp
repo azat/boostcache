@@ -69,7 +69,10 @@ void CommandServer::createTcpEndpoint()
 
     Ip::tcp::resolver resolver(m_tcpAcceptor.get_io_service());
     // TODO: support ipv6
-    Ip::tcp::resolver::query query(Ip::tcp::v4(), m_options.host, streamForPort.str());
+    Ip::tcp::resolver::query query(Ip::tcp::v4(),
+                                   m_options.host,
+                                   streamForPort.str(),
+                                   Ip::resolver_query_base::numeric_service);
     Ip::tcp::endpoint endpoint = *resolver.resolve(query);
 
     m_tcpAcceptor.open(endpoint.protocol());
@@ -155,3 +158,4 @@ void CommandServer::stop()
     m_ioServicePool.stop();
     LOG(info) << "Server was stopped";
 }
+
