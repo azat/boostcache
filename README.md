@@ -21,7 +21,7 @@ Used libraries
 - [boost program options](http://www.boost.org/libs/program_options)
 - [boost intrusive containers (rbtree|avltree)](http://www.boost.org/libs/intrusive)
 - OR [stxxl library](http://stxxl.sourceforge.net/)
-- [boost asio](http://www.boost.org/libs/asio)
+- [libevent](http://libevent.org/)
 - [cmake for builds](http://cmake.org/)
 - [boost log](http://www.boost.org/libs/log)
 
