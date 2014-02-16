@@ -47,6 +47,10 @@ AddCompilerFlags(FAIL_ON_ERROR FLAGS
                  LANGUAGES CXX)
 AddCompilerFlags(FLAGS -rdynamic
                  LANGUAGES C CXX)
+AddCompilerFlags(FAIL_ON_ERROR FLAGS
+                 "-B${BOOSTCACHE_ROOT_DIR}/utils/toolchain"
+                 LANGUAGES CXX)
+
 # Per BUILD_TYPE
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to 'Debug' as none was specified.")
@@ -67,6 +71,8 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
                  -O3 -march=native
                  LANGUAGES C CXX)
+# Using gold linker
+
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
