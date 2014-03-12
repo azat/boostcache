@@ -39,5 +39,21 @@ branches:
     only:
         - master
 
+env:
+    global:
+     # The next declration is the encrypted COVERITY_SCAN_TOKEN, created
+     #   via the "travis encrypt" command using the project repo's public key
+     - secure: "W0nOcM2fYaA2LZgjT23U/QiqWOcFxT3yqPOmyBzFY9WtFbHPBpRnMYPPvSv9f8zkGw53LjHFYAl9lw4evS1UlF17HQDYU/hpfvNXDXt98idLf+utnzo3MMewX6FtnyZLQYBzmAo2zxRhwrRgT9iwF51l99i7EhP/6bSQh5A3O/I="
+
+addons:
+    coverity_scan:
+      project:
+        name: "azat/boostcache"
+        description: "Coverity scan of boostcache"
+      notification_email: a3at.mail@gmail.com
+      build_command_prepend: cmake .
+      build_command: make
+      branch_pattern: master
+
 # TODO: add notifications
 
