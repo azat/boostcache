@@ -26,7 +26,7 @@ before_script:
     - bc --version
 
 script:
-    - cmake -DCMAKE_BUILD_TYPE=Distribution ..
+    - cmake -DCMAKE_BUILD_TYPE=Distribution .
     - make VERBOSE=1
     - make runbenchmarks
    # Build graphs in terminal
