@@ -131,10 +131,26 @@ install(PROGRAMS "${BENCHMARK_SRC_DIR}/bc-benchmark" DESTINATION bin)
 macro(AddCustomTarget name)
     add_custom_target(${name} COMMAND ${ARGN})
 endmacro()
-AddCustomTarget(runbenchmarks ${BOOSTCACHE_UTILS_DIR}/run_benchmarks.sh)
-AddCustomTarget(buildplots ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh)
-AddCustomTarget(buildplots-png ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh -w2 -f png)
-AddCustomTarget(buildplots-dumb ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh -w2 -f dumb)
+AddCustomTarget(runbenchmarks
+                ${BOOSTCACHE_UTILS_DIR}/run_benchmarks.sh
+                ${BOOSTCACHE_BUILD_DIR}/boostcached
+                ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
+)
+AddCustomTarget(buildplots
+                ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh
+                -b ${BOOSTCACHE_BUILD_DIR}/boostcached
+                -s ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
+)
+AddCustomTarget(buildplots-png
+                ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh -w2 -f png
+                -b ${BOOSTCACHE_BUILD_DIR}/boostcached
+                -s ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
+)
+AddCustomTarget(buildplots-dumb
+                ${BOOSTCACHE_UTILS_DIR}/build_graphs.sh -w2 -f dumb
+                -b ${BOOSTCACHE_BUILD_DIR}/boostcached
+                -s ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
+)
 
 # Package
 include(GenerateDebianControl)
