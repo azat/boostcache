@@ -35,7 +35,7 @@ script:
 
 branches:
     only:
-        - master
+        - coverity
 
 env:
     global:
@@ -51,7 +51,7 @@ addons:
       notification_email: a3at.mail@gmail.com
       build_command_prepend: cmake .
       build_command: make
-      branch_pattern: master
+      branch_pattern: coverity
 
 # TODO: add notifications
 

@@ -11,7 +11,7 @@ For now it is boost because used boost tree, but maybe in future it will be boos
 Build status and benchmarks
 ---------------------------
 
-[![Build Status and Benchmarks](https://travis-ci.org/azat/boostcache.png?branch-master)](https://travis-ci.org/azat/boostcache)
+[![Build Status and Benchmarks](https://travis-ci.org/azat/boostcache.png?branch-coverity)](https://travis-ci.org/azat/boostcache)
 
 [![Coverity scan](https://scan.coverity.com/projects/1583/badge.svg)](https://scan.coverity.com/projects/1583)
 
