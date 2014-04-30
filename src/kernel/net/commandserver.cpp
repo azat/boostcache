@@ -49,10 +49,51 @@ void CommandServer::start()
 {
     LOG(info) << "Starting server with " << m_options.numOfWorkers << " workers";
 
+    setupStopSignals();
+
     evconnlistener_enable(m_tcpAcceptor);
     evconnlistener_enable(m_unixDomainAcceptor);
 
     event_base_loop(m_base, 0);
+    stop();
+}
+
+void CommandServer::prepareToStop(int /* fd */, short /* events */, void *arg)
+{
+    CommandServer *self = (CommandServer *)arg;
+    event_base_loopexit(self->m_base, 0);
+    LOG(info) << "Stop scheduled";
+}
+void CommandServer::stop()
+{
+    evconnlistener_disable(m_tcpAcceptor);
+    evconnlistener_disable(m_unixDomainAcceptor);
+
+    evconnlistener_free(m_tcpAcceptor);
+    evconnlistener_free(m_unixDomainAcceptor);
+
+    event_del(m_eInt);
+    event_del(m_eTerm);
+
+    event_free(m_eInt);
+    event_free(m_eTerm);
+
+    event_base_free(m_base);
+
+    LOG(info) << "Exited cleanly";
+}
+event* CommandServer::createSignalHandler(int signal)
+{
+    event *e = evsignal_new(m_base, signal, prepareToStop, this);
+    BUG(e);
+    evsignal_add(e, NULL);
+
+    return e;
+}
+void CommandServer::setupStopSignals()
+{
+    m_eTerm = createSignalHandler(SIGTERM);
+    m_eInt = createSignalHandler(SIGINT);
 }
 
 void CommandServer::createTcpEndpoint()
