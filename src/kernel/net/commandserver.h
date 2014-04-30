@@ -65,9 +65,6 @@ private:
     /**
      * TODO: Because of migration to libevent:
      *
-     * - we didn't have normal stop
-     * - signal handlers
-     * - memory leaks
      * - more verbose error messages
      * - [?] multi-threadding support (workers)
      * - [?] domains resolving
@@ -75,7 +72,13 @@ private:
     event_base *m_base;
     evconnlistener *m_tcpAcceptor;
     evconnlistener *m_unixDomainAcceptor;
+    event *m_eTerm;
+    event *m_eInt;
 
+    static void prepareToStop(int /* fd */, short /* events */, void *arg);
+    void stop();
+    event* createSignalHandler(int signal);
+    void setupStopSignals();
     void createTcpEndpoint();
     void createUnixDomainEndpoint();
 };
