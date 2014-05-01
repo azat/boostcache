@@ -23,7 +23,7 @@ namespace Server
              "Socket listen to")
             ("fork,f", "Fork server process")
             ("workers,w", boost::program_options::value<int>()->default_value(2),
-             "Number of workers-threads")
+             "Number of workers-threads (or zero for event loop in main thread)")
         ;
     }
 }

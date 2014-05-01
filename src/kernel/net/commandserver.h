@@ -13,6 +13,8 @@
 #include "session.h"
 
 #include <string>
+#include <vector>
+#include <thread>
 
 #include <boost/noncopyable.hpp>
 
@@ -66,14 +68,45 @@ private:
      * TODO: Because of migration to libevent:
      *
      * - more verbose error messages
-     * - [?] multi-threadding support (workers)
      * - [?] domains resolving
+     * - more statistics
+     * - split threads support into another module
      */
+    struct Routine
+    {
+        std::thread *thread;
+
+        event_base *base;
+        struct event *event;
+
+        int read;
+        int write;
+    };
+    /** See also routineReadCmd() and startRoutineAccept() */
+    struct Request
+    {
+        evconnlistener *lev;
+        evutil_socket_t fd;
+    } __attribute__((packed));
+    std::vector<Routine> m_routines;
     event_base *m_base;
     evconnlistener *m_tcpAcceptor;
     evconnlistener *m_unixDomainAcceptor;
     event *m_eTerm;
     event *m_eInt;
+    evconnlistener_cb m_cb;
+    size_t m_handledRequests;
+
+    /** Used when we run without threads -w0 */
+    static void
+    startAccept(evconnlistener *lev, evutil_socket_t fd,
+                sockaddr * /*addr*/, int /*socklen*/,
+                void * /*arg = CommandServer **/);
+    /** Used when we run _with threads, workers > 0 */
+    static void
+    startRoutineAccept(evconnlistener *lev, evutil_socket_t fd,
+                       sockaddr * /*addr*/, int /*socklen*/,
+                       void *arg);
 
     static void prepareToStop(int /* fd */, short /* events */, void *arg);
     void stop();
@@ -81,5 +114,13 @@ private:
     void setupStopSignals();
     void createTcpEndpoint();
     void createUnixDomainEndpoint();
+
+    void createThreads();
+    void initRoutine(Routine &routine);
+    static void routineReadCmd(int /* fd */, short /* events */, void *arg);
+    void prepareToStopThreads();
+    void prepareToStopRoutine(Routine &routine);
+    void stopThreads();
+    void stopRoutine(Routine &routine);
 };
 
