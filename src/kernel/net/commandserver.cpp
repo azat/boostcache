@@ -22,8 +22,9 @@
 namespace
 {
 
-/** XXX: must be less then sizeof(Request) */
 static constexpr char STOP_ROUTINE_CMD[4] = { 0 };
+static_assert(sizeof(STOP_ROUTINE_CMD) == sizeof(int),
+              "Size of STOP_ROUTINE_CMD must be eqaul to int size");
 
 }; // namespace
 
@@ -72,7 +73,7 @@ void CommandServer::startAccept(evconnlistener *lev, evutil_socket_t fd,
     Session *newSession = new Session(evconnlistener_get_base(lev), fd);
     LOG(debug) << "Client connected " << newSession;
 }
-void CommandServer::startRoutineAccept(evconnlistener *lev, evutil_socket_t fd,
+void CommandServer::startRoutineAccept(evconnlistener * /*lev*/, evutil_socket_t fd,
                                        sockaddr * /*addr*/, int /*socklen*/,
                                        void *arg)
 {
@@ -81,12 +82,11 @@ void CommandServer::startRoutineAccept(evconnlistener *lev, evutil_socket_t fd,
     /** Simplest round-robin */
     size_t routineNum = (server->m_handledRequests++ % server->m_routines.size());
     Routine &routine = server->m_routines[routineNum];
-    Request request = { lev, fd };
 
-    if (write(routine.write, &request, sizeof(request)) != sizeof(request)) {
-        LOG(error) << "Error proxying request to " << &routine;
+    if (write(routine.write, &fd, sizeof(fd)) != sizeof(fd)) {
+        LOG(error) << "Error forwarding request to " << &routine;
     } else {
-        LOG(debug) << "Request proxied to routine " << &routine;
+        LOG(debug) << "Request forwarding to routine " << &routine;
     }
 }
 
@@ -199,15 +199,15 @@ void CommandServer::initRoutine(Routine &routine)
 void CommandServer::routineReadCmd(int /* fd */, short /* events */, void *arg)
 {
     Routine *routine = (Routine *)arg;
+    int fd;
 
-    Request request;
-    ssize_t readed = read(routine->read, &request, sizeof(request));
+    ssize_t readed = read(routine->read, &fd, sizeof(fd));
 
-    if (readed == sizeof(request)) {
-        Session *newSession = new Session(routine->base, request.fd);
+    if (readed == sizeof(fd) && fd > 0) {
+        Session *newSession = new Session(routine->base, fd);
         LOG(debug) << "Client connected " << newSession << " on routine " << routine;
     } else if (readed == sizeof(STOP_ROUTINE_CMD) &&
-               !memcmp(&request, STOP_ROUTINE_CMD, sizeof(STOP_ROUTINE_CMD))) {
+               !memcmp(&fd, STOP_ROUTINE_CMD, sizeof(STOP_ROUTINE_CMD))) {
         event_base_loopexit(routine->base, 0);
         LOG(info) << "Stop scheduled on routine " << routine;
     } else {
