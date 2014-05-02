@@ -98,10 +98,12 @@ private:
     evconnlistener_cb m_cb;
     size_t m_handledRequests;
 
+    /** Used when we run without threads -w0 */
     static void
     startAccept(evconnlistener *lev, evutil_socket_t fd,
                 sockaddr * /*addr*/, int /*socklen*/,
                 void * /*arg = CommandServer **/);
+    /** Used when we run _with threads, workers > 0 */
     static void
     startRoutineAccept(evconnlistener *lev, evutil_socket_t fd,
                        sockaddr * /*addr*/, int /*socklen*/,
