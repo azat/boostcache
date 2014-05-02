@@ -25,8 +25,6 @@
  * @brief Async command server
  *
  * TODO: singleton
- *
- * TODO: common implementation for TCP/IP and unix domain sockets
  */
 class CommandServer : boost::noncopyable
 {
@@ -82,12 +80,6 @@ private:
         int read;
         int write;
     };
-    /** See also routineReadCmd() and startRoutineAccept() */
-    struct Request
-    {
-        evconnlistener *lev;
-        evutil_socket_t fd;
-    } __attribute__((packed));
     std::vector<Routine> m_routines;
     event_base *m_base;
     evconnlistener *m_tcpAcceptor;
@@ -102,9 +94,9 @@ private:
     startAccept(evconnlistener *lev, evutil_socket_t fd,
                 sockaddr * /*addr*/, int /*socklen*/,
                 void * /*arg = CommandServer **/);
-    /** Used when we run _with threads, workers > 0 */
+    /** Used when we run _with_ threads, workers > 0 */
     static void
-    startRoutineAccept(evconnlistener *lev, evutil_socket_t fd,
+    startRoutineAccept(evconnlistener * /*lev*/, evutil_socket_t fd,
                        sockaddr * /*addr*/, int /*socklen*/,
                        void *arg);
 
