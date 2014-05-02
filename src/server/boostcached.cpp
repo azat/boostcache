@@ -27,6 +27,11 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    if (options.getValue<int>("logLevel") > 3) {
+        event_enable_debug_mode();
+        event_enable_debug_logging(EVENT_DBG_ALL);
+    }
+
     try {
         CommandServer server(CommandServer::Options(
             options.getValue<int>("port"),
