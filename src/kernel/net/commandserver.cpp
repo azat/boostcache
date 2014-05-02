@@ -183,6 +183,7 @@ void CommandServer::initRoutine(Routine &routine)
 
     routine.read = fds[0];
     routine.write = fds[1];
+    routine.preparedForStop = false;
 
     routine.base = event_base_new();
     /** XXX: defer */
@@ -222,12 +223,18 @@ void CommandServer::prepareToStopThreads()
 }
 void CommandServer::prepareToStopRoutine(Routine &routine)
 {
+    routine.preparedForStop = true;
     /** Stop the loop on the next event: or this one */
     write(routine.write, STOP_ROUTINE_CMD, sizeof(STOP_ROUTINE_CMD));
 }
 void CommandServer::stopThreads()
 {
     for (Routine &r : m_routines) {
+        /** This means that loop exited not by signal */
+        if (!r.preparedForStop) {
+            LOG(error) << "Not prepared for stop, do it for routine " << &r;
+            prepareToStopRoutine(r);
+        }
         stopRoutine(r);
     }
 }

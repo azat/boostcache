@@ -81,6 +81,7 @@ private:
 
         int read;
         int write;
+        bool preparedForStop;
     };
     /** See also routineReadCmd() and startRoutineAccept() */
     struct Request
