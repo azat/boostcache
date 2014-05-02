@@ -53,14 +53,14 @@ void CommandServer::start()
 
     setupStopSignals();
 
-    evconnlistener_enable(m_tcpAcceptor);
-    evconnlistener_enable(m_unixDomainAcceptor);
+    BUG(!evconnlistener_enable(m_tcpAcceptor));
+    BUG(!evconnlistener_enable(m_unixDomainAcceptor));
 
     if (m_routines.size()) {
         createThreads();
     }
 
-    event_base_loop(m_base, 0);
+    BUG(event_base_loop(m_base, 0) >= 0);
     stop();
     stopThreads();
 }
