@@ -225,7 +225,7 @@ void CommandHandler::reset()
 void CommandHandler::split(const char *begin, const char *end,
                            std::vector<std::string>& destination, char delimiter)
 {
-    const char *found;
+    const char *found = nullptr;
 
     while (true) {
         if (found == end) {
