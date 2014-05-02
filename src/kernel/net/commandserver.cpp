@@ -69,7 +69,7 @@ void CommandServer::startAccept(evconnlistener *lev, evutil_socket_t fd,
                                 sockaddr * /*addr*/, int /*socklen*/,
                                 void * /*arg = CommandServer **/)
 {
-    Session *newSession = new Session(lev, fd);
+    Session *newSession = new Session(evconnlistener_get_base(lev), fd);
     LOG(debug) << "Client connected " << newSession;
 }
 void CommandServer::startRoutineAccept(evconnlistener *lev, evutil_socket_t fd,
@@ -204,7 +204,7 @@ void CommandServer::routineReadCmd(int /* fd */, short /* events */, void *arg)
     ssize_t readed = read(routine->read, &request, sizeof(request));
 
     if (readed == sizeof(request)) {
-        Session *newSession = new Session(request.lev, request.fd);
+        Session *newSession = new Session(routine->base, request.fd);
         LOG(debug) << "Client connected " << newSession << " on routine " << routine;
     } else if (readed == sizeof(STOP_ROUTINE_CMD) &&
                !memcmp(&request, STOP_ROUTINE_CMD, sizeof(STOP_ROUTINE_CMD))) {

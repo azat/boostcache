@@ -37,9 +37,8 @@ void eventTriggered(struct bufferevent *bev, short events, void *arg)
 
 };
 
-Session::Session(evconnlistener *lev, int fd)
-    : m_lev(lev)
-    , m_bev(bufferevent_socket_new(evconnlistener_get_base(lev), fd, BEV_OPT_CLOSE_ON_FREE))
+Session::Session(event_base *base, int fd)
+    : m_bev(bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE))
     , m_input(bufferevent_get_input(m_bev))
     , m_output(bufferevent_get_output(m_bev))
 {
