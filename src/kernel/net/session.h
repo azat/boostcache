@@ -14,7 +14,7 @@
 
 #include <boost/noncopyable.hpp>
 
-#include <event2/listener.h>
+#include <event2/event.h>
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
 
@@ -24,12 +24,11 @@
 class Session : boost::noncopyable
 {
 public:
-    Session(evconnlistener *lev, int fd);
+    Session(event_base *base, int fd);
 
     void handleRead();
 
 private:
-    evconnlistener *m_lev;
     bufferevent *m_bev;
 
     evbuffer *m_input;
