@@ -13,10 +13,12 @@ include(AddCompilerFlags)
 include(CheckCXXCompilerFlag)
 include(AddFilesGlobRecursiveToList)
 include(GitVersion)
+include(FindLibrary)
 
 message(STATUS "Making ${PROJECT_NAME} on ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 
 find_package(Boost REQUIRED COMPONENTS program_options system log thread)
+FindLibrary(FAIL_ON_ERROR NAMES v8)
 
 # The version number.
 set(BoostCache_VERSION_MAJOR 0)
@@ -94,7 +96,7 @@ configure_file(
 file(GLOB_RECURSE BOOSTCACHE_SERVER_SOURCES "${BOOSTCACHE_SOURCE_DIR}/server/*.cpp")
 list(APPEND BOOSTCACHE_SERVER_SOURCES ${BOOSTCACHE_SOURCES})
 add_executable(boostcached ${BOOSTCACHE_SERVER_SOURCES})
-target_link_libraries(boostcached ${Boost_LIBRARIES})
+target_link_libraries(boostcached ${Boost_LIBRARIES} ${LIBS})
 install(TARGETS boostcached RUNTIME DESTINATION bin)
 install(PROGRAMS "${BOOSTCACHE_UTILS_DIR}/boostcache" DESTINATION bin)
 install(FILES "${BOOSTCACHE_UTILS_DIR}/bash_completion"
@@ -165,6 +167,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS    "libc6 (>= 2.13),"
                                     "libgcc1 (>= 4.7-2),"
                                     "libstdc++6 (>= 4.8),"
+                                    "libv8-dev (>=3.14),"
                                     "libboost-program-options1.54-dev,"
                                     "libboost-system1.54-dev,"
                                     "libboost-log1.54-dev,"
