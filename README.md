@@ -26,6 +26,7 @@ Used libraries
 - [boost asio](http://www.boost.org/libs/asio)
 - [cmake for builds](http://cmake.org/)
 - [boost log](http://www.boost.org/libs/log)
+- [v8](https://code.google.com/p/v8/)
 
 Building
 --------
