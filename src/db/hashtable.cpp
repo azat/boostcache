@@ -10,6 +10,7 @@
 
 
 #include "hashtable.h"
+#include "util/log.h"
 
 #include <v8.h>
 
@@ -75,7 +76,15 @@ namespace Db
         v8::Context::Scope enterScope(context);
         v8::Handle<v8::String> source = v8::String::New(arguments[1].c_str());
         v8::Handle<v8::Script> script = v8::Script::Compile(source);
+
+        v8::TryCatch trycatch;
         v8::Handle<v8::Value> sourceResult = script->Run();
+        if (sourceResult.IsEmpty()) {
+            v8::Handle<v8::Value> exception = trycatch.Exception();
+            v8::String::AsciiValue exceptionMessage(exception);
+            LOG(error) << *exceptionMessage;
+            return CommandHandler::REPLY_ERROR;
+        }
         v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(sourceResult);
 
         for (std::pair<const Key, Value> &i : m_table) {
