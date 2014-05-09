@@ -15,6 +15,30 @@
 #include <v8.h>
 
 
+namespace Js
+{
+    std::string logArgs2String(const ::v8::Arguments &args)
+    {
+        std::string message;
+        for (int i = 0; i < args.Length(); i++) {
+            ::v8::HandleScope scope;
+            ::v8::String::Utf8Value str(args[i]);
+            message += *str;
+        }
+        return message;
+    }
+    ::v8::Handle<::v8::Value> log(const ::v8::Arguments &args)
+    {
+        LOG(info) << logArgs2String(args);
+        return v8::Handle<v8::Value>();
+    }
+    ::v8::Handle<::v8::Value> error(const ::v8::Arguments &args)
+    {
+        LOG(error) << logArgs2String(args);
+        return v8::Handle<v8::Value>();
+    }
+}
+
 namespace Db
 {
     HashTable::HashTable()
@@ -74,7 +98,19 @@ namespace Db
         v8::TryCatch trycatch;
 
         v8::HandleScope scope;
-        v8::Handle<v8::Context> context = v8::Context::New();
+        /** Log */
+        v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New();
+        v8::Handle<v8::ObjectTemplate> console = v8::ObjectTemplate::New();
+        global->Set(v8::String::New("console"), console);
+        v8::Handle<v8::FunctionTemplate> logFunction =
+            v8::FunctionTemplate::New(&Js::log);
+        console->Set(v8::String::New("log"), logFunction);
+        v8::Handle<v8::FunctionTemplate> errorFunction =
+            v8::FunctionTemplate::New(&Js::error);
+        console->Set(v8::String::New("error"), errorFunction);
+        /** \Log */
+
+        v8::Handle<v8::Context> context = v8::Context::New(NULL, global);
         v8::Context::Scope enterScope(context);
 
         v8::Handle<v8::String> source = v8::String::New(arguments[1].c_str());
