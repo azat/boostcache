@@ -36,4 +36,9 @@ namespace Db
     {
         return CommandHandler::REPLY_ERROR_NOTSUPPORTED;
     }
+
+    std::string Interface::foreach(const CommandHandler::Arguments &UNUSED(arguments))
+    {
+        return CommandHandler::REPLY_ERROR_NOTSUPPORTED;
+    }
 }

@@ -36,6 +36,11 @@ namespace Db
     class Interface : boost::noncopyable
     {
     public:
+        typedef std::string Key;
+        typedef std::string Value;
+        /** XXX: Return some enum retry/skip/ok */
+        typedef void (Iterate)(const Key &key, const Value &value);
+
         Interface();
 
         /**
@@ -47,9 +52,6 @@ namespace Db
         std::string get(const CommandHandler::Arguments &arguments);
         std::string set(const CommandHandler::Arguments &arguments);
         std::string del(const CommandHandler::Arguments &arguments);
-
-    protected:
-        typedef std::string Key;
-        typedef std::string Value;
+        std::string foreach(const CommandHandler::Arguments &arguments);
     };
 }
