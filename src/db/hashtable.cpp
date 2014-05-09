@@ -71,13 +71,21 @@ namespace Db
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::Locker locker(isolate);
 
+        v8::TryCatch trycatch;
+
         v8::HandleScope scope;
         v8::Handle<v8::Context> context = v8::Context::New();
         v8::Context::Scope enterScope(context);
+
         v8::Handle<v8::String> source = v8::String::New(arguments[1].c_str());
         v8::Handle<v8::Script> script = v8::Script::Compile(source);
+        if (!*script) {
+            v8::Handle<v8::Value> exception = trycatch.Exception();
+            v8::String::AsciiValue exceptionMessage(exception);
+            LOG(error) << *exceptionMessage;
+            return CommandHandler::REPLY_ERROR;
+        }
 
-        v8::TryCatch trycatch;
         v8::Handle<v8::Value> sourceResult = script->Run();
         if (sourceResult.IsEmpty()) {
             v8::Handle<v8::Value> exception = trycatch.Exception();
