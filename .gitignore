@@ -94,5 +94,6 @@ gmon.out
 # "stashed"
 /patches
 
-!.gitignore
 .*
+!.gitignore
+!.vimrc

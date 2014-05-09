@@ -17,3 +17,17 @@
 #define ASSERT(...) BOOST_ASSERT(__VA_ARGS__)
 #define ASSERT_MSG(...) BOOST_ASSERT_MSG(__VA_ARGS__)
 #define VERIFY(...) BOOST_VERIFY(__VA_ARGS__)
+
+#ifdef NDEBUG
+#undef NDEBUG
+#include <boost/assert.hpp>
+
+#define BUG(...) BOOST_ASSERT(__VA_ARGS__)
+
+#define NDEBUG
+#else
+
+#define BUG(...) BOOST_ASSERT(__VA_ARGS__)
+
+#endif
+
