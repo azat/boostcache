@@ -14,11 +14,27 @@ include(CheckCXXCompilerFlag)
 include(AddFilesGlobRecursiveToList)
 include(GitVersion)
 include(FindLibrary)
+include(TryCompileFromSource)
 
 message(STATUS "Making ${PROJECT_NAME} on ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 
 find_package(Boost REQUIRED COMPONENTS program_options system log thread)
+
+# v8
 FindLibrary(FAIL_ON_ERROR NAMES v8)
+TryCompileFromSource(
+    HAVE_V8_WITH_MOST_CONSTRUCTORS_ISOLATE
+    "v8 most of constructors have Isolate* argument, instead of getting current"
+"
+#include <v8.h>
+int main()
+{
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope handle_scope(isolate);
+    return 0;
+};
+"
+)
 
 # The version number.
 set(BoostCache_VERSION_MAJOR 0)
