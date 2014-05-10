@@ -13,6 +13,10 @@
 #include "config.h" /** HAVE_* */
 
 
+/**
+ * XXX: get rid of support for old v8
+ */
+
 namespace Js
 {
 #ifdef HAVE_V8_FUNCTIONCALLBACKINFO
@@ -62,17 +66,31 @@ namespace Js
 #endif
 }
 
+namespace {
+#ifdef HAVE_V8_WITH_MOST_CONSTRUCTORS_ISOLATE
+    v8::Local<v8::String> newUtf8String(const char *data)
+    {
+        return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), data);
+    }
+#else
+    v8::Local<v8::String> newUtf8String(const char *data)
+    {
+        return v8::String::New(data);
+    }
+#endif
+}
+
 JsVm::JsVm(const std::string &code)
     : m_isolate(v8::Isolate::GetCurrent())
     , m_locker(m_isolate)
     , m_global(v8::ObjectTemplate::New())
 {
     v8::Handle<v8::ObjectTemplate> console = v8::ObjectTemplate::New();
-    m_global->Set(v8::String::New("console"), console);
+    m_global->Set(newUtf8String("console"), console);
 
-    console->Set(v8::String::New("log"),
+    console->Set(newUtf8String("log"),
                  v8::FunctionTemplate::New(&Js::log));
-    console->Set(v8::String::New("error"),
+    console->Set(newUtf8String("error"),
                  v8::FunctionTemplate::New(&Js::error));
 
     /**
@@ -87,7 +105,7 @@ JsVm::JsVm(const std::string &code)
     m_context = v8::Context::New(NULL, m_global);
     m_context->Enter();
 
-    m_source = v8::String::New(code.c_str());
+    m_source = newUtf8String(code.c_str());
 }
 JsVm::~JsVm()
 {
@@ -115,8 +133,8 @@ bool JsVm::init()
 void JsVm::call(const Db::Interface::Key &key, const Db::Interface::Value &value)
 {
     v8::Local<v8::Value> args[] = {
-        v8::String::New(key.c_str()),
-        v8::String::New(value.c_str())
+        newUtf8String(key.c_str()),
+        newUtf8String(value.c_str())
     };
 
     m_function->Call(m_context->Global(), 2, args);
