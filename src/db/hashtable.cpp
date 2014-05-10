@@ -11,7 +11,6 @@
 
 #include "hashtable.h"
 #include "server/jsvm.h"
-#include "util/log.h"
 
 
 namespace Db
