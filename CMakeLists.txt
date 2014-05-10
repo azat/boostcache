@@ -23,6 +23,18 @@ find_package(Boost REQUIRED COMPONENTS program_options system log thread)
 # v8
 FindLibrary(FAIL_ON_ERROR NAMES v8)
 TryCompileFromSource(
+    HAVE_V8_FUNCTIONCALLBACKINFO
+    "v8 with FunctionCallbackInfo instead of Arguments"
+"
+#include <v8.h>
+int main()
+{
+    (void)v8::FunctionCallbackInfo<v8::Value>;
+    return 0;
+};
+"
+)
+TryCompileFromSource(
     HAVE_V8_WITH_MOST_CONSTRUCTORS_ISOLATE
     "v8 most of constructors have Isolate* argument, instead of getting current"
 "
