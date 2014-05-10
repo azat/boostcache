@@ -86,11 +86,11 @@ namespace {
     {
         return v8::String::New(data);
     }
-    v8::Local<v8::FunctionTemplate> newFunctionTemplate(v8::FunctionCallback callback = NULL)
+    v8::Local<v8::FunctionTemplate> newFunctionTemplate(v8::InvocationCallback callback = NULL)
     {
         return v8::FunctionTemplate::New(callback);
     }
-    v8::Local<v8::Context> newContext(v8::ExtensionConfiguration* extensions = NULL,
+    v8::Persistent<v8::Context> newContext(v8::ExtensionConfiguration* extensions = NULL,
                                       v8::Handle<v8::ObjectTemplate> global_template = v8::Handle<v8::ObjectTemplate>())
     {
         return v8::Context::New(extensions, global_template);
