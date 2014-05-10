@@ -11,7 +11,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 include(ExternalProject)
 include(AddCompilerFlags)
 include(CheckCXXCompilerFlag)
-include(AddFilesGlobRecursiveToList)
 include(GitVersion)
 include(FindLibrary)
 include(TryCompileFromSource)
@@ -109,12 +108,26 @@ message(STATUS " C flags  : ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_
 message(STATUS " CXX flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 
 # boostcache sources
-AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/client/*.cpp")
-AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/kernel/*.cpp")
-AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/db/*.cpp")
-AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/kernel/net/*.cpp")
-AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/util/*.cpp")
-AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/wrapper/*.cpp")
+list(APPEND BOOSTCACHE_SOURCES
+    "${BOOSTCACHE_SOURCE_DIR}/db/avltree.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/db/hashtable.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/db/interface.cpp"
+
+    "${BOOSTCACHE_SOURCE_DIR}/kernel/commandhandler.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/kernel/commands.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/kernel/net/commandserver.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/kernel/net/ioservicepool.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/kernel/net/session.cpp"
+
+    "${BOOSTCACHE_SOURCE_DIR}/server/boostcached.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/server/jsvm.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/server/options.cpp"
+
+    "${BOOSTCACHE_SOURCE_DIR}/util/log.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/util/options.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/util/stacktrace.cpp"
+    "${BOOSTCACHE_SOURCE_DIR}/util/version.cpp"
+)
 
 # Pass defines to project
 macro(ConfigureBoostcache)
