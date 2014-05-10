@@ -29,7 +29,7 @@ TryCompileFromSource(
 #include <v8.h>
 int main()
 {
-    (void)v8::FunctionCallbackInfo<v8::Value>;
+    (void)sizeof(v8::FunctionCallbackInfo<v8::Value>);
     return 0;
 };
 "
