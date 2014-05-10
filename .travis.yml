@@ -18,7 +18,7 @@ before_script:
     - sudo add-apt-repository -y "deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe"
     - sudo apt-get update
     - sudo apt-get install libboost1.54-all-dev libv8-dev
-    - sudo apt-get install cmake
+    - sudo apt-get install g++ cmake
     # Version of some utils
     - bash --version
     - awk --version
