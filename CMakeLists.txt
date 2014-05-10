@@ -15,6 +15,7 @@ include(AddFilesGlobRecursiveToList)
 include(GitVersion)
 include(FindLibrary)
 include(TryCompileFromSource)
+include(Configure)
 
 message(STATUS "Making ${PROJECT_NAME} on ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR}")
 
@@ -62,6 +63,8 @@ set(BOOSTCACHE_UTILS_DIR "${BOOSTCACHE_ROOT_DIR}/utils")
 set(BOOSTCACHE_LIBRARY_DIR "${BOOSTCACHE_ROOT_DIR}/lib")
 set(EXECUTABLE_OUTPUT_PATH ${BOOSTCACHE_BUILD_DIR} CACHE PATH "Build directory" FORCE)
 set(LIBRARY_OUTPUT_PATH ${BOOSTCACHE_BUILD_DIR} CACHE PATH "Build directory" FORCE)
+
+set(BOOSTCACHE_HEADER_CONFIG "${BOOSTCACHE_BUILD_DIR}/config.h.in")
 
 # Include paths
 include_directories(${BOOSTCACHE_SOURCE_DIR})
@@ -113,12 +116,32 @@ AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/kernel/
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/util/*.cpp")
 AddFilesGlobRecursiveToList(BOOSTCACHE_SOURCES "${BOOSTCACHE_SOURCE_DIR}/wrapper/*.cpp")
 
-# configure a header file to pass some of the CMake settings
-# to the source code
-configure_file(
-    "${BOOSTCACHE_SOURCE_DIR}/config.h.in"
-    "${BOOSTCACHE_BINARY_DIR}/config.h"
-)
+# Pass defines to project
+macro(ConfigureBoostcache)
+    file(WRITE "${BOOSTCACHE_HEADER_CONFIG}" "// Generated with cmake\n\n")
+
+    set(BOOSTCACHE_VERSION_FLOAT "${BoostCache_VERSION_MAJOR}.${BoostCache_VERSION_MINOR}")
+    set(BOOSTCACHE_VERSION_GIT "${BoostCache_GIT_VERSION}")
+    set(BOOSTCACHE_NAME "${CMAKE_PROJECT_NAME}")
+
+    configure(STRING_VAL FILE "${BOOSTCACHE_HEADER_CONFIG}" DEFINES
+        BOOSTCACHE_VERSION_GIT
+        BOOSTCACHE_NAME
+    )
+    configure(VAL FILE "${BOOSTCACHE_HEADER_CONFIG}" DEFINES
+        BOOSTCACHE_VERSION_FLOAT
+    )
+    configure(FILE "${BOOSTCACHE_HEADER_CONFIG}" DEFINES
+        HAVE_V8_FUNCTIONCALLBACKINFO
+        HAVE_V8_WITH_MOST_CONSTRUCTORS_ISOLATE
+    )
+
+    configure_file(
+        "${BOOSTCACHE_HEADER_CONFIG}"
+        "${BOOSTCACHE_BUILD_DIR}/config.h"
+    )
+endmacro()
+ConfigureBoostcache()
 
 # boostcache server
 file(GLOB_RECURSE BOOSTCACHE_SERVER_SOURCES "${BOOSTCACHE_SOURCE_DIR}/server/*.cpp")
