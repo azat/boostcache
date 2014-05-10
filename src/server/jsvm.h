@@ -19,7 +19,6 @@
  *
  * Create and run this module in the same thread.
  *
- * XXX: adopt to the newer version of v8 (need Isolate* in constructor)
  * XXX: more debugging/profiling/testing
  */
 class JsVm
