@@ -10,11 +10,36 @@
 
 #include "jsvm.h"
 #include "util/log.h"
+#include "config.h" /** HAVE_* */
 
 
 namespace Js
 {
-    std::string logArgs2String(const ::v8::Arguments &args)
+#ifdef HAVE_V8_FUNCTIONCALLBACKINFO
+    typedef ::v8::FunctionCallbackInfo<::v8::Value> Args;
+
+    std::string logArgs2String(const Args &args)
+    {
+        std::string message;
+        for (int i = 0; i < args.Length(); i++) {
+            ::v8::HandleScope scope(args.GetIsolate());
+            ::v8::String::Utf8Value str(args[i]);
+            message += *str;
+        }
+        return message;
+    }
+    void log(const Args &args)
+    {
+        LOG(info) << logArgs2String(args);
+    }
+    void error(const Args &args)
+    {
+        LOG(error) << logArgs2String(args);
+    }
+#else
+    typedef ::v8::Arguments Args;
+
+    std::string logArgs2String(const Args &args)
     {
         std::string message;
         for (int i = 0; i < args.Length(); i++) {
@@ -24,16 +49,17 @@ namespace Js
         }
         return message;
     }
-    ::v8::Handle<::v8::Value> log(const ::v8::Arguments &args)
+    ::v8::Handle<::v8::Value> log(const Args &args)
     {
         LOG(info) << logArgs2String(args);
         return v8::Handle<v8::Value>();
     }
-    ::v8::Handle<::v8::Value> error(const ::v8::Arguments &args)
+    ::v8::Handle<::v8::Value> error(const Args &args)
     {
         LOG(error) << logArgs2String(args);
         return v8::Handle<v8::Value>();
     }
+#endif
 }
 
 JsVm::JsVm(const std::string &code)
