@@ -76,6 +76,11 @@ namespace {
     {
         return v8::FunctionTemplate::New(v8::Isolate::GetCurrent(), callback);
     }
+    v8::Local<v8::Context> newContext(v8::ExtensionConfiguration* extensions = NULL,
+                                      v8::Handle<v8::ObjectTemplate> global_template = v8::Handle<v8::ObjectTemplate>())
+    {
+        return v8::Context::New(v8::Isolate::GetCurrent(), extensions, global_template);
+    }
 #else
     v8::Local<v8::String> newUtf8String(const char *data)
     {
@@ -84,6 +89,11 @@ namespace {
     v8::Local<v8::FunctionTemplate> newFunctionTemplate(v8::FunctionCallback callback = NULL)
     {
         return v8::FunctionTemplate::New(callback);
+    }
+    v8::Local<v8::Context> newContext(v8::ExtensionConfiguration* extensions = NULL,
+                                      v8::Handle<v8::ObjectTemplate> global_template = v8::Handle<v8::ObjectTemplate>())
+    {
+        return v8::Context::New(extensions, global_template);
     }
 #endif
 }
@@ -113,7 +123,7 @@ JsVm::JsVm(const std::string &code)
      * here, since this module already provides "box" for executing
      * user-specific code in current thread.
      */
-    m_context = v8::Context::New(NULL, m_global);
+    m_context = newContext(NULL, m_global);
     m_context->Enter();
 
     m_source = newUtf8String(code.c_str());
