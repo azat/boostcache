@@ -99,7 +99,8 @@ namespace {
 }
 
 JsVm::JsVm(const std::string &code)
-    : m_isolate(v8::Isolate::GetCurrent())
+    : m_isolate(v8::Isolate::New())
+    , m_isolateScope(m_isolate)
     , m_locker(m_isolate)
 #ifdef HAVE_V8_WITH_MOST_CONSTRUCTORS_ISOLATE
     , m_scope(m_isolate)

@@ -33,6 +33,7 @@ public:
 
 private:
     v8::Isolate *m_isolate;
+    v8::Isolate::Scope m_isolateScope;
     v8::Locker m_locker;
 
     v8::TryCatch m_trycatch;
