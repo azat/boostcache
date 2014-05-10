@@ -41,8 +41,7 @@ TryCompileFromSource(
 #include <v8.h>
 int main()
 {
-    v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    v8::HandleScope handle_scope(isolate);
+    (void)sizeof(v8::HandleScope(v8::Isolate*));
     return 0;
 };
 "
