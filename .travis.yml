@@ -5,6 +5,7 @@ compiler:
 
 before_script:
     - sudo add-apt-repository -y ppa:azat/boost-unofficial
+    - sudo apt-get install gawk gnuplot bc
     # - gcc {
     #    HACK: Update gcc it to support c++11
     #
@@ -18,7 +19,6 @@ before_script:
     - sudo add-apt-repository -y "deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe"
     - sudo apt-get update
     - sudo apt-get install libboost1.54-all-dev libv8-dev
-    - sudo apt-get install gawk gnuplot bc
     - sudo apt-get install cmake
     # Version of some utils
     - bash --version
