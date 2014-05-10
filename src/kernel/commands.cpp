@@ -62,10 +62,12 @@ void Commands::addDbCommands()
     m_commands["HGET"] =   ADD_COMMAND(&Db::HashTable::get, &m_dbHashTable, 1);
     m_commands["HSET"] =   ADD_COMMAND(&Db::HashTable::set, &m_dbHashTable, 2);
     m_commands["HDEL"] =   ADD_COMMAND(&Db::HashTable::del, &m_dbHashTable, 1);
+    m_commands["HFOR"] =   ADD_COMMAND(&Db::HashTable::foreach, &m_dbHashTable, 1);
     /* avltree */
     m_commands["ATGET"] =  ADD_COMMAND(&Db::AvlTree::get, &m_dbAvlTree, 1);
     m_commands["ATSET"] =  ADD_COMMAND(&Db::AvlTree::set, &m_dbAvlTree, 2);
     m_commands["ATDEL"] =  ADD_COMMAND(&Db::AvlTree::del, &m_dbAvlTree, 1);
+    m_commands["ATFOR"] =  ADD_COMMAND(&Db::AvlTree::foreach, &m_dbAvlTree, 1);
 }
 
 std::string Commands::notImplementedYetCallback(const CommandHandler::Arguments &arguments)
