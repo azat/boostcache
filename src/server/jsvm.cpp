@@ -164,6 +164,6 @@ void JsVm::call(const Db::Interface::Key &key, const Db::Interface::Value &value
 void JsVm::fillTryCatch()
 {
     v8::Handle<v8::Value> exception = m_trycatch.Exception();
-    v8::String::AsciiValue exceptionMessage(exception);
+    v8::String::Utf8Value exceptionMessage(exception);
     LOG(error) << *exceptionMessage;
 }
