@@ -80,6 +80,14 @@ namespace Db
             return CommandHandler::REPLY_ERROR;
         }
 
+        /**
+         * Get shared lock
+         *
+         * But when we will allow user to change values, we need to convert it
+         * to exclusive (and personally I think that this is must-have feature).
+         */
+        boost::shared_lock<boost::shared_mutex> lock(m_access);
+
         for (Node &node : m_nodes) {
             std::string &key = node.get().key;
             std::string &value = node.get().value;

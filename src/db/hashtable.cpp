@@ -65,6 +65,14 @@ namespace Db
             return CommandHandler::REPLY_ERROR;
         }
 
+        /**
+         * Get shared lock
+         *
+         * But when we will allow user to change values, we need to convert it
+         * to exclusive (and personally I think that this is must-have feature).
+         */
+        boost::shared_lock<boost::shared_mutex> lock(m_access);
+
         for (std::pair<const Key, Value> &i : m_table) {
             std::string key(i.first);
             std::string &value = i.second;
