@@ -72,10 +72,18 @@ namespace {
     {
         return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), data);
     }
+    v8::Local<v8::FunctionTemplate> newFunctionTemplate(v8::FunctionCallback callback = NULL)
+    {
+        return v8::FunctionTemplate::New(v8::Isolate::GetCurrent(), callback);
+    }
 #else
     v8::Local<v8::String> newUtf8String(const char *data)
     {
         return v8::String::New(data);
+    }
+    v8::Local<v8::FunctionTemplate> newFunctionTemplate(v8::FunctionCallback callback = NULL)
+    {
+        return v8::FunctionTemplate::New(callback);
     }
 #endif
 }
@@ -89,9 +97,9 @@ JsVm::JsVm(const std::string &code)
     m_global->Set(newUtf8String("console"), console);
 
     console->Set(newUtf8String("log"),
-                 v8::FunctionTemplate::New(&Js::log));
+                 newFunctionTemplate(&Js::log));
     console->Set(newUtf8String("error"),
-                 v8::FunctionTemplate::New(&Js::error));
+                 newFunctionTemplate(&Js::error));
 
     /**
      * We can't do this inside initialization list, since we are modifying
