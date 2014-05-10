@@ -20,7 +20,7 @@
 namespace Js
 {
 #ifdef HAVE_V8_FUNCTIONCALLBACKINFO
-    typedef ::v8::FunctionCallbackInfo<::v8::Value> Args;
+    typedef ::v8::FunctionCallbackInfo< ::v8::Value > Args;
 
     std::string logArgs2String(const Args &args)
     {
@@ -53,12 +53,12 @@ namespace Js
         }
         return message;
     }
-    ::v8::Handle<::v8::Value> log(const Args &args)
+    ::v8::Handle< ::v8::Value > log(const Args &args)
     {
         LOG(info) << logArgs2String(args);
         return v8::Handle<v8::Value>();
     }
-    ::v8::Handle<::v8::Value> error(const Args &args)
+    ::v8::Handle< ::v8::Value > error(const Args &args)
     {
         LOG(error) << logArgs2String(args);
         return v8::Handle<v8::Value>();
