@@ -60,10 +60,12 @@ namespace Db
                  * Need for erasing from list.
                  */
                 Nodes::iterator listIterator;
+                Key key;
                 Value value;
 
                 Data(Key key, Value value)
                     : internalKey(m_keyHashFunction(key))
+                    , key(key)
                     , value(value)
                 {}
                 /**
@@ -71,6 +73,7 @@ namespace Db
                  */
                 Data(Key key)
                     : internalKey(m_keyHashFunction(key))
+                    , key(key)
                 {}
             };
 
