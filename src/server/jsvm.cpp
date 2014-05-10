@@ -91,6 +91,9 @@ namespace {
 JsVm::JsVm(const std::string &code)
     : m_isolate(v8::Isolate::GetCurrent())
     , m_locker(m_isolate)
+#ifdef HAVE_V8_WITH_MOST_CONSTRUCTORS_ISOLATE
+    , m_scope(m_isolate)
+#endif
     , m_global(v8::ObjectTemplate::New())
 {
     v8::Handle<v8::ObjectTemplate> console = v8::ObjectTemplate::New();
