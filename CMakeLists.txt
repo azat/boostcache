@@ -50,10 +50,7 @@ int main()
 
 # The version number.
 GitVersion(BoostCache)
-macro(InstallVersionMajorMinor)
-    set(BoostCache_VERSION_MAJOR 0)
-    set(BoostCache_VERSION_MINOR 10)
-endmacro()
+GitVersionToMajorMinor(BoostCache ${BoostCache_GIT_VERSION})
 
 # Directories
 set(BOOSTCACHE_ROOT_DIR "${CMAKE_SOURCE_DIR}")
