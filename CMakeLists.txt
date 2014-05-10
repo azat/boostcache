@@ -40,10 +40,12 @@ TryCompileFromSource(
 #include <v8.h>
 int main()
 {
-    (void)sizeof(v8::HandleScope(v8::Isolate*));
+    v8::HandleScope scope(v8::Isolate::GetCurrent());
+    (void)scope;
     return 0;
 };
 "
+    LINK_LIBRARIES ${LIBS}
 )
 
 # The version number.
