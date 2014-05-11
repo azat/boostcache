@@ -14,7 +14,7 @@ startServer()
 {
     $BOOSTCACHED -w2 &
     SERVER_PID="$!"
-    trap "echo Killing server; ps u $SERVER_PID &> /dev/null && kill $SERVER_PID" EXIT
+    trap "echo Killing server; ps u $SERVER_PID &> /dev/null && kill -INT $SERVER_PID" EXIT
 
     sleep 2
 }
