@@ -29,10 +29,15 @@ for name in ${sanitizers[@]}; do
     cd "$dir"
     buildDir="$PWD/build/"
 
+    # If somebody build it without extra subdir for cmake generated stuff,
+    # then current script will pick up cache from the same directory where
+    # CMakeLists.txt is, and will fail because of cached *COMPILER* variables.
+    # So just drop it and that's it.
+    rm -f "$root/CMakeCache.txt"
     cmake \
         -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang \
         -DCMAKE_BUILD_TYPE=$name -DBOOSTCACHE_BUILD_DIR="$buildDir" \
-        $root
+        "$root"
     make
 
     env MSAN_SYMBOLIZER_PATH="$symbolizer" \
