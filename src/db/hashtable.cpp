@@ -10,6 +10,7 @@
 
 
 #include "hashtable.h"
+#include "server/jsvm.h"
 
 
 namespace Db
@@ -54,6 +55,31 @@ namespace Db
         }
 
         m_table.erase(value);
+        return CommandHandler::REPLY_TRUE;
+    }
+
+    std::string HashTable::foreach(const CommandHandler::Arguments &arguments)
+    {
+        JsVm vm(arguments[1]);
+        if (!vm.init()) {
+            return CommandHandler::REPLY_ERROR;
+        }
+
+        /**
+         * Get shared lock
+         *
+         * But when we will allow user to change values, we need to convert it
+         * to exclusive (and personally I think that this is must-have feature).
+         */
+        boost::shared_lock<boost::shared_mutex> lock(m_access);
+
+        for (std::pair<const Key, Value> &i : m_table) {
+            std::string key(i.first);
+            std::string &value = i.second;
+
+            vm.call(key, value);
+        }
+
         return CommandHandler::REPLY_TRUE;
     }
 }

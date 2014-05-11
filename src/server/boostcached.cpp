@@ -14,6 +14,7 @@
 
 #include <exception>
 #include <unistd.h>
+#include <v8.h>
 
 using namespace Server;
 
@@ -26,6 +27,9 @@ int main(int argc, char **argv)
     if (options.getValue("fork") && (daemon(1 /* nochdir */, 0 /* noclose */) == -1)) {
         return EXIT_FAILURE;
     }
+
+    v8::V8::Initialize();
+    LOG(trace) << "v8 vm initialized (" << v8::V8::GetVersion() << ")";
 
     try {
         CommandServer server(CommandServer::Options(
@@ -40,6 +44,9 @@ int main(int argc, char **argv)
 
         return EXIT_FAILURE;
     }
+
+    LOG(trace) << "Freeing v8 vm resources";
+    v8::V8::Dispose();
 
     return EXIT_SUCCESS;
 }

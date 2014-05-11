@@ -9,6 +9,7 @@
  */
 
 #include "avltree.h"
+#include "server/jsvm.h"
 
 namespace Db
 {
@@ -68,6 +69,31 @@ namespace Db
             return CommandHandler::REPLY_FALSE;
         }
         m_tree->erase_and_dispose(found, m_deleteDisposer);
+
+        return CommandHandler::REPLY_TRUE;
+    }
+
+    std::string AvlTree::foreach(const CommandHandler::Arguments &arguments)
+    {
+        JsVm vm(arguments[1]);
+        if (!vm.init()) {
+            return CommandHandler::REPLY_ERROR;
+        }
+
+        /**
+         * Get shared lock
+         *
+         * But when we will allow user to change values, we need to convert it
+         * to exclusive (and personally I think that this is must-have feature).
+         */
+        boost::shared_lock<boost::shared_mutex> lock(m_access);
+
+        for (Node &node : m_nodes) {
+            std::string &key = node.get().key;
+            std::string &value = node.get().value;
+
+            vm.call(key, value);
+        }
 
         return CommandHandler::REPLY_TRUE;
     }

@@ -37,6 +37,7 @@ namespace Db
         std::string get(const CommandHandler::Arguments &arguments);
         std::string set(const CommandHandler::Arguments &arguments);
         std::string del(const CommandHandler::Arguments &arguments);
+        std::string foreach(const CommandHandler::Arguments &arguments);
 
     private:
         static std::hash<Key> m_keyHashFunction;
@@ -60,10 +61,12 @@ namespace Db
                  * Need for erasing from list.
                  */
                 Nodes::iterator listIterator;
+                Key key;
                 Value value;
 
                 Data(Key key, Value value)
                     : internalKey(m_keyHashFunction(key))
+                    , key(key)
                     , value(value)
                 {}
                 /**
@@ -71,6 +74,7 @@ namespace Db
                  */
                 Data(Key key)
                     : internalKey(m_keyHashFunction(key))
+                    , key(key)
                 {}
             };
 
