@@ -199,6 +199,11 @@ install(PROGRAMS "${BENCHMARK_SRC_DIR}/bc-benchmark" DESTINATION bin)
 macro(AddCustomTarget name)
     add_custom_target(${name} COMMAND ${ARGN})
 endmacro()
+AddCustomTarget(runtests
+                ${BOOSTCACHE_UTILS_DIR}/run_tests.sh
+                ${BOOSTCACHE_BUILD_DIR}/boostcached
+                ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
+)
 AddCustomTarget(runbenchmarks
                 ${BOOSTCACHE_UTILS_DIR}/run_benchmarks.sh
                 ${BOOSTCACHE_BUILD_DIR}/boostcached
