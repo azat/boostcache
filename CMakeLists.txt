@@ -225,29 +225,31 @@ AddCustomTarget(buildplots-dumb
                 -s ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
 )
 
-# Package
-include(GenerateDebianControl)
-set(CPACK_PACKAGE_NAME "boostcache-git")
-file(READ "${BOOSTCACHE_ROOT_DIR}/README.md" README)
-GenerateDebianControl(${README} DEBIAN_CONTROL)
-set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${DEBIAN_CONTROL}")
-set(CPACK_PACKAGE_VERSION "${BOOSTCACHE_VERSION_GIT}")
-GitToDebVersion(CPACK_PACKAGE_VERSION)
-set(CPACK_PACKAGE_MAINTAINER "a3at.mail@gmail.com")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS    "libc6 (>= 2.13),"
-                                    "libgcc1 (>= 4.7-2),"
-                                    "libstdc++6 (>= 4.8),"
-                                    "libv8-dev (>=3.14),"
-                                    "libboost-program-options1.54-dev,"
-                                    "libboost-system1.54-dev,"
-                                    "libboost-log1.54-dev,"
-                                    "libboost-thread1.54-dev")
-JoinArguments(CPACK_DEBIAN_PACKAGE_DEPENDS)
-# TODO: strip in productin
-set(CPACK_STRIP_FILES NO)
-set(CPACK_PACKAGE_HOMEPAGE "https://github.com/azat/boostcache")
-set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${CPACK_PACKAGE_HOMEPAGE}")
-set(CPACK_GENERATOR "DEB")
-include(CPack)
+macro(GeneratePackage)
+    include(GenerateDebianControl)
+    set(CPACK_PACKAGE_NAME "boostcache-git")
+    file(READ "${BOOSTCACHE_ROOT_DIR}/README.md" README)
+    GenerateDebianControl(${README} DEBIAN_CONTROL)
+    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${DEBIAN_CONTROL}")
+    set(CPACK_PACKAGE_VERSION "${BOOSTCACHE_VERSION_GIT}")
+    GitToDebVersion(CPACK_PACKAGE_VERSION)
+    set(CPACK_PACKAGE_MAINTAINER "a3at.mail@gmail.com")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS    "libc6 (>= 2.13),"
+                                        "libgcc1 (>= 4.7-2),"
+                                        "libstdc++6 (>= 4.8),"
+                                        "libv8-dev (>=3.14),"
+                                        "libboost-program-options1.54-dev,"
+                                        "libboost-system1.54-dev,"
+                                        "libboost-log1.54-dev,"
+                                        "libboost-thread1.54-dev")
+    JoinArguments(CPACK_DEBIAN_PACKAGE_DEPENDS)
+    # TODO: strip in productin
+    set(CPACK_STRIP_FILES NO)
+    set(CPACK_PACKAGE_HOMEPAGE "https://github.com/azat/boostcache")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${CPACK_PACKAGE_HOMEPAGE}")
+    set(CPACK_GENERATOR "DEB")
+    include(CPack)
+endmacro(GeneratePackage)
+GeneratePackage()
 
