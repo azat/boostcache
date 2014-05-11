@@ -24,6 +24,14 @@ IFS='' jsThrow=$(cat <<EOF
 })
 EOF
 )
+IFS='' jsCheckUpdatedKeys=$(cat <<EOF
+(function(key, value) {
+    if (value.indexOf("_updated") == -1) {
+        throw ("Key " + key + " not updated");
+    }
+})
+EOF
+)
 
 function send() { nc -q$timeout $host $port; }
 function checkOkResponse() { grep -q $'^+OK\r$'; }
@@ -50,3 +58,4 @@ for i in {1..1000}; do
 done
 sendBulkRequest HFOR "$jsForEach" | checkTrueResponse
 sendBulkRequest HFOR "$jsThrow" | checkErrorResponse
+sendBulkRequest HFOR "$jsCheckUpdatedKeys" | checkTrueResponse
