@@ -14,6 +14,7 @@ port=9876
 IFS='' jsForEach=$(cat <<EOF
 (function(key, value) {
     console.log("Key: " + key + ", value: " + value);
+    return value + "_updated";
 })
 EOF
 )

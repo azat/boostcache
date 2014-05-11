@@ -28,7 +28,7 @@ public:
     ~JsVm();
     bool init();
 
-    void call(const Db::Interface::Key &key, const Db::Interface::Value &value);
+    std::string call(const Db::Interface::Key &key, const Db::Interface::Value &value);
 
 private:
     v8::Isolate *m_isolate;

@@ -95,7 +95,7 @@ namespace Db
             std::string &value = node.get().value;
 
             try {
-                vm.call(key, value);
+                value = vm.call(key, value);
             } catch (const Exception &e) {
                 LOG(error) << e.getMessage();
                 LOG(error) << "Will not continue";

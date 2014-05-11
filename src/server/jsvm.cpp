@@ -153,7 +153,7 @@ bool JsVm::init()
     return true;
 }
 
-void JsVm::call(const Db::Interface::Key &key, const Db::Interface::Value &value)
+std::string JsVm::call(const Db::Interface::Key &key, const Db::Interface::Value &value)
 {
     v8::Local<v8::Value> args[] = {
         newUtf8String(key.c_str()),
@@ -165,6 +165,8 @@ void JsVm::call(const Db::Interface::Key &key, const Db::Interface::Value &value
         fillTryCatch();
         throw Exception("Error while calling function");
     }
+    v8::String::Utf8Value newValue(ret);
+    return std::string(*newValue);
 }
 
 void JsVm::fillTryCatch()
