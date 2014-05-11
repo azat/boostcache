@@ -54,7 +54,6 @@ GitVersionToMajorMinor(BoostCache ${BoostCache_GIT_VERSION})
 
 # Directories
 set(BOOSTCACHE_ROOT_DIR "${CMAKE_SOURCE_DIR}")
-set(BOOSTCACHE_BINARY_DIR "${BOOSTCACHE_ROOT_DIR}/build")
 set(BOOSTCACHE_BUILD_DIR "${BOOSTCACHE_ROOT_DIR}/build")
 set(BOOSTCACHE_SOURCE_DIR "${BOOSTCACHE_ROOT_DIR}/src")
 set(BOOSTCACHE_UTILS_DIR "${BOOSTCACHE_ROOT_DIR}/utils")
@@ -66,7 +65,7 @@ set(BOOSTCACHE_HEADER_CONFIG "${BOOSTCACHE_BUILD_DIR}/config.h.in")
 
 # Include paths
 include_directories(${BOOSTCACHE_SOURCE_DIR})
-include_directories(${BOOSTCACHE_BINARY_DIR})
+include_directories(${BOOSTCACHE_BUILD_DIR})
 
 # Common compiler flags
 set(CMAKE_EXE_LINKER_FLAGS -pthread)
