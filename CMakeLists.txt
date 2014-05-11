@@ -98,6 +98,26 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
                  -O3 -march=native
                  LANGUAGES C CXX)
+# Sanitizers
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZETHREAD
+                     FLAGS -g3 "-fsanitize=thread -fPIC"
+                     LANGUAGES C CXX)
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEADDRESS
+                     FLAGS -g3 "-fsanitize=address"
+                     LANGUAGES C CXX)
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEMEMORY
+                     FLAGS -g3 -fsanitize=memory -fsanitize-memory-track-origins -fno-omit-frame-pointer
+                     LANGUAGES C CXX)
+else()
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZETHREAD
+                     FLAGS -g3 "-fsanitize=thread -fPIC -pie"
+                     LANGUAGES C CXX)
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEADDRESS
+                     FLAGS -g3 "-fsanitize=address"
+                     LANGUAGES C CXX)
+endif()
+
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
