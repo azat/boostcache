@@ -17,10 +17,17 @@ IFS='' jsForEach=$(cat <<EOF
 })
 EOF
 )
+IFS='' jsThrow=$(cat <<EOF
+(function(key, value) {
+    throw ("Checking throw handling: " + key + " " + value);
+})
+EOF
+)
 
 function send() { nc -q$timeout $host $port; }
 function checkOkResponse() { grep -q $'^+OK\r$'; }
 function checkTrueResponse() { grep -q $'^:1\r$'; }
+function checkErrorResponse() { grep -q $'^-ERR\r$'; }
 # XXX: add sendInlineRequest
 function sendBulkRequest()
 {
@@ -41,3 +48,4 @@ for i in {1..1000}; do
     sendBulkRequest HSET foo$i bar$i | checkOkResponse
 done
 sendBulkRequest HFOR "$jsForEach" | checkTrueResponse
+sendBulkRequest HFOR "$jsThrow" | checkErrorResponse

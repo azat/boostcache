@@ -10,6 +10,7 @@
 
 #include "jsvm.h"
 #include "util/log.h"
+#include "kernel/exception.h"
 #include "config.h" /** HAVE_* */
 
 
@@ -159,7 +160,11 @@ void JsVm::call(const Db::Interface::Key &key, const Db::Interface::Value &value
         newUtf8String(value.c_str())
     };
 
-    m_function->Call(m_context->Global(), 2, args);
+    v8::Local<v8::Value> ret = m_function->Call(m_context->Global(), 2, args);
+    if (ret.IsEmpty()) {
+        fillTryCatch();
+        throw Exception("Error while calling function");
+    }
 }
 
 void JsVm::fillTryCatch()
