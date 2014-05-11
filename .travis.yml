@@ -31,6 +31,7 @@ before_script:
 script:
     - cmake -DCMAKE_BUILD_TYPE=Distribution .
     - make VERBOSE=1
+    - make runtests
     - make runbenchmarks
    # Build graphs in terminal
     - make buildplots-dumb
