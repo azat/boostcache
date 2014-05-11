@@ -227,6 +227,7 @@ AddCustomTarget(runtests
                 ${BOOSTCACHE_BUILD_DIR}/boostcached
                 ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
 )
+AddCustomTarget(runsanitizers ${BOOSTCACHE_UTILS_DIR}/sanitizers.sh)
 AddCustomTarget(runbenchmarks
                 ${BOOSTCACHE_UTILS_DIR}/run_benchmarks.sh
                 ${BOOSTCACHE_BUILD_DIR}/boostcached

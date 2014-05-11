@@ -18,7 +18,7 @@ before_script:
     - sudo add-apt-repository -y "deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe"
     - sudo apt-get update
     - sudo apt-get install libboost1.54-all-dev libv8-dev
-    - sudo apt-get install g++ cmake
+    - sudo apt-get install g++ cmake llvm-3.4 clang-3.4
     # Version of some utils
     - bash --version
     - awk --version
@@ -32,6 +32,7 @@ script:
     - cmake -DCMAKE_BUILD_TYPE=Distribution .
     - make VERBOSE=1
     - make runtests
+    - make runsanitizers
     - make runbenchmarks
    # Build graphs in terminal
     - make buildplots-dumb
