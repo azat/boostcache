@@ -33,7 +33,15 @@ IFS='' jsCheckUpdatedKeys=$(cat <<EOF
 EOF
 )
 
-function send() { nc -q$timeout $host $port; }
+function send()
+{
+    realnc=$(readlink -f $(which nc))
+    if [[ "$realnc" =~ ".traditional" ]]; then
+        nc -q$timeout -w$timeout $host $port
+    else # It's likely to be openbsd version of nc
+        nc -w$timeout $host $port
+    fi
+}
 function checkOkResponse() { grep -q $'^+OK\r$'; }
 function checkTrueResponse() { grep -q $'^:1\r$'; }
 function checkErrorResponse() { grep -q $'^-ERR\r$'; }
