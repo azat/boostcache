@@ -29,6 +29,7 @@ IFS='' jsCheckUpdatedKeys=$(cat <<EOF
     if (value.indexOf("_updated") == -1) {
         throw ("Key " + key + " not updated");
     }
+    return value;
 })
 EOF
 )
