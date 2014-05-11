@@ -11,7 +11,12 @@ timeout=10000
 host=localhost
 port=9876
 
-jsForEach='(function(key, value) { console.log("Key: " + key + ", value: " + value); })'
+IFS='' jsForEach=$(cat <<EOF
+(function(key, value) {
+    console.log("Key: " + key + ", value: " + value);
+})
+EOF
+)
 
 function send() { nc -q$timeout $host $port; }
 function checkOkResponse() { grep -q $'^+OK\r$'; }
