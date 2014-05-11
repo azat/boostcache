@@ -119,6 +119,9 @@ else()
 endif()
 
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
+AddCompilerFlags(FAIL_ON_ERROR FLAGS
+                 "-include ${BOOSTCACHE_SOURCE_DIR}/util/compilercompat.h"
+                 LANGUAGES C CXX)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 # Common flags
