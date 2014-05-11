@@ -32,10 +32,10 @@ script:
     - cmake -DCMAKE_BUILD_TYPE=Distribution .
     - make VERBOSE=1
     - make runtests
-    - make runsanitizers
     - make runbenchmarks
    # Build graphs in terminal
     - make buildplots-dumb
+    - make runsanitizers
    # TODO: add gtest
 
 branches:
