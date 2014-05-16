@@ -93,10 +93,10 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DEBUG FLAGS
                  -g3
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
-                 -O3 -g3
+                 -O3 -g3 -flto
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
-                 -O3 -march=native
+                 -O3 -flto -march=native
                  LANGUAGES C CXX)
 # Sanitizers
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
