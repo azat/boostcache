@@ -86,6 +86,15 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Profile" "Debug" "Release" "Distribution")
 endif()
 
+macro(SetupLTOForClang)
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        AddCompilerFlags(FAIL_ON_ERROR FLAGS
+                         "-B${BOOSTCACHE_ROOT_DIR}/utils/toolchain"
+                         LANGUAGES C CXX)
+    endif()
+endmacro()
+SetupLTOForClang()
+
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE PROFILE FLAGS
                  -g3 --coverage
                  OVERWRITE --coverage
@@ -95,6 +104,7 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DEBUG FLAGS
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
                  -O3 -g3 -flto
+                 OVERWRITE -flto
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
                  -O3 -flto -march=native
