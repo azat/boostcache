@@ -10,6 +10,7 @@
 
 #include "jsvm.h"
 #include "util/log.h"
+#include "kernel/exception.h"
 #include "config.h" /** HAVE_* */
 
 
@@ -152,14 +153,20 @@ bool JsVm::init()
     return true;
 }
 
-void JsVm::call(const Db::Interface::Key &key, const Db::Interface::Value &value)
+std::string JsVm::call(const Db::Interface::Key &key, const Db::Interface::Value &value)
 {
     v8::Local<v8::Value> args[] = {
         newUtf8String(key.c_str()),
         newUtf8String(value.c_str())
     };
 
-    m_function->Call(m_context->Global(), 2, args);
+    v8::Local<v8::Value> ret = m_function->Call(m_context->Global(), 2, args);
+    if (ret.IsEmpty()) {
+        fillTryCatch();
+        throw Exception("Error while calling function");
+    }
+    v8::String::Utf8Value newValue(ret);
+    return std::string(*newValue);
 }
 
 void JsVm::fillTryCatch()

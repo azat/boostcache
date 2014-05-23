@@ -54,8 +54,8 @@ GitVersionToMajorMinor(BoostCache ${BoostCache_GIT_VERSION})
 
 # Directories
 set(BOOSTCACHE_ROOT_DIR "${CMAKE_SOURCE_DIR}")
-set(BOOSTCACHE_BINARY_DIR "${BOOSTCACHE_ROOT_DIR}/build")
-set(BOOSTCACHE_BUILD_DIR "${BOOSTCACHE_ROOT_DIR}/build")
+set(BOOSTCACHE_BUILD_DIR "${BOOSTCACHE_ROOT_DIR}/build"
+    CACHE STRING "Set build dir")
 set(BOOSTCACHE_SOURCE_DIR "${BOOSTCACHE_ROOT_DIR}/src")
 set(BOOSTCACHE_UTILS_DIR "${BOOSTCACHE_ROOT_DIR}/utils")
 set(BOOSTCACHE_LIBRARY_DIR "${BOOSTCACHE_ROOT_DIR}/lib")
@@ -66,7 +66,7 @@ set(BOOSTCACHE_HEADER_CONFIG "${BOOSTCACHE_BUILD_DIR}/config.h.in")
 
 # Include paths
 include_directories(${BOOSTCACHE_SOURCE_DIR})
-include_directories(${BOOSTCACHE_BINARY_DIR})
+include_directories(${BOOSTCACHE_BUILD_DIR})
 
 # Common compiler flags
 set(CMAKE_EXE_LINKER_FLAGS -pthread)
@@ -86,19 +86,58 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Profile" "Debug" "Release" "Distribution")
 endif()
 
+macro(SetupLTOForClang)
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        AddCompilerFlags(FAIL_ON_ERROR FLAGS
+                         "-B${BOOSTCACHE_ROOT_DIR}/utils/toolchain"
+                         LANGUAGES C CXX)
+    endif()
+endmacro()
+SetupLTOForClang()
+
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE PROFILE FLAGS
                  -g3 --coverage
+                 OVERWRITE --coverage
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DEBUG FLAGS
                  -g3
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
-                 -O3 -g3
+                 -O3 -g3 -flto
+                 OVERWRITE -flto
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
-                 -O3 -march=native
+                 -O3 -flto -march=native
                  LANGUAGES C CXX)
+# Sanitizers
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZETHREAD
+                     FLAGS -g3 -fsanitize=thread
+                     OVERWRITE -fsanitize=thread
+                     LANGUAGES C CXX)
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEADDRESS
+                     FLAGS "-g3 -fsanitize=address"
+                     OVERWRITE -fsanitize=address
+                     LANGUAGES C CXX)
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEMEMORY
+                     FLAGS -g3 -fsanitize=memory -fno-omit-frame-pointer
+                     OVERWRITE -fsanitize=memory -fsanitize-memory-track-origins
+                     LANGUAGES C CXX)
+else()
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZETHREAD
+                     FLAGS -g3 "-fsanitize=thread -fPIC"
+                     OVERWRITE "-fsanitize=thread -pie"
+                     LANGUAGES C CXX)
+    AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEADDRESS
+                     FLAGS -g3 -fsanitize=address
+                     OVERWRITE -fsanitize=address
+                     LANGUAGES C CXX)
+endif()
+
 add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
+AddCompilerFlags(FAIL_ON_ERROR FLAGS
+                 "-include ${BOOSTCACHE_SOURCE_DIR}/util/compilercompat.h"
+                 LANGUAGES C CXX)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 # Common flags
@@ -204,6 +243,7 @@ AddCustomTarget(runtests
                 ${BOOSTCACHE_BUILD_DIR}/boostcached
                 ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
 )
+AddCustomTarget(runsanitizers ${BOOSTCACHE_UTILS_DIR}/sanitizers.sh)
 AddCustomTarget(runbenchmarks
                 ${BOOSTCACHE_UTILS_DIR}/run_benchmarks.sh
                 ${BOOSTCACHE_BUILD_DIR}/boostcached
@@ -225,29 +265,31 @@ AddCustomTarget(buildplots-dumb
                 -s ${BOOSTCACHE_BUILD_DIR}/boostcached.sock
 )
 
-# Package
-include(GenerateDebianControl)
-set(CPACK_PACKAGE_NAME "boostcache-git")
-file(READ "${BOOSTCACHE_ROOT_DIR}/README.md" README)
-GenerateDebianControl(${README} DEBIAN_CONTROL)
-set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${DEBIAN_CONTROL}")
-set(CPACK_PACKAGE_VERSION "${BOOSTCACHE_VERSION_GIT}")
-GitToDebVersion(CPACK_PACKAGE_VERSION)
-set(CPACK_PACKAGE_MAINTAINER "a3at.mail@gmail.com")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS    "libc6 (>= 2.13),"
-                                    "libgcc1 (>= 4.7-2),"
-                                    "libstdc++6 (>= 4.8),"
-                                    "libv8-dev (>=3.14),"
-                                    "libboost-program-options1.54-dev,"
-                                    "libboost-system1.54-dev,"
-                                    "libboost-log1.54-dev,"
-                                    "libboost-thread1.54-dev")
-JoinArguments(CPACK_DEBIAN_PACKAGE_DEPENDS)
-# TODO: strip in productin
-set(CPACK_STRIP_FILES NO)
-set(CPACK_PACKAGE_HOMEPAGE "https://github.com/azat/boostcache")
-set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${CPACK_PACKAGE_HOMEPAGE}")
-set(CPACK_GENERATOR "DEB")
-include(CPack)
+macro(GeneratePackage)
+    include(GenerateDebianControl)
+    set(CPACK_PACKAGE_NAME "boostcache-git")
+    file(READ "${BOOSTCACHE_ROOT_DIR}/README.md" README)
+    GenerateDebianControl(${README} DEBIAN_CONTROL)
+    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${DEBIAN_CONTROL}")
+    set(CPACK_PACKAGE_VERSION "${BOOSTCACHE_VERSION_GIT}")
+    GitToDebVersion(CPACK_PACKAGE_VERSION)
+    set(CPACK_PACKAGE_MAINTAINER "a3at.mail@gmail.com")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_MAINTAINER}")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS    "libc6 (>= 2.13),"
+                                        "libgcc1 (>= 4.7-2),"
+                                        "libstdc++6 (>= 4.8),"
+                                        "libv8-dev (>=3.14),"
+                                        "libboost-program-options1.54-dev,"
+                                        "libboost-system1.54-dev,"
+                                        "libboost-log1.54-dev,"
+                                        "libboost-thread1.54-dev")
+    JoinArguments(CPACK_DEBIAN_PACKAGE_DEPENDS)
+    # TODO: strip in productin
+    set(CPACK_STRIP_FILES NO)
+    set(CPACK_PACKAGE_HOMEPAGE "https://github.com/azat/boostcache")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "${CPACK_PACKAGE_HOMEPAGE}")
+    set(CPACK_GENERATOR "DEB")
+    include(CPack)
+endmacro(GeneratePackage)
+GeneratePackage()
 
