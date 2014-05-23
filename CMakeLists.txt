@@ -102,20 +102,25 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
 # Sanitizers
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZETHREAD
-                     FLAGS -g3 "-fsanitize=thread -fPIC"
+                     FLAGS -g3 -fsanitize=thread
+                     OVERWRITE -fsanitize=thread
                      LANGUAGES C CXX)
     AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEADDRESS
-                     FLAGS -g3 "-fsanitize=address"
+                     FLAGS "-g3 -fsanitize=address"
+                     OVERWRITE -fsanitize=address
                      LANGUAGES C CXX)
     AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEMEMORY
-                     FLAGS -g3 -fsanitize=memory -fsanitize-memory-track-origins -fno-omit-frame-pointer
+                     FLAGS -g3 -fsanitize=memory -fno-omit-frame-pointer
+                     OVERWRITE -fsanitize=memory -fsanitize-memory-track-origins
                      LANGUAGES C CXX)
 else()
     AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZETHREAD
-                     FLAGS -g3 "-fsanitize=thread -fPIC -pie"
+                     FLAGS -g3 "-fsanitize=thread -fPIC"
+                     OVERWRITE "-fsanitize=thread -pie"
                      LANGUAGES C CXX)
     AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE SANITIZEADDRESS
-                     FLAGS -g3 "-fsanitize=address"
+                     FLAGS -g3 -fsanitize=address
+                     OVERWRITE -fsanitize=address
                      LANGUAGES C CXX)
 endif()
 
