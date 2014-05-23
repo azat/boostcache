@@ -88,6 +88,7 @@ endif()
 
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE PROFILE FLAGS
                  -g3 --coverage
+                 OVERWRITE --coverage
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DEBUG FLAGS
                  -g3
