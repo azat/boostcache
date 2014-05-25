@@ -15,7 +15,7 @@ Build status and benchmarks
 
 [![Coverity scan](https://scan.coverity.com/projects/1583/badge.svg)](https://scan.coverity.com/projects/1583)
 
-![boostcache benchmarks](http://tiny.cc/boostcache-benchmarks "benchmarks")
+![boostcache benchmarks](https://github.com/azat/boostcache/releases/download/v0.2/boostcache.png "benchmarks")
 
 Used libraries
 --------------
