@@ -106,6 +106,7 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
                  -O3 -g3 -flto
                  OVERWRITE -flto
                  LANGUAGES C CXX)
+set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-fwhole-program")
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
                  -O3 -flto -march=native
                  LANGUAGES C CXX)
