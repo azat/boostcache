@@ -67,12 +67,12 @@ function parse_options()
 #
 function run_benchmark()
 {
-    eval "$1 &"
+    eval "$1 >/dev/null &"
     SERVER_PID="$!"
     trap "ps u $SERVER_PID &> /dev/null && kill $SERVER_PID" EXIT
     sleep 0.1
-    $2
-    kill $SERVER_PID
+    $2 -t ${COMMANDS// /,}
+    kill -9 $SERVER_PID
 }
 
 function prepare_graph()
@@ -190,7 +190,7 @@ function build_graphs()
 
             # Try to avoid randomization
             for _RAND in $(seq 1 $RANDOM_ITERATIONS); do
-                run_benchmark "$BOOSTCACHED -w $WORKERS -s $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
+                run_benchmark "$BOOSTCACHED --unixsocket $SOCKET" "$BC_BENCHMARK -s $SOCKET -q -c $CLIENTS" | \
                     # emulate carriage return
                     sed 's/^.*\r//' | \
                     awk '{printf "%s %s\n", $1, $2}' >> \
