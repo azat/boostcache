@@ -1,0 +1,34 @@
+name: bc
+root: /tmp
+pre_window: j boostcache &&
+            export PATH=$PATH:$PWD/build &&
+            . utils/bash_completion
+
+windows:
+  - editor:
+      layout: fdcb,273x73,0,0{175x73,0,0,221,97x73,176,0,225}
+      panes:
+        - vim
+        - tig:
+          # Hack for 'i' button, not work without this timeout
+          - sleep 1 && tmux send-keys -t bl:editor.1 i &
+          - tig
+          # send more keys (settings)
+          - H
+          - I
+  - make:
+      panes:
+        - prod:
+          - mkdir -p .cmake && cd .cmake
+          - cmake .. -DCMAKE_BUILD_TYPE=release
+        - dev:
+          - mkdir -p .cmake-debug && cd .cmake-debug
+          - cmake .. -DCMAKE_BUILD_TYPE=debug
+            -DBOOSTCACHE_BUILD_DIR=$PWD/build
+            -DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE
+  - bin:
+  - tests:
+      panes:
+        - prod:
+          - cd .cmake
+          - make runbenchmarks
