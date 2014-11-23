@@ -2,13 +2,16 @@ name: bc
 root: /tmp
 pre_window: j boostcache &&
             export PATH=$PATH:$PWD/build &&
+            SLEEP_TIMEOUT=5 &&
             . utils/bash_completion
 
 windows:
   - editor:
       layout: fdcb,273x73,0,0{175x73,0,0,221,97x73,176,0,225}
       panes:
-        - vim
+        - vim:
+          - sleep $SLEEP_TIMEOUT && tmux send-keys -t bc:editor.0 'C-p' &
+          - vim
         - tig:
           - tig
           # send more keys (settings)
