@@ -86,16 +86,72 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Profile" "Debug" "Release" "Distribution")
 endif()
 
+add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
+AddCompilerFlags(FAIL_ON_ERROR FLAGS
+                 "-include ${BOOSTCACHE_SOURCE_DIR}/util/compilercompat.h"
+                 LANGUAGES C CXX)
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+# Common flags
+string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPER)
+
 macro(SetupLTO)
-    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        AddCompilerFlags(FAIL_ON_ERROR FLAGS
-                         "-B${BOOSTCACHE_ROOT_DIR}/utils/toolchain"
+    set(LTO_TOOLCHAIN "")
+    if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+        set(LTO_TOOLCHAIN "-B${BOOSTCACHE_ROOT_DIR}/tools/toolchain")
+        AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASELTO FLAGS
+                         "${LTO_TOOLCHAIN}"
                          LANGUAGES C CXX)
+        set(LINKER_FLAGS_RELEASELTO "-Wl,--as-needed -Wl,--no-undefined -Wl,--no-allow-shlib-undefined")
+        set(CMAKE_EXE_LINKER_FLAGS_RELEASELTO "${LINKER_FLAGS_RELEASELTO}")
+        set(CMAKE_SHARED_LINKER_FLAGS_RELEASELTO "${LINKER_FLAGS_RELEASELTO}")
+    endif()
+
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+             set(CMAKE_STATIC_LINKER_FLAGS_RELEASELTO
+                 "--plugin /usr/lib/LLVMgold.so")
+        endif()
+        # XXX: not a nice solution
+        if (${CMAKE_BUILD_TYPE_UPPER} STREQUAL "RELEASELTO")
+            set(CMAKE_C_ARCHIVE_FINISH "llvm-ranlib <TARGET>")
+        else()
+            set(CMAKE_C_ARCHIVE_FINISH "")
+        endif()
+        set(CMAKE_CXX_ARCHIVE_FINISH "${CMAKE_C_ARCHIVE_FINISH}")
+
+        AddCompilerFlags (FAIL_ON_ERROR
+                          BUILD_TYPE RELEASELTO
+                          FLAGS -g3 -O3 -DNDEBUG -flto
+                          OVERWRITE "-flto ${LTO_TOOLCHAIN}"
+                          LANGUAGES C CXX)
     else()
-        set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-fwhole-program")
+        set(CMAKE_EXE_LINKER_FLAGS_RELEASELTO "-fwhole-program")
+
+        # XXX: not a nice solution
+        if (${CMAKE_BUILD_TYPE_UPPER} STREQUAL "RELEASELTO")
+            set(CMAKE_C_ARCHIVE_CREATE "gcc-ar cr <TARGET> <OBJECTS>")
+            set(CMAKE_C_ARCHIVE_FINISH "gcc-ranlib <TARGET>")
+        else()
+            set(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> cr <TARGET> <OBJECTS>")
+            set(CMAKE_C_ARCHIVE_FINISH "")
+        endif()
+        set(CMAKE_CXX_ARCHIVE_CREATE "${CMAKE_C_ARCHIVE_CREATE}")
+        set(CMAKE_CXX_ARCHIVE_FINISH "${CMAKE_C_ARCHIVE_FINISH}")
+
+        # Bug in gcc cgraph, for duplicated declarations of a given symbol
+        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61886
+        add_definitions(-U_FORTIFY_SOURCE)
+
+        AddCompilerFlags (FAIL_ON_ERROR
+                          BUILD_TYPE RELEASELTO
+                          FLAGS -g3 -O3 -DNDEBUG -flto
+                          OVERWRITE -flto
+                          LANGUAGES C CXX)
     endif()
 endmacro()
 SetupLTO()
+
 
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE PROFILE FLAGS
                  -g3 --coverage
@@ -105,11 +161,10 @@ AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DEBUG FLAGS
                  -g3
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE RELEASE FLAGS
-                 -O3 -g3 -flto
-                 OVERWRITE -flto
+                 -O3 -g3
                  LANGUAGES C CXX)
 AddCompilerFlags(FAIL_ON_ERROR BUILD_TYPE DISTRIBUTION FLAGS
-                 -O3 -flto -march=native
+                 -O3 -march=native
                  LANGUAGES C CXX)
 # Sanitizers
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
@@ -136,14 +191,6 @@ else()
                      LANGUAGES C CXX)
 endif()
 
-add_definitions(-D_REENTRANT -DTHREAD_SAFE -D_GNU_SOURCE -DDEBUG)
-AddCompilerFlags(FAIL_ON_ERROR FLAGS
-                 "-include ${BOOSTCACHE_SOURCE_DIR}/util/compilercompat.h"
-                 LANGUAGES C CXX)
-
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-# Common flags
-string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPER)
 message(STATUS " C flags  : ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 message(STATUS " CXX flags: ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 
