@@ -1,8 +1,13 @@
 name: bc
 root: /tmp
 pre_window: j boostcache &&
+            BC_ROOT=$PWD &&
+            BC_PATH_BAK=$PATH &&
+            CLANG=$(ls -t /usr/bin/clang-?.? | head -1) &&
+            CLANG_PP=$(ls -t /usr/bin/clang++-?.? | head -1) &&
             export PATH=$PATH:$PWD/build &&
             SLEEP_TIMEOUT=5 &&
+            function mkcd() { [ -n "$1" ] && mkdir -p "$@" && cd "$1"; } &&
             . utils/bash_completion
 
 windows:
@@ -18,15 +23,24 @@ windows:
           - r
           - I
   - make:
+      layout: tiled
       panes:
         - prod:
-          - mkdir -p .cmake && cd .cmake
-          - cmake .. -DCMAKE_BUILD_TYPE=release
+          - mkcd .cmake
+          - cmake .. -DCMAKE_BUILD_TYPE=releaselto -G Ninja
         - dev:
-          - mkdir -p .cmake-debug && cd .cmake-debug
+          - mkcd .cmake-debug
+          - export PATH=$PWD/build/bin:$BC_PATH_BAK
           - cmake .. -DCMAKE_BUILD_TYPE=debug
-            -DBOOSTCACHE_BUILD_DIR=$PWD/build
             -DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE
+            -G Ninja
+        - clang:
+          - mkcd .cmake-clang
+          - export PATH=$PWD/build/bin:$BC_PATH_BAK
+          - cmake .. -DCMAKE_BUILD_TYPE=debug
+            -DCMAKE_CXX_COMPILER=$CLANG_PP
+            -DCMAKE_C_COMPILER=$CLANG
+            -G Ninja
   - bin:
   - tests:
       panes:
