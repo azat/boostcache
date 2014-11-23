@@ -10,11 +10,9 @@ windows:
       panes:
         - vim
         - tig:
-          # Hack for 'i' button, not work without this timeout
-          - sleep 1 && tmux send-keys -t bl:editor.1 i &
           - tig
           # send more keys (settings)
-          - H
+          - r
           - I
   - make:
       panes:
