@@ -1,5 +1,6 @@
 name: bc
 root: /tmp
+socket_name: bc
 pre_window: j boostcache &&
             BC_ROOT=$PWD &&
             BC_PATH_BAK=$PATH &&
