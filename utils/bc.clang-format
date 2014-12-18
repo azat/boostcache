@@ -1,0 +1,75 @@
+---
+Language:          Cpp
+BasedOnStyle:      LLVM
+
+AlignAfterOpenBracket: true
+AlignEscapedNewlinesLeft: true
+AlignOperands: true
+AlignTrailingComments: true
+
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+AlwaysBreakAfterDefinitionReturnType: false
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: false
+
+BinPackArguments: false
+BinPackParameters: true
+
+BreakBeforeBinaryOperators: false
+BreakBeforeBraces: Linux
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializersBeforeComma: true
+
+ColumnLimit:     80
+CommentPragmas:  '^ IWYU pragma:' #XXX
+
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+
+Cpp11BracedListStyle: true #XXX
+DerivePointerAlignment: false #XXX
+DisableFormat:   false
+ExperimentalAutoDetectBinPacking: false #XXX
+ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
+
+IndentCaseLabels: false
+IndentFunctionDeclarationAfterType: false
+IndentWidth:     4
+IndentWrappedFunctionNames: false
+
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 1 #XXX
+NamespaceIndentation: None
+
+ObjCSpaceAfterProperty: true #XXX
+ObjCSpaceBeforeProtocolList: false
+
+PenaltyBreakBeforeFirstCallParameter: 19 #XXX
+PenaltyBreakComment: 300 #XXX
+PenaltyBreakFirstLessLess: 120 #XXX
+PenaltyBreakString: 1000 #XXX
+PenaltyExcessCharacter: 1000000 #XXX
+PenaltyReturnTypeOnItsOwnLine: 60 #XXX
+
+PointerAlignment: Right #XXX
+
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: true #XXX
+SpacesInParentheses: false
+Standard:        Cpp11
+TabWidth:        4
+UseTab:          Never
+...
