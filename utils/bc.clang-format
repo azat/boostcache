@@ -2,24 +2,24 @@
 Language:          Cpp
 BasedOnStyle:      LLVM
 
-AlignAfterOpenBracket: true
+# AlignAfterOpenBracket: true
 AlignEscapedNewlinesLeft: true
-AlignOperands: true
+# AlignOperands: true
 AlignTrailingComments: true
 
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: true
+# AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: All
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 
-AlwaysBreakAfterDefinitionReturnType: false
+# AlwaysBreakAfterDefinitionReturnType: false
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: false
 
-BinPackArguments: false
-BinPackParameters: true
+# BinPackArguments: false
+# BinPackParameters: true
 
 BreakBeforeBinaryOperators: false
 BreakBeforeBraces: Linux
@@ -60,7 +60,7 @@ PenaltyReturnTypeOnItsOwnLine: 60 #XXX
 
 PointerAlignment: Right #XXX
 
-SpaceAfterCStyleCast: false
+# SpaceAfterCStyleCast: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false
