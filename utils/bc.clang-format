@@ -2,6 +2,8 @@
 Language:          Cpp
 BasedOnStyle:      LLVM
 
+AccessModifierOffset: -4
+
 # AlignAfterOpenBracket: true
 AlignEscapedNewlinesLeft: true
 # AlignOperands: true
@@ -45,7 +47,7 @@ IndentWidth:     4
 IndentWrappedFunctionNames: false
 
 KeepEmptyLinesAtTheStartOfBlocks: true
-MaxEmptyLinesToKeep: 1 #XXX
+MaxEmptyLinesToKeep: 2
 NamespaceIndentation: None
 
 ObjCSpaceAfterProperty: true #XXX
