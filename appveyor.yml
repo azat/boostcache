@@ -9,6 +9,8 @@ environment:
   BOOST_ROOT: c:\Libraries\boost
 
 install:
+  - gem update --system
+  - gem install libv8 -- --with-system-v8
   - git submodule update --init
   - if "%PLATFORM%" == "Win32" set CMAKE_GENERATOR="Visual Studio 12"
   - if "%PLATFORM%" == "x64"   set CMAKE_GENERATOR="Visual Studio 12 Win64"
