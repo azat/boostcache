@@ -6,7 +6,7 @@ platform:
   - x64
 
 environment:
-  - BOOST_ROOT: c:\Libraries\boost
+  BOOST_ROOT: c:\Libraries\boost
 
 install:
   - if "%PLATFORM%" == "Win32" set CMAKE_GENERATOR="Visual Studio 12"
