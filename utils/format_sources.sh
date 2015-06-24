@@ -8,8 +8,8 @@ set -e
 
 SELF=${0%/*}
 BIN=$(ls -t /usr/bin/clang-format* | head -1)
-CONFIG=$SELF/bc.clang-format
-SRCDIR=$(readlink -f "$SELF/../src")
+CONFIG=${1:-"$SELF/bc.clang-format"}
+SRCDIR=${2:-"$(readlink -f "$SELF/../src")"}
 
 find $SRCDIR -type f | \
     fgrep -vf <(\
