@@ -41,7 +41,7 @@ function run_test_client()
         # Flush progress bar
         print \"\" > \"/dev/stderr\"
 
-        close(service)
+        close(serverConnection)
         print count
     }
     ")
